@@ -74,8 +74,8 @@ public class GitProcessor implements AutoCloseable {
     }
 
     /**
-    * Opens an existing repository.
-    */
+     * Opens an existing repository.
+     */
     private Git openProject(File repoFile) throws IOException {
         return new Git(new FileRepositoryBuilder().setGitDir(repoFile).readEnvironment().findGitDir().build());
     }
@@ -87,6 +87,14 @@ public class GitProcessor implements AutoCloseable {
         return Git.cloneRepository().setURI(uri).setDirectory(path).call();
     }
 
+    /**
+     * Lists differences between SHAs of two commits.
+     *
+     * @param oldCommit
+     * @param newCommit
+     * @throws GitAPIException
+     * @throws IOException
+     */
     public void listDiff(String oldCommit, String newCommit) throws GitAPIException, IOException {
         Repository repository = gitProject.getRepository();
         final List<DiffEntry> diffs = gitProject.diff().setOldTree(prepareTreeParser(repository, oldCommit))
@@ -96,7 +104,7 @@ public class GitProcessor implements AutoCloseable {
         for (DiffEntry diff : diffs) {
             System.out.println("Diff: " + diff.getChangeType() + ": "
                     + (diff.getOldPath().equals(diff.getNewPath()) ? diff.getNewPath()
-                            : diff.getOldPath() + " -> " + diff.getNewPath()));
+                    : diff.getOldPath() + " -> " + diff.getNewPath()));
         }
     }
 
@@ -119,7 +127,7 @@ public class GitProcessor implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         // just to make sure we are closing the repository entirely.
         this.gitProject.getRepository().close();
         this.gitProject.close();
