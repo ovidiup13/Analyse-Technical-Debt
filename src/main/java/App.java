@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.sql.SQLOutput;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
@@ -22,11 +24,11 @@ public class App {
     public static void main(String[] args) {
 
         String tmp = Paths.get(System.getProperty("user.dir"), "tmp").toString();
-        File repoPath = new File(Paths.get(tmp, "zeppelin", ".git").toString());
+        File repoPath = new File(Paths.get(tmp, "zeppelin").toString());
         String uri = "https://github.com/apache/zeppelin.git";
 
         try (GitProcessor zeppelin = new GitProcessor(uri, repoPath)) {
-            // zeppelin = new GitProcessor(uri, repoPath);
+            System.out.println(zeppelin.getCommits());
         } catch (InvalidRemoteException e) {
             LOGGER.error("InvalidRemoteException", e);
         } catch (TransportException e) {
@@ -36,45 +38,9 @@ public class App {
         } catch (JGitInternalException e) { // destination exists
             LOGGER.error("JGitInternalException", e);
             // open repository
+        } catch (Exception e) {
+            LOGGER.error("Exception", e);
         }
-
-        // try {
-        //     repository = GitProcessor.openProject(repoPath);
-        //     // System.out.println(zeppelin.getRepository().getDirectory().toPath().toString());
-        //     // System.out.println(zeppelin.getRepository().getBranch());
-
-        //     zeppelin = new Git(repository);
-        //     zeppelin.checkout().setStartPoint("7af4fab420ed42edbe9f97c1c4d63823ff321c2d").call();
-        //     // Ref head = repository.exactRef("refs/heads/master");
-        //     // System.out.println("Ref of refs/heads/master: " + head);
-        //     // List<Ref> call = zeppelin.branchList().call();
-        //     // System.out.println(call);
-        //     // for (Ref ref : call) {
-        //     //     System.out.println("Branch: " + ref + " " + ref.getName() + " " + ref.getObjectId().getName());
-        //     //     break;
-        //     // }
-        // } catch (IOException | GitAPIException e) {
-        //     // TODO Auto-generated catch block
-        //     LOGGER.error("IOException", e);
-        // } finally {
-        //     zeppelin.close();
-        // }
-
-        // try {
-        //     Iterable<RevCommit> commits = zeppelin.log().all().call();
-        //     int count = 0;
-        //     for (RevCommit commit : commits) {
-        //         System.out.println("LogCommit: " + commit);
-        //         // listDiff(repository, zeppelin, commit.getName() + "^", commit.getName());
-        //         count++;
-        //         if (count == 10) {
-        //             break;
-        //         }
-        //     }
-        //     System.out.println(count);
-        // } catch (Exception e) {
-        //     LOGGER.error("Exception", e);
-        // }
     }
 
 }

@@ -2,13 +2,20 @@ package vcs;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -16,8 +23,14 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import models.CommitModel;
 
 public class GitProcessor implements AutoCloseable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitProcessor.class);
 
     private Git gitProject;
 
@@ -33,6 +46,33 @@ public class GitProcessor implements AutoCloseable {
      */
     public GitProcessor(String uri, File path) throws InvalidRemoteException, TransportException, GitAPIException {
         this.gitProject = cloneProject(uri, path);
+    }
+
+    /***
+     * Retrieves all the list of commits on the main branch.
+     */
+    public List<CommitModel> getCommits() {
+        List<CommitModel> result = new ArrayList<>();
+        try {
+            Iterable<RevCommit> commits = gitProject.log().all().call();
+            for (RevCommit commit : commits) {
+                PersonIdent committer = commit.getCommitterIdent();
+                Date date = committer.getWhen();
+                TimeZone zone = committer.getTimeZone();
+
+                CommitModel model = new CommitModel();
+                model.setSha(commit.getName());
+                model.setAuthor(committer.getName());
+                model.setMessage(commit.getShortMessage());
+                model.setTimestamp(LocalDateTime.ofInstant(date.toInstant(), zone.toZoneId()));
+
+                result.add(model);
+            }
+        } catch (GitAPIException | IOException e) {
+            LOGGER.error("An exception occurred when retrieving list of commits.", e);
+        }
+
+        return result;
     }
 
     /**
@@ -82,6 +122,8 @@ public class GitProcessor implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        // just to make sure we are closing the repository entirely.
+        this.gitProject.getRepository().close();
         this.gitProject.close();
     }
 
