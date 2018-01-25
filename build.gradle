@@ -53,6 +53,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
     compile "org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE"
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
+    compile "org.springframework.boot:spring-boot-devtools"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
 
     // spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
     // compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
