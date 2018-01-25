@@ -40,7 +40,7 @@ gradle-app.setting
 # IDEA Settings
 .idea
 *.iml
-
+out/
 
 # Repositories
 tmp/
