@@ -8,22 +8,45 @@
 
  buildscript {
   repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
+    mavenCentral()
   }
   dependencies {
-    classpath "gradle.plugin.com.github.spotbugs:gradlePlugin:1.6.0"
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
+    // classpath "gradle.plugin.com.github.spotbugs:gradlePlugin:1.6.0"
   }
 }
-
-apply plugin: "com.github.spotbugs"
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 
 // Apply the application plugin to add support for building an application
 apply plugin: 'application'
+
+// Apply the spring boot plugin to add support for spring boot runtime
+apply plugin: 'org.springframework.boot'
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java/']
+        }
+        // resources {
+        //     srcDirs = ['src/resources']
+        // }
+    }
+    test {
+        java {
+          srcDirs = ['src/test/java/']
+        }
+    }
+}
+
+mainClassName = "com.tdsource.App"
+
+// The plugin adds a bootRepackage task
+bootRepackage {
+    mainClass = 'com.tdsource.App'
+}
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -33,9 +56,11 @@ repositories {
 }
 
 dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE"
+
     // spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    // compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    // compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     // This dependency is found on compile classpath of this component and consumers.
     compile 'com.google.guava:guava:23.0'
 

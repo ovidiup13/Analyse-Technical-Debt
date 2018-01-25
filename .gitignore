@@ -37,6 +37,11 @@ gradle-app.setting
 .vscode/
 .settings/
 
+# IDEA Settings
+.idea
+*.iml
+
+
 # Repositories
 tmp/
 
