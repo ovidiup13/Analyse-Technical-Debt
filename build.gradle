@@ -6,6 +6,16 @@
  * user guide available at https://docs.gradle.org/4.4.1/userguide/tutorial_java_projects.html
  */
 
+buildscript {
+    ext.spring_boot_version = '1.5.9.RELEASE'
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+    }
+}
+
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 
@@ -50,8 +60,8 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
-    compile "org.springframework.boot:spring-boot-starter-web:1.5.9.RELEASE"
+    compile "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+    compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
     compile "org.springframework.boot:spring-boot-devtools"
     compile "org.springframework.boot:spring-boot-starter-actuator"
