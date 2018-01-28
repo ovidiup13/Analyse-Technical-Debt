@@ -15,7 +15,7 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'source'
+rootProject.name = 'tdanalysis'
 
-include 'loader'
-include 'app'
+include 'tdanalysis-db-module'
+include 'tdanalysis-web-app'

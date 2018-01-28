@@ -25,7 +25,7 @@ bootRepackage {
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
-    compile project(':loader')
+    compile project(':tdanalysis-db-module')
 
     // spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
     // compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
