@@ -1,13 +1,26 @@
 package com.tdsource.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
 
+@Document(collection = "repos")
+@JsonIgnoreProperties(value = {"commits"}, allowGetters = true)
 public class RepositoryModel {
 
+    @Id
     private String id;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String author;
+
     private String URI;
     private List<CommitModel> commits;
 

@@ -8,6 +8,7 @@
 
 buildscript {
     ext.spring_boot_version = '1.5.9.RELEASE'
+
     repositories {
         jcenter()
     }
@@ -16,68 +17,23 @@ buildscript {
     }
 }
 
-// Apply the java plugin to add support for Java
-apply plugin: 'java'
-
-// Apply the application plugin to add support for building an application
-apply plugin: 'application'
-
-// Apply the spring boot plugin to add support for spring boot runtime
-apply plugin: 'org.springframework.boot'
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java/']
-        }
-        resources {
-             srcDirs = ['src/main/resources']
-        }
-    }
-    test {
-        java {
-          srcDirs = ['src/test/java/']
-        }
-    }
-}
-
-mainClassName = "com.tdsource.App"
-
-// The plugin adds a bootRepackage task
-bootRepackage {
-    mainClass = 'com.tdsource.App'
-}
-
 // In this section you declare where to find the dependencies of your project
-repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
-    jcenter()
-    mavenCentral()
+allprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    // Apply the spring boot plugin to add support for spring boot runtime
+    apply plugin: 'org.springframework.boot'
+
+    repositories {
+        // Use jcenter for resolving your dependencies.
+        // You can declare any Maven/Ivy/file repository here.
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        compile "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+    }
 }
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-dependencies {
-    compile "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
-    compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
-    compile "org.springframework.boot:spring-boot-starter-data-mongodb"
-    compile "org.springframework.boot:spring-boot-devtools"
-    compile "org.springframework.boot:spring-boot-starter-actuator"
-
-    // spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
-    // compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    // compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
-    // This dependency is found on compile classpath of this component and consumers.
-    compile 'com.google.guava:guava:23.0'
-
-    compile 'org.eclipse.jgit:org.eclipse.jgit:4.9.0.201710071750-r'
-
-    // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
-}
-
-// Define the main class for the application
-mainClassName = 'App'
 

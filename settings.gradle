@@ -16,3 +16,6 @@ include 'services:webservice'
 */
 
 rootProject.name = 'source'
+
+include 'loader'
+include 'app'

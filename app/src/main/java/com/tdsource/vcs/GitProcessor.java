@@ -3,8 +3,6 @@ package com.tdsource.vcs;
 import com.tdsource.models.CommitModel;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -20,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +28,7 @@ import java.util.TimeZone;
 public class GitProcessor implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GitProcessor.class);
+    private static final String GIT_FOLDER = ".git";
 
     private Git gitProject;
 
@@ -36,13 +36,13 @@ public class GitProcessor implements AutoCloseable {
      * Instantiate a new GitProcessor by using an existing repository.
      */
     public GitProcessor(File path) throws IOException {
-        this.gitProject = openProject(path);
+        this.gitProject = openProject(new File(Paths.get(path.toPath().toString(), GIT_FOLDER).toUri()));
     }
 
     /***
      * Instantiate a new GitProcessor by cloning a repository from a URI.
      */
-    public GitProcessor(String uri, File path) throws InvalidRemoteException, TransportException, GitAPIException {
+    public GitProcessor(String uri, File path) throws GitAPIException {
         this.gitProject = cloneProject(uri, path);
     }
 
@@ -83,7 +83,7 @@ public class GitProcessor implements AutoCloseable {
     /**
      * Clones a repository from URI to a path.
      */
-    private Git cloneProject(String uri, File path) throws InvalidRemoteException, TransportException, GitAPIException {
+    private Git cloneProject(String uri, File path) throws GitAPIException {
         return Git.cloneRepository().setURI(uri).setDirectory(path).call();
     }
 
