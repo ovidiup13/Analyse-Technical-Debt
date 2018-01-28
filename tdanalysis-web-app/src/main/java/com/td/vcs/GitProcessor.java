@@ -1,6 +1,6 @@
-package com.tdsource.vcs;
+package com.td.vcs;
 
-import models.CommitModel;
+import com.td.models.CommitModel;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;

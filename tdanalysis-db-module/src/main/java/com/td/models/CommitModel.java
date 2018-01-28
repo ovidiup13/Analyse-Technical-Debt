@@ -1,4 +1,4 @@
-package models;
+package com.td.models;
 
 import java.time.LocalDateTime;
 

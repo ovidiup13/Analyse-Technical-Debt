@@ -1,5 +1,4 @@
-package models;
-
+package com.td.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;

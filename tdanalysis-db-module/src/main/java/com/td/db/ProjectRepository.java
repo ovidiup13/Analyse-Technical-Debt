@@ -1,6 +1,6 @@
-package db;
+package com.td.db;
 
-import models.RepositoryModel;
+import com.td.models.RepositoryModel;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

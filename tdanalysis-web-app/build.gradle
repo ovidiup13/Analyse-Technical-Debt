@@ -17,10 +17,10 @@ sourceSets {
     }
 }
 
-mainClassName = "com.tdsource.App"
+mainClassName = "com.td.App"
 
 bootRepackage {
-    mainClass = 'com.tdsource.App'
+    mainClass = 'com.td.App'
 }
 
 dependencies {

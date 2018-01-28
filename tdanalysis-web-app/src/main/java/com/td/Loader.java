@@ -1,6 +1,6 @@
-package com.tdsource;
+package com.td;
 
-import com.tdsource.vcs.GitProcessor;
+import com.td.vcs.GitProcessor;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
