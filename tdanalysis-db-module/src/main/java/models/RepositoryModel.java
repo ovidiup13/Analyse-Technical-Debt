@@ -1,4 +1,4 @@
-package com.tdsource.models;
+package models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

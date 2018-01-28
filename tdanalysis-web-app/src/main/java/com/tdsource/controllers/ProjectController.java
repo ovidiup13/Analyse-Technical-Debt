@@ -1,8 +1,7 @@
 package com.tdsource.controllers;
 
-import com.tdsource.db.ProjectRepository;
-import com.tdsource.models.RepositoryModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import db.ProjectRepository;
+import models.RepositoryModel;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +13,6 @@ import java.util.List;
 @CrossOrigin("*")
 public class ProjectController {
 
-    @Autowired
     ProjectRepository repository;
 
     @RequestMapping("")
