@@ -77,6 +77,7 @@ public class GitProcessor implements AutoCloseable {
      * Opens an existing repository.
      */
     private Git openProject(File repoFile) throws IOException {
+        LOGGER.info(String.format("Opening git project residing at %s", repoFile.getAbsolutePath()));
         return new Git(new FileRepositoryBuilder().setGitDir(repoFile).readEnvironment().findGitDir().build());
     }
 
@@ -84,6 +85,7 @@ public class GitProcessor implements AutoCloseable {
      * Clones a repository from URI to a path.
      */
     private Git cloneProject(String uri, File path) throws GitAPIException {
+        LOGGER.info(String.format("Cloning git project from %s to path %s", uri, path.getAbsolutePath()));
         return Git.cloneRepository().setURI(uri).setDirectory(path).call();
     }
 

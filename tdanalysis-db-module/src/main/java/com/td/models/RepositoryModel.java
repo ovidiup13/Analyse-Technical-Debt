@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Document(collection = "repos")
-@JsonIgnoreProperties(value = {"commits"}, allowGetters = true)
 public class RepositoryModel {
 
     @Id
