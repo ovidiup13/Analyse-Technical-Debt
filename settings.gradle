@@ -18,4 +18,5 @@ include 'services:webservice'
 rootProject.name = 'tdanalysis'
 
 include 'tdanalysis-db-module'
+include 'tdanalysis-load-repos'
 include 'tdanalysis-web-app'
