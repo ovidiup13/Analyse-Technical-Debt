@@ -1,6 +1,7 @@
 package com.td.config;
 
 import com.td.models.RepositoryModel;
+import com.td.processor.CommitProcessor;
 import com.td.processor.RepositoryProcessor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -43,12 +44,23 @@ public class ImportRepositories {
 
     @Bean
     public Step step1() {
-        return stepBuilderFactory.get("step1").<RepositoryModel, RepositoryModel>chunk(10).reader(csvFileReader()).processor(processor()).writer(writer()).build();
+        return stepBuilderFactory.get("step1")
+                .<RepositoryModel, RepositoryModel>chunk(10)
+                .reader(csvFileReader())
+//                .processor(commitProcessor())
+                .processor(repositoryProcessor())
+                .writer(writer())
+                .build();
     }
 
     @Bean
-    public RepositoryProcessor processor() {
+    public RepositoryProcessor repositoryProcessor() {
         return new RepositoryProcessor();
+    }
+
+    @Bean
+    public CommitProcessor commitProcessor() {
+        return new CommitProcessor();
     }
 
     @Bean

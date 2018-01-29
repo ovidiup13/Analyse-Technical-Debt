@@ -18,14 +18,17 @@ public class RepositoryProcessor implements ItemProcessor<RepositoryModel, Repos
 
     @Override
     public RepositoryModel process(RepositoryModel item) {
+        LOGGER.info(String.format("Reading repository info %s:%s", item.getAuthor(), item.getName()));
+
         File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
-        try(GitProcessor gitProcessor = repoPath.exists() ? new GitProcessor(repoPath) : new GitProcessor(item.getURI(), repoPath)) {
+        try (GitProcessor gitProcessor = repoPath.exists() ? new GitProcessor(repoPath) : new GitProcessor(item.getURI(), repoPath)) {
             item.setCommits(gitProcessor.getCommits());
         } catch (IOException | GitAPIException e) {
-            LOGGER.error(String.format("An error occurred when processing repository %s", item.getURI()), e);
+            LOGGER.error(String.format("An error occurred when processing commits %s", item.getURI()), e);
             return null;
         }
 
+        System.out.println(item.getCommits());
         return item;
     }
 

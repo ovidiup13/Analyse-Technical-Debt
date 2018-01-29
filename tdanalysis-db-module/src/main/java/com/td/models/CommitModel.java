@@ -8,6 +8,7 @@ public class CommitModel {
     private LocalDateTime timestamp;
     private String message;
     private String author;
+    private DiffModel diff;
 
     /**
      * @return the author
@@ -63,5 +64,13 @@ public class CommitModel {
      */
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public DiffModel getDiff() {
+        return diff;
+    }
+
+    public void setDiff(DiffModel diff) {
+        this.diff = diff;
     }
 }
