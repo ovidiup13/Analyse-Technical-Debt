@@ -1,4 +1,4 @@
-package com.td.vcs;
+package com.td.helpers;
 
 import com.td.models.CommitModel;
 import com.td.models.DiffModel;
@@ -26,24 +26,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class GitProcessor implements AutoCloseable {
+public class VersionControlHelper implements AutoCloseable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GitProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionControlHelper.class);
     private static final String GIT_FOLDER = ".git";
 
     private Git gitProject;
 
     /***
-     * Instantiate a new GitProcessor by using an existing repository.
+     * Instantiate a new VersionControlHelper by using an existing repository.
      */
-    public GitProcessor(File path) throws IOException {
+    public VersionControlHelper(File path) throws IOException {
         this.gitProject = openProject(new File(Paths.get(path.toPath().toString(), GIT_FOLDER).toUri()));
     }
 
     /***
-     * Instantiate a new GitProcessor by cloning a repository from a URI.
+     * Instantiate a new VersionControlHelper by cloning a repository from a URI.
      */
-    public GitProcessor(String uri, File path) throws GitAPIException {
+    public VersionControlHelper(String uri, File path) throws GitAPIException {
         this.gitProject = cloneProject(uri, path);
     }
 

@@ -2,6 +2,7 @@
 
 ### Java ###
 *.class
+*/bin
 
 # BlueJ files
 *.ctxt
@@ -38,6 +39,9 @@ gradle-app.setting
 # VS Code
 .vscode/
 .settings/
+
+*.project
+*.classpath
 
 # IDEA Settings
 .idea

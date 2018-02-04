@@ -2,7 +2,7 @@ package com.td.processor;
 
 import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
-import com.td.vcs.GitProcessor;
+import com.td.helpers.VersionControlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -21,12 +21,12 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
         LOGGER.info(String.format("Processing commits for repository %s:%s", item.getAuthor(), item.getName()));
 
         File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
-        try (GitProcessor gitProcessor = new GitProcessor(repoPath)) {
+        try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
             System.out.println(item.getName());
             System.out.println(item.getCommits());
             for (CommitModel commit : item.getCommits()) {
                 LOGGER.info(commit.toString());
-                commit.setDiff(gitProcessor.getDiff(commit.getSha() + "^", commit.getSha()));
+                commit.setDiff(versionControlHelper.getDiff(commit.getSha() + "^", commit.getSha()));
             }
         } catch (IOException e) {
             LOGGER.error(String.format("An error occurred when processing repository %s", item.getURI()), e);

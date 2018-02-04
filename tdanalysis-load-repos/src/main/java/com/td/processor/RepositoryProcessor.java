@@ -1,7 +1,7 @@
 package com.td.processor;
 
 import com.td.models.RepositoryModel;
-import com.td.vcs.GitProcessor;
+import com.td.helpers.VersionControlHelper;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ public class RepositoryProcessor implements ItemProcessor<RepositoryModel, Repos
         LOGGER.info(String.format("Reading repository info %s:%s", item.getAuthor(), item.getName()));
 
         File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
-        try (GitProcessor gitProcessor = repoPath.exists() ? new GitProcessor(repoPath) : new GitProcessor(item.getURI(), repoPath)) {
-            item.setCommits(gitProcessor.getCommits());
+        try (VersionControlHelper versionControlHelper = repoPath.exists() ? new VersionControlHelper(repoPath) : new VersionControlHelper(item.getURI(), repoPath)) {
+            item.setCommits(versionControlHelper.getCommits());
         } catch (IOException | GitAPIException e) {
             LOGGER.error(String.format("An error occurred when processing commits %s", item.getURI()), e);
             return null;
