@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class StaticAnalysisHelper {
 
     private static final String JAR_EXTENSION = ".jar";

@@ -1,12 +1,15 @@
 package com.td.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.File;
 import java.util.List;
 
 @Document(collection = "repos")
+@JsonIgnoreProperties(value = {"projectFolder"})
 public class RepositoryModel {
 
     @Id
@@ -20,6 +23,8 @@ public class RepositoryModel {
 
     private String URI;
     private List<CommitModel> commits;
+
+    private File projectFolder;
 
     /**
      * @return the id
@@ -91,4 +96,11 @@ public class RepositoryModel {
         this.commits = commits;
     }
 
+    public File getProjectFolder() {
+        return projectFolder;
+    }
+
+    public void setProjectFolder(File projectFolder) {
+        this.projectFolder = projectFolder;
+    }
 }

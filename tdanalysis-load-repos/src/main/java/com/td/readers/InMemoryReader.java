@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
  * ItemReader implementation that reads the repositories from the in-memory store.
  */
 @Component
-public class RepositoryReader implements ItemReader<RepositoryModel> {
+public class InMemoryReader implements ItemReader<RepositoryModel> {
 
     private int next;
     private InMemoryStore store;
 
-    public RepositoryReader(InMemoryStore store){
+    public InMemoryReader(InMemoryStore store){
         assert store != null;
         this.store = store;
     }

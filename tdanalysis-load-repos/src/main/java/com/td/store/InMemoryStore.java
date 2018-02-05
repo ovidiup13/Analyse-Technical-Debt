@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+// TODO: will not work with multithreading!
 @Component()
 public class InMemoryStore {
 
