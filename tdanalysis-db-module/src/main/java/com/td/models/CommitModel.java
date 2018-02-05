@@ -1,6 +1,7 @@
 package com.td.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CommitModel {
 
@@ -9,6 +10,7 @@ public class CommitModel {
     private String message;
     private String author;
     private DiffModel diff;
+    private List<BugModel> bugs;
 
     /**
      * @return the author
@@ -72,5 +74,13 @@ public class CommitModel {
 
     public void setDiff(DiffModel diff) {
         this.diff = diff;
+    }
+
+    public List<BugModel> getBugs() {
+        return bugs;
+    }
+
+    public void setBugs(List<BugModel> bugs) {
+        this.bugs = bugs;
     }
 }

@@ -1,6 +1,7 @@
 package com.td.processor;
 
 import com.td.helpers.StaticAnalysisHelper;
+import com.td.models.BugModel;
 import com.td.models.RepositoryModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,9 @@ public class AnalysisProcessor implements ItemProcessor<RepositoryModel, Reposit
 
         StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper();
 
-        List<String> results = staticAnalysisHelper.executeAnalysis(item);
+        List<BugModel> results = staticAnalysisHelper.executeAnalysis(item);
 
-        System.out.println(results);
+        item.getCommits().get(0).setBugs(results);
 
         return item;
     }
