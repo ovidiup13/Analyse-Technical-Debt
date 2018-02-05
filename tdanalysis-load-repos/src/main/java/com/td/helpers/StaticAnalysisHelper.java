@@ -1,14 +1,15 @@
 package com.td.helpers;
 
 import com.td.models.RepositoryModel;
-import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,11 +18,30 @@ public class StaticAnalysisHelper {
     private static final String JAR_EXTENSION = ".jar";
     private static final String FILE_EXTENSION_SEPARATOR = ".";
 
-    private static final String[] COMMANDS = new String[]{"findbugs", "-textui"};
+    private static final String[] COMMANDS = new String[]{"spotbugs.bat", "-textui"};
 
     // TODO: implement this method
-    public List<String> executeAnalysis(RepositoryModel repositoryModel) {
-        return Collections.emptyList();
+    public List<String> executeAnalysis(RepositoryModel repositoryModel) throws IOException {
+        List<String> results = new ArrayList<>();
+
+        // TODO: make sure project is built
+        List<String> projectJars = getProjectJars(repositoryModel.getProjectFolder(), repositoryModel.getName());
+        System.out.println(projectJars.toString());
+
+//        String[] fullCommand = Stream.of(COMMANDS, projectJars.toArray()).flatMap(Stream::of).toArray(String[]::new);
+
+        ProcessBuilder builder = new ProcessBuilder();
+        builder.command("findbugs.bat", "-textui", projectJars.get(0));
+        builder.directory(repositoryModel.getProjectFolder());
+
+        Process p = builder.start();
+         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+         String line;
+         while ((line = reader.readLine()) != null) {
+            results.add(line);
+         }
+
+        return results;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.td.config;
 
 import com.td.models.RepositoryModel;
+import com.td.processor.AnalysisProcessor;
 import com.td.processor.CommitProcessor;
 import com.td.processor.RepositoryProcessor;
 import com.td.readers.InMemoryReader;
@@ -15,7 +16,6 @@ import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -26,7 +26,6 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -57,6 +56,9 @@ public class TDBatch {
     private CommitProcessor commitProcessor;
 
     @Autowired
+    private AnalysisProcessor analysisProcessor;
+
+    @Autowired
     private RepositoryProcessor repositoryProcessor;
 
     @Autowired
@@ -66,8 +68,9 @@ public class TDBatch {
     public Job repositoryJob() {
 
         Flow flow = new FlowBuilder<SimpleFlow>("flow")
-                .start(cloneRepositories())
-                .next(readCommitMetadata())
+                .start(cloneRepositoriesStep())
+//                .next(readCommitMetadataStep())
+                .next(staticAnalysisStep())
                 .build();
 
         return jobBuilderFactory
@@ -79,9 +82,9 @@ public class TDBatch {
     }
 
     @Bean
-    public Step cloneRepositories() {
+    public Step cloneRepositoriesStep() {
         return stepBuilderFactory
-                .get("cloneRepositories")
+                .get("cloneRepositoriesStep")
                 .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
                 .reader(csvFileReader())
                 .processor(repositoryProcessor)
@@ -90,12 +93,23 @@ public class TDBatch {
     }
 
     @Bean
-    public Step readCommitMetadata() {
+    public Step readCommitMetadataStep() {
         return stepBuilderFactory
-                .get("readCommitMetadata")
+                .get("readCommitMetadataStep")
                 .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
                 .reader(inMemoryReader)
                 .processor(commitProcessor)
+                .writer(noOpWriter)
+                .build();
+    }
+
+    @Bean
+    public Step staticAnalysisStep() {
+        return stepBuilderFactory
+                .get("staticAnalysisStep")
+                .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
+                .reader(inMemoryReader)
+                .processor(analysisProcessor)
                 .writer(noOpWriter)
                 .build();
     }
