@@ -23,6 +23,7 @@ public class RepositoryModel {
 
     private String URI;
     private List<CommitModel> commits;
+    private String buildCommand;
 
     private File projectFolder;
 
@@ -102,5 +103,13 @@ public class RepositoryModel {
 
     public void setProjectFolder(File projectFolder) {
         this.projectFolder = projectFolder;
+    }
+
+    public String getBuildCommand() {
+        return buildCommand;
+    }
+
+    public void setBuildCommand(String buildCommand) {
+        this.buildCommand = buildCommand;
     }
 }

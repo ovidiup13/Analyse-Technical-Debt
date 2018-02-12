@@ -69,8 +69,7 @@ public class TDBatch {
 
         Flow flow = new FlowBuilder<SimpleFlow>("flow")
                 .start(cloneRepositoriesStep())
-//                .next(readCommitMetadataStep())
-                .next(staticAnalysisStep())
+                .next(readCommitMetadataStep())
                 .build();
 
         return jobBuilderFactory
@@ -103,16 +102,16 @@ public class TDBatch {
                 .build();
     }
 
-    @Bean
-    public Step staticAnalysisStep() {
-        return stepBuilderFactory
-                .get("staticAnalysisStep")
-                .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
-                .reader(inMemoryReader)
-                .processor(analysisProcessor)
-                .writer(noOpWriter)
-                .build();
-    }
+//    @Bean
+//    public Step staticAnalysisStep() {
+//        return stepBuilderFactory
+//                .get("staticAnalysisStep")
+//                .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
+//                .reader(inMemoryReader)
+//                .processor(analysisProcessor)
+//                .writer(noOpWriter)
+//                .build();
+//    }
 
     @Bean
     ItemReader<RepositoryModel> csvFileReader() {
@@ -149,7 +148,7 @@ public class TDBatch {
     private LineTokenizer createRepoLineTokenizer() {
         DelimitedLineTokenizer repoLineTokenizer = new DelimitedLineTokenizer();
         repoLineTokenizer.setDelimiter(",");
-        repoLineTokenizer.setNames(new String[]{"id", "author", "name", "uri"});
+        repoLineTokenizer.setNames(new String[]{"id", "author", "name", "uri", "buildCommand"});
         return repoLineTokenizer;
     }
 

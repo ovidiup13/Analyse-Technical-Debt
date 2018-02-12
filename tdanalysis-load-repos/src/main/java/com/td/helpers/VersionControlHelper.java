@@ -56,7 +56,7 @@ public class VersionControlHelper implements AutoCloseable {
         List<CommitModel> result = new ArrayList<>();
         try {
             Iterable<RevCommit> commits = gitProject.log().all().call();
-            int count = 10; //TODO: remove this. Added for performance reasons
+            int count = 1; //TODO: remove this. Added for performance reasons
             for (RevCommit commit : commits) {
                 PersonIdent committer = commit.getCommitterIdent();
                 Date date = committer.getWhen();
@@ -82,6 +82,16 @@ public class VersionControlHelper implements AutoCloseable {
         }
 
         return result;
+    }
+
+    /***
+     * Checks out a specific revision of the repository.
+     * @param commitSHA SHA of commit to be checked out
+     * @throws GitAPIException in case of error (e.g. commit does not exist)
+     */
+    public void checkoutRevision(String commitSHA) throws GitAPIException {
+        LOGGER.info(String.format("Checking out revision %s", commitSHA));
+        gitProject.checkout().setName(commitSHA).call();
     }
 
     /**
