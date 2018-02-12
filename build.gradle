@@ -7,7 +7,7 @@
  */
 
 buildscript {
-    ext.spring_boot_version = '1.5.9.RELEASE'
+    ext.spring_boot_version = '1.5.7.RELEASE'
 
     repositories {
         jcenter()
