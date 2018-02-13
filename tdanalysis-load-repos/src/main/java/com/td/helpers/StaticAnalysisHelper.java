@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,21 +29,21 @@ public class StaticAnalysisHelper {
     private static final String[] COMMANDS = new String[]{"findbugs.bat", "-textui"};
 
     // TODO: implement this method
-    public List<BugModel> executeAnalysis(RepositoryModel repositoryModel) throws IOException {
+    public List<BugModel> executeAnalysis(RepositoryModel repositoryModel, String findBugsPath) throws IOException {
         List<BugModel> results = new ArrayList<>();
 
         // TODO: make sure project is built
         List<String> projectJars = getProjectJars(repositoryModel.getProjectFolder(), repositoryModel.getName());
-        System.out.println(projectJars.toString());
 
         String[] fullCommand = Stream.of(COMMANDS, projectJars.toArray()).flatMap(Stream::of).toArray(String[]::new);
 
-        LOGGER.info("Starting static analysis for project {} on JARs {} and {}", repositoryModel.getName(), projectJars.get(0), projectJars.get(1));
-
         ProcessBuilder builder = new ProcessBuilder();
         builder.command("findbugs.bat", "-textui", projectJars.get(0), projectJars.get(1));
+        Map<String, String> envs = builder.environment();
+        envs.put("PATH", findBugsPath + File.pathSeparator + System.getenv("PATH"));
         builder.directory(repositoryModel.getProjectFolder());
 
+        LOGGER.info("Starting static analysis for project {} on JARs {} and {}", repositoryModel.getName(), projectJars.get(0), projectJars.get(1));
         Process p = builder.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line;

@@ -3,6 +3,7 @@ package com.td.helpers;
 import com.td.models.RepositoryModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -15,6 +16,12 @@ public class BuildHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BuildHelper.class);
 
+    @Value("${java.home.path}")
+    private String javaHomePath;
+
+    @Value("${maven.home.path}")
+    private String mavenHomePath;
+
     public BuildHelper(){}
 
     public void buildRepository(RepositoryModel repositoryModel) throws IOException, InterruptedException {
@@ -23,11 +30,10 @@ public class BuildHelper {
         String[] commands = repositoryModel.getBuildCommand().split(" ");
         builder.command(commands);
         Map<String, String> envs = builder.environment();
-//        System.out.println(envs.get("Path"));
-        envs.put("JAVA_HOME", "C:\\Program Files\\Java\\jdk1.8.0_151\\");
-        envs.put("MAVEN_HOME", "C:\\Libraries\\apache-maven-3.5.2\\");
-//        envs.put("M2_HOME", "C:\\Libraries\\apache-maven-3.5.2\\bin");
-//        builder.redirectErrorStream(System.err);
+        System.out.println(javaHomePath);
+        System.out.println(mavenHomePath);
+        envs.put("JAVA_HOME", javaHomePath);
+        envs.put("MAVEN_HOME", mavenHomePath);
         builder.directory(repositoryModel.getProjectFolder());
 
         Process p = builder.start();

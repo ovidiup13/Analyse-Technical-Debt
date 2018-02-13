@@ -6,6 +6,7 @@ import com.td.models.RepositoryModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,6 +16,9 @@ public class AnalysisProcessor implements ItemProcessor<RepositoryModel, Reposit
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisProcessor.class);
 
+    @Value("${findbugs.home.path}")
+    private String findBugsHomePath;
+
     @Override
     public RepositoryModel process(RepositoryModel item) throws Exception {
 
@@ -22,7 +26,7 @@ public class AnalysisProcessor implements ItemProcessor<RepositoryModel, Reposit
 
         StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper();
 
-        List<BugModel> results = staticAnalysisHelper.executeAnalysis(item);
+        List<BugModel> results = staticAnalysisHelper.executeAnalysis(item, findBugsHomePath);
 
         item.getCommits().get(0).setBugs(results);
 
