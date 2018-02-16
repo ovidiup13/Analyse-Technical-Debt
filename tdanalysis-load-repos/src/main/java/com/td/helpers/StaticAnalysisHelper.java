@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,14 +45,19 @@ public class StaticAnalysisHelper {
 
         LOGGER.info(String.format("Starting analysis for project %s:%s", repositoryModel.getName(), repositoryModel.getAuthor()));
 
-        List<BugModel> results = new ArrayList<>();
+        List<BugModel> results = Collections.synchronizedList(new ArrayList<>());
         String analysisCommand = System.getProperty("os.name").contains("Windows") ? COMMAND_WINDOWS : COMMAND_LINUX;
         List<String> projectJars = getProjectJars(repositoryModel.getProjectFolder(), repositoryModel.getName());
 
-        for(String jar: projectJars){
+        // process JARs in parallel to speed up analysis
+        projectJars.parallelStream().forEach(jar -> {
             LOGGER.info(String.format("Starting analysis for JAR %s in project %s",jar, repositoryModel.getName()));
-            results.addAll(analyseJar(analysisCommand, repositoryModel.getProjectFolder(), jar));
-        }
+            try {
+                results.addAll(analyseJar(analysisCommand, repositoryModel.getProjectFolder(), jar));
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
 
         return results;
     }
