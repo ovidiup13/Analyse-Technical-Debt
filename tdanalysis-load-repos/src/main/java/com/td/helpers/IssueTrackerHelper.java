@@ -42,7 +42,6 @@ public class IssueTrackerHelper {
         return jiraRestClient.getProjectClient().getProject(projectKey).claim();
     }
 
-
     public Issue getIssue(String issueKey) {
         return jiraRestClient
                 .getIssueClient()
