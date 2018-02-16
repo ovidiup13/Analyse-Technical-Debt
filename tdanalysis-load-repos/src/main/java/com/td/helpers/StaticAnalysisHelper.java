@@ -132,7 +132,7 @@ public class StaticAnalysisHelper {
 
     private static boolean isProjectJar(Path path, String projectName) {
         String fileName = path.getFileName().toString();
-        return fileName.contains(projectName) && isJarFile(fileName) && !isSourcesJar(fileName) && !isDocsJar(fileName);
+        return fileName.contains(projectName) && isJarFile(fileName) && !isSourcesJar(fileName) && !isDocsJar(fileName) && !isTestsJar(fileName);
     }
 
     private static boolean isJarFile(String fileName) {
@@ -146,5 +146,9 @@ public class StaticAnalysisHelper {
 
     private static boolean isDocsJar(String fileName){
         return fileName.contains("doc");
+    }
+
+    private static boolean isTestsJar(String fileName){
+        return fileName.contains("test");
     }
 }
