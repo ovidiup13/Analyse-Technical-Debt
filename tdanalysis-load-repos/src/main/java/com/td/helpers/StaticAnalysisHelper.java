@@ -25,6 +25,9 @@ public class StaticAnalysisHelper {
     private static final String COMMAND_LINUX = "findbugs";
     private static final String COMMAND_WINDOWS = "findbugs.bat";
 
+    private static final String COMMAND_LINE = "-textui";
+    private static final String PRIORITY = "-high";
+
     private String findbugsPath;
 
     public StaticAnalysisHelper(String analyserPath){
@@ -74,7 +77,7 @@ public class StaticAnalysisHelper {
         ProcessBuilder builder = new ProcessBuilder();
 
         // set up process
-        builder.command(command, jarPath);
+        builder.command(command, COMMAND_LINE, PRIORITY, jarPath);
         builder.directory(projectDirectory);
 
         // make sure findbugs is in process path
