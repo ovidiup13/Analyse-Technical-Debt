@@ -1,7 +1,6 @@
 package com.td.config;
 
 import com.td.models.RepositoryModel;
-import com.td.processor.AnalysisProcessor;
 import com.td.processor.CommitProcessor;
 import com.td.processor.RepositoryProcessor;
 import com.td.readers.InMemoryReader;
@@ -56,9 +55,6 @@ public class TDBatch {
     private CommitProcessor commitProcessor;
 
     @Autowired
-    private AnalysisProcessor analysisProcessor;
-
-    @Autowired
     private RepositoryProcessor repositoryProcessor;
 
     @Autowired
@@ -101,17 +97,6 @@ public class TDBatch {
                 .writer(noOpWriter)
                 .build();
     }
-
-//    @Bean
-//    public Step staticAnalysisStep() {
-//        return stepBuilderFactory
-//                .get("staticAnalysisStep")
-//                .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
-//                .reader(inMemoryReader)
-//                .processor(analysisProcessor)
-//                .writer(noOpWriter)
-//                .build();
-//    }
 
     @Bean
     ItemReader<RepositoryModel> csvFileReader() {

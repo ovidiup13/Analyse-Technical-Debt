@@ -1,11 +1,17 @@
 package com.td.models;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Document(collection = "commits")
 public class CommitModel {
 
+    @Id
     private String sha;
+
     private LocalDateTime timestamp;
     private String message;
     private String author;

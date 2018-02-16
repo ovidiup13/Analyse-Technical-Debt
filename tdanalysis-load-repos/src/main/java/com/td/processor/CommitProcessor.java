@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CommitProcessor implements ItemProcessor<RepositoryModel, RepositoryModel> {
@@ -42,11 +43,13 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
         File repoPath = item.getProjectFolder();
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
 
+            List<CommitModel> commits = versionControlHelper.getCommits();
+
             // set the commits of the repository
-            item.setCommits(versionControlHelper.getCommits());
+            item.setCommits(commits.parallelStream().map(CommitModel::getSha).collect(Collectors.toList()));
 
             // get the diff for each commit
-            for (CommitModel commit : item.getCommits()) {
+            for (CommitModel commit : commits) {
 
                 // get diff
                 commit.setDiff(versionControlHelper.getDiff(commit.getSha() + "^", commit.getSha()));

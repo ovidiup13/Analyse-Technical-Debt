@@ -22,7 +22,7 @@ public class RepositoryModel {
     private String author;
 
     private String URI;
-    private List<CommitModel> commits;
+    private List<String> commits;
     private String buildCommand;
 
     private File projectFolder;
@@ -86,14 +86,14 @@ public class RepositoryModel {
     /**
      * @return the commits
      */
-    public List<CommitModel> getCommits() {
+    public List<String> getCommits() {
         return commits;
     }
 
     /**
      * @param commits the commits to set
      */
-    public void setCommits(List<CommitModel> commits) {
+    public void setCommits(List<String> commits) {
         this.commits = commits;
     }
 
