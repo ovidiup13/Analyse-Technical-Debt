@@ -24,9 +24,9 @@ public class AnalysisProcessor implements ItemProcessor<RepositoryModel, Reposit
 
         LOGGER.info("Starting static analysis for repository {}", item.getName());
 
-        StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper();
+        StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper(findBugsHomePath);
 
-        List<BugModel> results = staticAnalysisHelper.executeAnalysis(item, findBugsHomePath);
+        List<BugModel> results = staticAnalysisHelper.executeAnalysis(item);
 
         item.getCommits().get(0).setBugs(results);
 

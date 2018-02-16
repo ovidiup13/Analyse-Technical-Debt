@@ -19,7 +19,7 @@ sourceSets {
 
 mainClassName = "com.td.App"
 
-bootRepackage {
+springBoot {
     mainClass = 'com.td.App'
 }
 

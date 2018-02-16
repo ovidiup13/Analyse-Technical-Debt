@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StaticAnalysisHelper {
 
@@ -25,31 +24,71 @@ public class StaticAnalysisHelper {
     private static final String JAR_EXTENSION = ".jar";
     private static final String FILE_EXTENSION_SEPARATOR = ".";
 
-    //TODO: make sure this works on windows platform
-    private static final String[] COMMANDS = new String[]{"findbugs.bat", "-textui"};
+    private static final String COMMAND_LINUX = "findbugs";
+    private static final String COMMAND_WINDOWS = "findbugs.bat";
 
-    // TODO: implement this method
-    public List<BugModel> executeAnalysis(RepositoryModel repositoryModel, String findBugsPath) throws IOException {
+    private String findbugsPath;
+
+    public StaticAnalysisHelper(String analyserPath){
+        this.findbugsPath = analyserPath;
+    }
+
+    /***
+     * Executes the analysis for all project JARs found in the directory.
+     * @param repositoryModel the repository model object
+     * @return list of bugs
+     * @throws IOException if the program is not found
+     * @throws InterruptedException if any of the processes is interrupted.
+     */
+    public List<BugModel> executeAnalysis(RepositoryModel repositoryModel) throws IOException, InterruptedException {
+
+        LOGGER.info(String.format("Starting analysis for project %s:%s", repositoryModel.getName(), repositoryModel.getAuthor()));
+
         List<BugModel> results = new ArrayList<>();
-
-        // TODO: make sure project is built
+        String analysisCommand = System.getProperty("os.name").contains("Windows") ? COMMAND_WINDOWS : COMMAND_LINUX;
         List<String> projectJars = getProjectJars(repositoryModel.getProjectFolder(), repositoryModel.getName());
 
-        String[] fullCommand = Stream.of(COMMANDS, projectJars.toArray()).flatMap(Stream::of).toArray(String[]::new);
+        for(String jar: projectJars){
+            LOGGER.info(String.format("Starting analysis for JAR %s in project %s",jar, repositoryModel.getName()));
+            results.addAll(analyseJar(analysisCommand, repositoryModel.getProjectFolder(), jar));
+        }
 
+        return results;
+    }
+
+    /***
+     * Method that starts a new process and analyses a JAR within the project directory.
+     * @param command command to run the analysis
+     * @param projectDirectory project... directory
+     * @param jarPath jar... path
+     * @return list of bugs
+     * @throws IOException if the program is not found
+     * @throws InterruptedException if the process is interrupted
+     */
+    private List<BugModel> analyseJar(String command, File projectDirectory, String jarPath) throws IOException, InterruptedException {
+
+        List<BugModel> results = new ArrayList<>();
         ProcessBuilder builder = new ProcessBuilder();
-        builder.command("findbugs.bat", "-textui", projectJars.get(0), projectJars.get(1));
-        Map<String, String> envs = builder.environment();
-        envs.put("PATH", findBugsPath + File.pathSeparator + System.getenv("PATH"));
-        builder.directory(repositoryModel.getProjectFolder());
 
-        LOGGER.info("Starting static analysis for project {} on JARs {} and {}", repositoryModel.getName(), projectJars.get(0), projectJars.get(1));
+        // set up process
+        builder.command(command, jarPath);
+        builder.directory(projectDirectory);
+
+        // make sure findbugs is in process path
+        Map<String, String> envs = builder.environment();
+        envs.put("PATH", findbugsPath + File.pathSeparator + System.getenv("PATH"));
+
         Process p = builder.start();
+
+        // store the results as they are found
         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null) {
             results.add(parseBug(line));
         }
+
+        // wait for process to complete
+        p.waitFor();
 
         return results;
     }
