@@ -1,11 +1,12 @@
 package com.td.processor;
 
+import com.td.db.CommitRepository;
 import com.td.helpers.BuildHelper;
 import com.td.helpers.StaticAnalysisHelper;
+import com.td.helpers.VersionControlHelper;
 import com.td.models.BugModel;
 import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
-import com.td.helpers.VersionControlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +30,9 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
 
     @Value("${findbugs.home.path}")
     private String findbugsPath;
+
+    @Autowired
+    private CommitRepository commitRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommitProcessor.class);
 
@@ -63,6 +66,12 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
                 // analyse for bugs
                 List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
                 commit.setBugs(bugs);
+
+                // set the repository id
+                commit.setRepositoryId(item.getId());
+
+                // save the commit to db
+                commitRepository.insert(commit);
             }
 
         } catch (IOException e) {

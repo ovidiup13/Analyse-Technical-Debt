@@ -17,6 +17,7 @@ public class CommitModel {
     private String author;
     private DiffModel diff;
     private List<BugModel> bugs;
+    private String repositoryId;
 
     /**
      * @return the author
@@ -88,5 +89,13 @@ public class CommitModel {
 
     public void setBugs(List<BugModel> bugs) {
         this.bugs = bugs;
+    }
+
+    public String getRepositoryId() {
+        return repositoryId;
+    }
+
+    public void setRepositoryId(String repositoryId) {
+        this.repositoryId = repositoryId;
     }
 }
