@@ -12,10 +12,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class StaticAnalysisHelper {
@@ -90,7 +87,8 @@ public class StaticAnalysisHelper {
         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null) {
-            results.add(parseBug(line));
+            Optional<BugModel> optional = parseBug(line);
+            optional.ifPresent(results::add);
         }
 
         // wait for process to complete
@@ -99,16 +97,20 @@ public class StaticAnalysisHelper {
         return results;
     }
 
-    private BugModel parseBug(String line){
+    private Optional<BugModel> parseBug(String line){
 
         BugModel bug = new BugModel();
         int index = line.indexOf(":");
+
+        if(index < 0){
+            return Optional.empty();
+        }
 
         bug.setType(line.substring(0, index - 1));
         bug.setText(line.substring(index + 1));
         bug.setFullText(line);
 
-        return bug;
+        return Optional.of(bug);
     }
 
     /**
