@@ -1,2 +1,2 @@
 id,author,name,uri,buildCommand
-1,antlr,antlr4,https://github.com/antlr/antlr4.git,mvn -DskipTests install
+1,antlr,antlr4,https://github.com/antlr/antlr4.git,mvn -T 1C -DskipTests install
