@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-// TODO: will not work with multithreading!
+// Use a concurrent list with Collections.synchronizedList(new ArrayList<>());
 @Component()
 public class InMemoryStore {
 

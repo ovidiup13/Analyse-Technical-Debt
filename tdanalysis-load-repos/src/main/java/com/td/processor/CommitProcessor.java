@@ -16,11 +16,15 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class CommitProcessor implements ItemProcessor<RepositoryModel, RepositoryModel> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommitProcessor.class);
+    private static final String tempFolder = Paths.get(System.getProperty("user.dir"), "tmp").toString();
 
     @Value("${java.home.path}")
     private String javaHomePath;
@@ -34,8 +38,6 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
     @Autowired
     private CommitRepository commitRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommitProcessor.class);
-
     @Override
     public RepositoryModel process(RepositoryModel item) throws Exception {
         LOGGER.info(String.format("Processing commits for repository %s:%s", item.getAuthor(), item.getName()));
@@ -43,7 +45,7 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
         BuildHelper buildHelper = new BuildHelper(javaHomePath, mavenHomePath);
         StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper(findbugsPath);
 
-        File repoPath = item.getProjectFolder();
+        File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
 
             List<CommitModel> commits = versionControlHelper.getCommits();
