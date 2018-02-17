@@ -4,7 +4,9 @@ import com.td.models.RepositoryModel;
 import com.td.processor.CommitProcessor;
 import com.td.processor.RepositoryProcessor;
 import com.td.readers.InMemoryReader;
+import com.td.readers.MongoRepositoryReader;
 import com.td.writers.InMemoryWriter;
+import com.td.writers.MongoRepositoryWriter;
 import com.td.writers.NoOpWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -16,6 +18,7 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.data.MongoItemReader;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
@@ -28,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
@@ -46,10 +51,10 @@ public class TDBatch {
     private NoOpWriter noOpWriter;
 
     @Autowired
-    private InMemoryWriter inMemoryWriter;
+    private MongoRepositoryReader mongoRepositoryReader;
 
     @Autowired
-    private InMemoryReader inMemoryReader;
+    private MongoRepositoryWriter mongoRepositoryWriter;
 
     @Autowired
     private CommitProcessor commitProcessor;
@@ -83,7 +88,7 @@ public class TDBatch {
                 .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
                 .reader(csvFileReader())
                 .processor(repositoryProcessor)
-                .writer(inMemoryWriter)
+                .writer(mongoRepositoryWriter)
                 .build();
     }
 
@@ -92,11 +97,18 @@ public class TDBatch {
         return stepBuilderFactory
                 .get("readCommitMetadataStep")
                 .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
-                .reader(inMemoryReader)
+                .reader(mongoRepositoryReader)
                 .processor(commitProcessor)
                 .writer(noOpWriter)
+                .taskExecutor(taskExecutor())
                 .build();
     }
+
+    @Bean
+    public TaskExecutor taskExecutor(){
+        return new SimpleAsyncTaskExecutor("spring_batch");
+    }
+
 
     @Bean
     ItemReader<RepositoryModel> csvFileReader() {
