@@ -49,7 +49,7 @@ public class BuildHelper {
         commands.addAll(PERFORMANCE_FLAGS);
         commands.addAll(SKIP_FLAGS);
 
-        builder.command((String[])(commands.toArray()));
+        builder.command(commands);
         Map<String, String> envs = builder.environment();
         envs.put("JAVA_HOME", javaHomePath);
         envs.put("MAVEN_HOME", mavenHomePath);
