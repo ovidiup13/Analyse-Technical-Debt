@@ -1,30 +1,25 @@
 package com.td.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.File;
 import java.util.List;
 
 @Document(collection = "repos")
-@JsonIgnoreProperties(value = {"projectFolder"})
 public class RepositoryModel {
 
     @Id
     private String id;
-
-    @NotBlank
     private String name;
-
-    @NotBlank
     private String author;
 
     private String URI;
     private List<String> commits;
     private String buildCommand;
 
+    @Transient
     private File projectFolder;
 
     /**

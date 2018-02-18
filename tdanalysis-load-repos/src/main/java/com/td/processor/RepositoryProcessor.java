@@ -26,8 +26,7 @@ public class RepositoryProcessor implements ItemProcessor<RepositoryModel, Repos
         try (VersionControlHelper ignored = repoPath.exists() ? new VersionControlHelper(repoPath) : new VersionControlHelper(item.getURI(), repoPath)) {
             item.setProjectFolder(repoPath);
         } catch (IOException | GitAPIException e) {
-            LOGGER.error(String.format("An error occurred when processing commits %s", item.getURI()), e);
-            return null;
+            LOGGER.error(String.format("An error occurred when processing repository %s", item.getURI()), e);
         }
 
         return item;

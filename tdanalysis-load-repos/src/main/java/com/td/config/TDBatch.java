@@ -1,13 +1,12 @@
 package com.td.config;
 
+import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
 import com.td.processor.CommitProcessor;
 import com.td.processor.RepositoryProcessor;
-import com.td.readers.InMemoryReader;
 import com.td.readers.MongoRepositoryReader;
-import com.td.writers.InMemoryWriter;
+import com.td.writers.MongoCommitWriter;
 import com.td.writers.MongoRepositoryWriter;
-import com.td.writers.NoOpWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -18,8 +17,6 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.data.MongoItemReader;
-import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -35,6 +32,8 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.util.List;
+
 @Configuration
 @EnableBatchProcessing
 public class TDBatch {
@@ -48,19 +47,19 @@ public class TDBatch {
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    private NoOpWriter noOpWriter;
-
-    @Autowired
-    private MongoRepositoryReader mongoRepositoryReader;
-
-    @Autowired
     private MongoRepositoryWriter mongoRepositoryWriter;
+
+    @Autowired
+    private MongoCommitWriter mongoCommitWriter;
 
     @Autowired
     private CommitProcessor commitProcessor;
 
     @Autowired
     private RepositoryProcessor repositoryProcessor;
+
+    @Autowired
+    private MongoRepositoryReader mongoRepositoryReader;
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -89,6 +88,7 @@ public class TDBatch {
                 .reader(csvFileReader())
                 .processor(repositoryProcessor)
                 .writer(mongoRepositoryWriter)
+                .taskExecutor(taskExecutor())
                 .build();
     }
 
@@ -96,10 +96,10 @@ public class TDBatch {
     public Step readCommitMetadataStep() {
         return stepBuilderFactory
                 .get("readCommitMetadataStep")
-                .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
+                .<RepositoryModel, List<CommitModel>>chunk(CHUNK_SIZE)
                 .reader(mongoRepositoryReader)
                 .processor(commitProcessor)
-                .writer(noOpWriter)
+                .writer(mongoCommitWriter)
                 .taskExecutor(taskExecutor())
                 .build();
     }
@@ -109,6 +109,19 @@ public class TDBatch {
         return new SimpleAsyncTaskExecutor("spring_batch");
     }
 
+
+//    @Bean
+//    ItemReader<RepositoryModel> mongoRepositoryReader() {
+//        MongoItemReader<RepositoryModel> reader = new MongoItemReader<>();
+//        reader.setTemplate(mongoTemplate);
+//        reader.setTargetType(RepositoryModel.class);
+//        reader.setCollection("repos");
+//        reader.setQuery("");
+//        Map<String, Sort.Direction> sorts = new HashMap<>(1);
+//        sorts.put("id", Sort.Direction.ASC);
+//        reader.setSort(sorts);
+//        return reader;
+//    }
 
     @Bean
     ItemReader<RepositoryModel> csvFileReader() {
@@ -120,14 +133,6 @@ public class TDBatch {
         csvReader.setLineMapper(repoLineMapper);
 
         return csvReader;
-    }
-
-    @Bean
-    public MongoItemWriter<RepositoryModel> writer() {
-        MongoItemWriter<RepositoryModel> writer = new MongoItemWriter<>();
-        writer.setTemplate(mongoTemplate);
-        writer.setCollection("repos");
-        return writer;
     }
 
     private LineMapper<RepositoryModel> createRepoLineMapper() {

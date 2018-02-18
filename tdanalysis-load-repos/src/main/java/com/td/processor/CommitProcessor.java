@@ -1,10 +1,9 @@
 package com.td.processor;
 
-import com.td.db.CommitRepository;
+import com.td.db.ProjectRepository;
 import com.td.helpers.BuildHelper;
 import com.td.helpers.StaticAnalysisHelper;
 import com.td.helpers.VersionControlHelper;
-import com.td.models.BugModel;
 import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
 import org.slf4j.Logger;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CommitProcessor implements ItemProcessor<RepositoryModel, RepositoryModel> {
+public class CommitProcessor implements ItemProcessor<RepositoryModel, List<CommitModel>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommitProcessor.class);
     private static final String tempFolder = Paths.get(System.getProperty("user.dir"), "tmp").toString();
@@ -36,19 +35,21 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
     private String findbugsPath;
 
     @Autowired
-    private CommitRepository commitRepository;
+    private ProjectRepository projectRepository;
 
     @Override
-    public RepositoryModel process(RepositoryModel item) throws Exception {
+    public List<CommitModel> process(RepositoryModel item) throws Exception {
         LOGGER.info(String.format("Processing commits for repository %s:%s", item.getAuthor(), item.getName()));
 
         BuildHelper buildHelper = new BuildHelper(javaHomePath, mavenHomePath);
         StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper(findbugsPath);
-
         File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
+
+        List<CommitModel> commits = null;
+
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
 
-            List<CommitModel> commits = versionControlHelper.getCommits();
+            commits = versionControlHelper.getCommits();
 
             // set the commits of the repository
             item.setCommits(commits.parallelStream().map(CommitModel::getSha).collect(Collectors.toList()));
@@ -63,23 +64,26 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, Repositor
                 versionControlHelper.checkoutRevision(commit.getSha());
 
                 // build the revision
-                buildHelper.buildRepository(item);
+//                buildHelper.buildRepository(item);
 
                 // analyse for bugs
-                List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
-                commit.setBugs(bugs);
+//                List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
+//                commit.setBugs(bugs);
 
                 // set the repository id
                 commit.setRepositoryId(item.getId());
 
                 // save the commit to db
-                commitRepository.insert(commit);
+//                commitRepository.insert(commit);
             }
 
         } catch (IOException e) {
             LOGGER.error(String.format("An error occurred when processing repository %s", item.getURI()), e);
         }
 
-        return item;
+        // save repo with all commits
+        projectRepository.save(item);
+
+        return commits;
     }
 }
