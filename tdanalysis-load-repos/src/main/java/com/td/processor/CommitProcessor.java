@@ -1,9 +1,11 @@
 package com.td.processor;
 
+import com.td.db.CommitRepository;
 import com.td.db.ProjectRepository;
 import com.td.helpers.BuildHelper;
 import com.td.helpers.StaticAnalysisHelper;
 import com.td.helpers.VersionControlHelper;
+import com.td.models.BugModel;
 import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
 import org.slf4j.Logger;
@@ -35,7 +37,7 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
     private String findbugsPath;
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private CommitRepository commitRepository;
 
     @Override
     public List<CommitModel> process(RepositoryModel item) throws Exception {
@@ -51,9 +53,6 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
             commits = versionControlHelper.getCommits();
 
-            // set the commits of the repository
-            item.setCommits(commits.parallelStream().map(CommitModel::getSha).collect(Collectors.toList()));
-
             // get the diff for each commit
             for (CommitModel commit : commits) {
 
@@ -64,25 +63,24 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
                 versionControlHelper.checkoutRevision(commit.getSha());
 
                 // build the revision
-//                buildHelper.buildRepository(item);
+                buildHelper.buildRepository(item);
 
                 // analyse for bugs
-//                List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
-//                commit.setBugs(bugs);
+                List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
+                commit.setBugs(bugs);
 
                 // set the repository id
                 commit.setRepositoryId(item.getId());
 
-                // save the commit to db
-//                commitRepository.insert(commit);
+                // save the commit to db in case anything else breaks
+                commitRepository.save(commit);
             }
+
+            versionControlHelper.close();
 
         } catch (IOException e) {
             LOGGER.error(String.format("An error occurred when processing repository %s", item.getURI()), e);
         }
-
-        // save repo with all commits
-        projectRepository.save(item);
 
         return commits;
     }

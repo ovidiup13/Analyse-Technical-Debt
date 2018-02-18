@@ -1,6 +1,7 @@
 package com.td.models;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -12,12 +13,14 @@ public class CommitModel {
     @Id
     private String sha;
 
+    @Indexed
+    private String repositoryId;
+
     private LocalDateTime timestamp;
     private String message;
     private String author;
     private DiffModel diff;
     private List<BugModel> bugs;
-    private String repositoryId;
 
     /**
      * @return the author

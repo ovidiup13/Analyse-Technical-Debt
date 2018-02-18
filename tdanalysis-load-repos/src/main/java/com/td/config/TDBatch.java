@@ -110,19 +110,6 @@ public class TDBatch {
     }
 
 
-//    @Bean
-//    ItemReader<RepositoryModel> mongoRepositoryReader() {
-//        MongoItemReader<RepositoryModel> reader = new MongoItemReader<>();
-//        reader.setTemplate(mongoTemplate);
-//        reader.setTargetType(RepositoryModel.class);
-//        reader.setCollection("repos");
-//        reader.setQuery("");
-//        Map<String, Sort.Direction> sorts = new HashMap<>(1);
-//        sorts.put("id", Sort.Direction.ASC);
-//        reader.setSort(sorts);
-//        return reader;
-//    }
-
     @Bean
     ItemReader<RepositoryModel> csvFileReader() {
         FlatFileItemReader<RepositoryModel> csvReader = new FlatFileItemReader<>();

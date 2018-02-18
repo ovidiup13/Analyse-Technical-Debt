@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.File;
-import java.util.List;
 
 @Document(collection = "repos")
 public class RepositoryModel {
@@ -16,7 +15,6 @@ public class RepositoryModel {
     private String author;
 
     private String URI;
-    private List<String> commits;
     private String buildCommand;
 
     @Transient
@@ -76,20 +74,6 @@ public class RepositoryModel {
      */
     public void setURI(String uRI) {
         this.URI = uRI;
-    }
-
-    /**
-     * @return the commits
-     */
-    public List<String> getCommits() {
-        return commits;
-    }
-
-    /**
-     * @param commits the commits to set
-     */
-    public void setCommits(List<String> commits) {
-        this.commits = commits;
     }
 
     public File getProjectFolder() {

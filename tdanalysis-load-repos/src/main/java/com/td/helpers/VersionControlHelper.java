@@ -56,7 +56,7 @@ public class VersionControlHelper implements AutoCloseable {
         List<CommitModel> result = new ArrayList<>();
         try {
             Iterable<RevCommit> commits = gitProject.log().all().call();
-            int count = 1; //TODO: remove this. Added for performance reasons
+            int count = 10; //TODO: remove this. Added for performance reasons
             for (RevCommit commit : commits) {
                 PersonIdent committer = commit.getCommitterIdent();
                 Date date = committer.getWhen();
@@ -65,7 +65,7 @@ public class VersionControlHelper implements AutoCloseable {
                 CommitModel model = new CommitModel();
                 model.setSha(commit.getName());
                 model.setAuthor(committer.getName());
-                model.setMessage(commit.getShortMessage());
+                model.setMessage(commit.getFullMessage());
                 model.setTimestamp(LocalDateTime.ofInstant(date.toInstant(), zone.toZoneId()));
                 model.setDiff(this.getDiff(model.getSha() + "^", model.getSha()));
 
