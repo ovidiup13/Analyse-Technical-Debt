@@ -48,7 +48,7 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
         File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
         item.setProjectFolder(repoPath);
-        
+
         List<CommitModel> commits = null;
 
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {

@@ -96,11 +96,12 @@ public class TDBatch {
     public Step readCommitMetadataStep() {
         return stepBuilderFactory
                 .get("readCommitMetadataStep")
-                .<RepositoryModel, List<CommitModel>>chunk(CHUNK_SIZE)
+                .<RepositoryModel, List<CommitModel>>chunk(1)
                 .reader(mongoRepositoryReader)
                 .processor(commitProcessor)
                 .writer(mongoCommitWriter)
                 .taskExecutor(taskExecutor())
+                .throttleLimit(10)
                 .build();
     }
 
