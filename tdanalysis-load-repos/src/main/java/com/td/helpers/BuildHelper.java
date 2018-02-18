@@ -8,11 +8,28 @@ import org.springframework.beans.factory.annotation.Value;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class BuildHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BuildHelper.class);
+
+    private static final List<String> PERFORMANCE_FLAGS = new ArrayList<String>() {{
+        add("-T");
+        add("1C");
+    }};
+
+    private static final List<String> SKIP_FLAGS = new ArrayList<String>() {{
+        add("-DskipTests");
+        add("-Dcobertura.skip=true");
+        add("-Dcheckstyle.skip=true");
+        add("-Dfindbugs.skip=true");
+        add("-Dpmd.skip=true");
+        add("-Dmaven.javadoc.skip=true");
+    }};
 
     @Value("${java.home.path}")
     private String javaHomePath;
@@ -20,7 +37,7 @@ public class BuildHelper {
     @Value("${maven.home.path}")
     private String mavenHomePath;
 
-    public BuildHelper(String javaHomePath, String taskRunnerPath){
+    public BuildHelper(String javaHomePath, String taskRunnerPath) {
         this.javaHomePath = javaHomePath;
         this.mavenHomePath = taskRunnerPath;
     }
@@ -28,8 +45,11 @@ public class BuildHelper {
     public void buildRepository(RepositoryModel repositoryModel) throws IOException, InterruptedException {
         ProcessBuilder builder = new ProcessBuilder();
 
-        String[] commands = repositoryModel.getBuildCommand().split(" ");
-        builder.command(commands);
+        List<String> commands = new ArrayList<>(Arrays.asList(repositoryModel.getBuildCommand().split(" ")));
+        commands.addAll(PERFORMANCE_FLAGS);
+        commands.addAll(SKIP_FLAGS);
+
+        builder.command((String[])(commands.toArray()));
         Map<String, String> envs = builder.environment();
         envs.put("JAVA_HOME", javaHomePath);
         envs.put("MAVEN_HOME", mavenHomePath);
