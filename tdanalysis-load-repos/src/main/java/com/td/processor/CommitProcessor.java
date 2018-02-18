@@ -45,8 +45,10 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
         BuildHelper buildHelper = new BuildHelper(javaHomePath, mavenHomePath);
         StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper(findbugsPath);
-        File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
 
+        File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
+        item.setProjectFolder(repoPath);
+        
         List<CommitModel> commits = null;
 
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
