@@ -6,6 +6,7 @@ import com.td.helpers.BuildHelper;
 import com.td.helpers.StaticAnalysisHelper;
 import com.td.helpers.VersionControlHelper;
 import com.td.models.BugModel;
+import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
 import org.slf4j.Logger;
@@ -65,11 +66,16 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
                 versionControlHelper.checkoutRevision(commit.getSha());
 
                 // build the revision
-                buildHelper.buildRepository(item);
+                BuildStatus buildStatus = buildHelper.buildRepository(item);
+
+                // set build status
+                commit.setBuildStatus(buildStatus);
 
                 // analyse for bugs
-                List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
-                commit.setBugs(bugs);
+                if(buildStatus.equals(BuildStatus.SUCCESSFUL)){
+                    List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
+                    commit.setBugs(bugs);
+                }
 
                 // set the repository id
                 commit.setRepositoryId(item.getId());

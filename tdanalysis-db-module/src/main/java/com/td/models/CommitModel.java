@@ -19,6 +19,7 @@ public class CommitModel {
     private LocalDateTime timestamp;
     private String message;
     private String author;
+    private BuildStatus buildStatus;
     private DiffModel diff;
     private List<BugModel> bugs;
 
@@ -100,5 +101,13 @@ public class CommitModel {
 
     public void setRepositoryId(String repositoryId) {
         this.repositoryId = repositoryId;
+    }
+
+    public BuildStatus getBuildStatus() {
+        return buildStatus;
+    }
+
+    public void setBuildStatus(BuildStatus buildStatus) {
+        this.buildStatus = buildStatus;
     }
 }
