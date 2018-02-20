@@ -1,5 +1,5 @@
 id,author,name,uri,buildCommand
-1,antlr,antlr4,https://github.com/antlr/antlr4.git,mvn install
-2,spring-projects,spring-hateoas,https://github.com/spring-projects/spring-hateoas.git,mvn install
-3,checkstyle,checkstyle,https://github.com/checkstyle/checkstyle.git,mvn install
-4,apache,commons-collections,https://github.com/apache/commons-collections.git,mvn install
+1,antlr,antlr4,https://github.com/antlr/antlr4.git,mvn clean install
+2,spring-projects,spring-hateoas,https://github.com/spring-projects/spring-hateoas.git,mvn clean install
+3,checkstyle,checkstyle,https://github.com/checkstyle/checkstyle.git,mvn clean install
+4,apache,commons-collections,https://github.com/apache/commons-collections.git,mvn clean install
