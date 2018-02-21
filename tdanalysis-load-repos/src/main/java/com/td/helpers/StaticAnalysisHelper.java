@@ -45,7 +45,7 @@ public class StaticAnalysisHelper {
 
         LOGGER.info(String.format("Starting analysis for project %s:%s", repositoryModel.getName(), repositoryModel.getAuthor()));
 
-        List<BugModel> results = Collections.synchronizedList(new ArrayList<>());
+        Set<BugModel> results = Collections.synchronizedSet(new HashSet<>());
         String analysisCommand = System.getProperty("os.name").contains("Windows") ? COMMAND_WINDOWS : COMMAND_LINUX;
         List<String> projectJars = getProjectJars(repositoryModel.getProjectFolder(), repositoryModel.getName());
 
@@ -59,7 +59,7 @@ public class StaticAnalysisHelper {
             }
         });
 
-        return results;
+        return new ArrayList<>(results);
     }
 
     /***
@@ -71,9 +71,9 @@ public class StaticAnalysisHelper {
      * @throws IOException if the program is not found
      * @throws InterruptedException if the process is interrupted
      */
-    private List<BugModel> analyseJar(String command, File projectDirectory, String jarPath) throws IOException, InterruptedException {
+    private Set<BugModel> analyseJar(String command, File projectDirectory, String jarPath) throws IOException, InterruptedException {
 
-        List<BugModel> results = new ArrayList<>();
+        Set<BugModel> results = new HashSet<>();
         ProcessBuilder builder = new ProcessBuilder();
 
         // set up process

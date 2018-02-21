@@ -34,4 +34,10 @@ public class BugModel {
     public String toString() {
         return this.getFullText();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        BugModel m = (BugModel) obj;
+        return this.getFullText().equals(m.getFullText());
+    }
 }
