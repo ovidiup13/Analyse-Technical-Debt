@@ -4,6 +4,7 @@ import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
 import com.td.processor.CommitProcessor;
 import com.td.processor.RepositoryProcessor;
+import com.td.readers.InMemoryReader;
 import com.td.readers.MongoRepositoryReader;
 import com.td.writers.MongoCommitWriter;
 import com.td.writers.MongoRepositoryWriter;
@@ -62,6 +63,9 @@ public class TDBatch {
     private MongoRepositoryReader mongoRepositoryReader;
 
     @Autowired
+    private InMemoryReader inMemoryReader;
+
+    @Autowired
     MongoTemplate mongoTemplate;
 
     @Bean
@@ -84,7 +88,7 @@ public class TDBatch {
     public Step cloneRepositoriesStep() {
         return stepBuilderFactory
                 .get("cloneRepositoriesStep")
-                .<RepositoryModel, RepositoryModel>chunk(CHUNK_SIZE)
+                .<RepositoryModel, RepositoryModel>chunk(1)
                 .reader(csvFileReader())
                 .processor(repositoryProcessor)
                 .writer(mongoRepositoryWriter)
@@ -97,7 +101,7 @@ public class TDBatch {
         return stepBuilderFactory
                 .get("readCommitMetadataStep")
                 .<RepositoryModel, List<CommitModel>>chunk(1)
-                .reader(mongoRepositoryReader)
+                .reader(inMemoryReader)
                 .processor(commitProcessor)
                 .writer(mongoCommitWriter)
                 .taskExecutor(taskExecutor())

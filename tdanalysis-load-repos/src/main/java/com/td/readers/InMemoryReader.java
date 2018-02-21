@@ -25,7 +25,9 @@ public class InMemoryReader implements ItemReader<RepositoryModel> {
 
         if(next < store.getRepositoryModels().size()){
             repositoryModel = store.getRepositoryModels().get(next++);
+            System.out.println("Reading repository " + repositoryModel.getName());
         }
+
 
         return repositoryModel;
     }

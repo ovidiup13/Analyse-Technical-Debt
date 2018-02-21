@@ -67,7 +67,7 @@ public class VersionControlHelper implements AutoCloseable {
                 model.setAuthor(committer.getName());
                 model.setMessage(commit.getFullMessage());
                 model.setTimestamp(LocalDateTime.ofInstant(date.toInstant(), zone.toZoneId()));
-                model.setDiff(this.getDiff(model.getSha() + "^", model.getSha()));
+//                model.setDiff(this.getDiff(model.getSha() + "^", model.getSha()));
 
                 result.add(model);
 

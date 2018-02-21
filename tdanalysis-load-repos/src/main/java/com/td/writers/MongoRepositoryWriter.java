@@ -2,6 +2,7 @@ package com.td.writers;
 
 import com.td.db.ProjectRepository;
 import com.td.models.RepositoryModel;
+import com.td.store.InMemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemWriter;
@@ -20,9 +21,13 @@ public class MongoRepositoryWriter implements ItemWriter<RepositoryModel> {
     @Autowired
     ProjectRepository projectRepository;
 
+    @Autowired
+    InMemoryStore inMemoryStore;
+
     @Override
     public void write(List<? extends RepositoryModel> items) {
         LOGGER.info("Writing repositories to DB...");
         projectRepository.save(items);
+        inMemoryStore.addRepositories((List<RepositoryModel>) items);
     }
 }

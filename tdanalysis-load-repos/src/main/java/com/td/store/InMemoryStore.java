@@ -3,6 +3,8 @@ package com.td.store;
 import com.td.models.RepositoryModel;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // Use a concurrent list with Collections.synchronizedList(new ArrayList<>());
@@ -11,7 +13,9 @@ public class InMemoryStore {
 
     private List<RepositoryModel> repositoryModels;
 
-    public InMemoryStore(){}
+    public InMemoryStore(){
+        repositoryModels = Collections.synchronizedList(new ArrayList<>());
+    }
 
     public InMemoryStore(List<RepositoryModel> repositoryModels) {
         this.repositoryModels = repositoryModels;
@@ -24,4 +28,10 @@ public class InMemoryStore {
     public void setRepositoryModels(List<RepositoryModel> repositoryModels) {
         this.repositoryModels = repositoryModels;
     }
+
+    public void addRepositories(List<RepositoryModel> repos){
+        this.repositoryModels.addAll(repos);
+    }
+
+
 }
