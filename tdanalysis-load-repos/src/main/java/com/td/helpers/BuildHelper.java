@@ -22,7 +22,7 @@ public class BuildHelper {
 
     private static final List<String> PERFORMANCE_FLAGS = new ArrayList<String>() {{
         add("-T");
-        add("1C");
+        add("4");
     }};
 
     private static final List<String> SKIP_FLAGS = new ArrayList<String>() {{
