@@ -52,12 +52,17 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
         List<CommitModel> commits = null;
 
+        String repositoryId = item.getId();
+
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
 
             commits = versionControlHelper.getCommits();
 
             // get the diff for each commit
             for (CommitModel commit : commits) {
+
+                // set the repository id
+                commit.setRepositoryId(repositoryId);
 
                 // get diff
                 commit.setDiff(versionControlHelper.getDiff(commit.getSha() + "^", commit.getSha()));
@@ -76,9 +81,6 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
                     List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
                     commit.setBugs(bugs);
                 }
-
-                // set the repository id
-                commit.setRepositoryId(item.getId());
 
                 // save the commit to db in case anything else breaks
                 commitRepository.save(commit);
