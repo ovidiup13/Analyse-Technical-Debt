@@ -1,7 +1,7 @@
 id,author,name,uri,buildCommand
-1,antlr,antlr4,https://github.com/antlr/antlr4.git,mvn -T 2 clean install -Dmaven.test.skip -Dmaven.javadoc.skip
-2,spring-projects,spring-hateoas,https://github.com/spring-projects/spring-hateoas.git,mvn -T 2 clean install -Dmaven.test.skip -Dmaven.javadoc.skip
-3,checkstyle,checkstyle,https://github.com/checkstyle/checkstyle.git,mvn -T 2 clean install -Dmaven.test.skip -Dcheckstyle.ant.skip -Dmaven.javadoc.skip -Dcobertura.skip -Dsonar.skip -Dspotbugs.skip -Dfindbugs.skip -Dpmd.skip
-4,apache,commons-collections,https://github.com/apache/commons-collections.git,mvn -T 2 clean install -Dmaven.test.skip -Dmaven.javadoc.skip
-5,apache,commons-lang,https://github.com/apache/commons-lang.git,mvn -T 2 clean install -Dmaven.test.skip -Dmaven.javadoc.skip -Dcheckstyle.skip -Dfindbugs.skip -Dpmd.skip
-6,spring-projects,spring-data-mongodb,https://github.com/spring-projects/spring-data-mongodb.git,mvn -T 2 clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+1,antlr,antlr4,https://github.com/antlr/antlr4.git,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+2,spring-projects,spring-hateoas,https://github.com/spring-projects/spring-hateoas.git,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+3,checkstyle,checkstyle,https://github.com/checkstyle/checkstyle.git,mvn clean install -Dmaven.test.skip -Dcheckstyle.ant.skip -Dmaven.javadoc.skip -Dcobertura.skip -Dsonar.skip -Dspotbugs.skip -Dfindbugs.skip -Dpmd.skip
+4,apache,commons-collections,https://github.com/apache/commons-collections.git,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+5,apache,commons-lang,https://github.com/apache/commons-lang.git,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip -Dcheckstyle.skip -Dfindbugs.skip -Dpmd.skip
+6,spring-projects,spring-data-mongodb,https://github.com/spring-projects/spring-data-mongodb.git,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
