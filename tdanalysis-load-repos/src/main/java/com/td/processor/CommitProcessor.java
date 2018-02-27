@@ -1,26 +1,30 @@
 package com.td.processor;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.td.db.CommitRepository;
-import com.td.db.ProjectRepository;
+import com.td.db.IssueRepository;
 import com.td.helpers.BuildHelper;
+import com.td.helpers.IssueTrackerHelper;
+import com.td.helpers.JiraTrackerHelper;
 import com.td.helpers.StaticAnalysisHelper;
 import com.td.helpers.VersionControlHelper;
 import com.td.models.BugModel;
 import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
+import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class CommitProcessor implements ItemProcessor<RepositoryModel, List<CommitModel>> {
@@ -37,22 +41,34 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
     @Value("${findbugs.home.path}")
     private String findbugsPath;
 
+    @Value("${jira.username}")
+    private String jiraUsername;
+
+    @Value("${jira.password}")
+    private String jiraPassword;
+
     @Autowired
     private CommitRepository commitRepository;
 
-    @Override
-    public List<CommitModel> process(RepositoryModel item) throws Exception {
-        LOGGER.info(String.format("Processing commits for repository %s:%s", item.getAuthor(), item.getName()));
+    @Autowired
+    private IssueRepository issueRepository;
 
+    @Override
+    public List<CommitModel> process(RepositoryModel respositoryModel) throws Exception {
+        LOGGER.info(String.format("Processing commits for repository %s:%s", respositoryModel.getAuthor(),
+                respositoryModel.getName()));
+
+        // helpers
         BuildHelper buildHelper = new BuildHelper(javaHomePath, mavenHomePath);
         StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper(findbugsPath);
+        IssueTrackerHelper issueTrackerHelper = new JiraTrackerHelper(jiraUsername, jiraPassword, respositoryModel);
 
-        File repoPath = new File(Paths.get(tempFolder, item.getName()).toString());
-        item.setProjectFolder(repoPath);
+        File repoPath = new File(Paths.get(tempFolder, respositoryModel.getName()).toString());
+        respositoryModel.setProjectFolder(repoPath);
 
         List<CommitModel> commits = null;
 
-        String repositoryId = item.getId();
+        String repositoryId = respositoryModel.getId();
 
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
 
@@ -71,16 +87,25 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
                 versionControlHelper.checkoutRevision(commit.getSha());
 
                 // build the revision
-                BuildStatus buildStatus = buildHelper.buildRepository(item);
+                // BuildStatus buildStatus = buildHelper.buildRepository(item);
 
                 // set build status
-                commit.setBuildStatus(buildStatus);
+                // commit.setBuildStatus(buildStatus);
 
                 // analyse for bugs
-                if(buildStatus.equals(BuildStatus.SUCCESSFUL)){
-                    List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
-                    commit.setBugs(bugs);
-                }
+                // if (buildStatus.equals(BuildStatus.SUCCESSFUL)) {
+                //     List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
+                //     commit.setBugs(bugs);
+                // }
+
+                List<String> issueKeys = issueTrackerHelper.getKeys(commit.getMessage());
+                List<IssueModel> issues = issueKeys.stream().map(issueTrackerHelper::getIssue)
+                        .collect(Collectors.toList());
+
+                commit.setIssueIds(issueKeys);
+
+                // save all issues found
+                issueRepository.save(issues);
 
                 // save the commit to db in case anything else breaks
                 commitRepository.save(commit);
@@ -89,7 +114,8 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
             versionControlHelper.close();
 
         } catch (IOException e) {
-            LOGGER.error(String.format("An error occurred when processing repository %s", item.getURI()), e);
+            LOGGER.error(String.format("An error occurred when processing repository %s", respositoryModel.getURI()),
+                    e);
         }
 
         return commits;

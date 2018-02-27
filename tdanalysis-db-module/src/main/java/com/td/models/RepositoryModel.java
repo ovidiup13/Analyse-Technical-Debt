@@ -15,6 +15,8 @@ public class RepositoryModel {
     private String author;
 
     private String URI;
+    private String issueTrackerURI;
+
     private String buildCommand;
 
     @Transient
@@ -90,5 +92,19 @@ public class RepositoryModel {
 
     public void setBuildCommand(String buildCommand) {
         this.buildCommand = buildCommand;
+    }
+
+    /**
+     * @return the issueTrackerURI
+     */
+    public String getIssueTrackerURI() {
+        return issueTrackerURI;
+    }
+
+    /**
+     * @param issueTrackerURI the issueTrackerURI to set
+     */
+    public void setIssueTrackerURI(String issueTrackerURI) {
+        this.issueTrackerURI = issueTrackerURI;
     }
 }

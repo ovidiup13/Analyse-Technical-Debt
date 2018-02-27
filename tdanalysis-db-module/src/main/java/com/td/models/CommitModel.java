@@ -16,6 +16,8 @@ public class CommitModel {
     @Indexed
     private String repositoryId;
 
+    private List<String> issueIds;
+
     private LocalDateTime timestamp;
     private String message;
     private String author;
@@ -109,5 +111,19 @@ public class CommitModel {
 
     public void setBuildStatus(BuildStatus buildStatus) {
         this.buildStatus = buildStatus;
+    }
+
+    /**
+     * @return the issueIds
+     */
+    public List<String> getIssueIds() {
+        return issueIds;
+    }
+
+    /**
+     * @param issueIds the issueIds to set
+     */
+    public void setIssueIds(List<String> issueIds) {
+        this.issueIds = issueIds;
     }
 }

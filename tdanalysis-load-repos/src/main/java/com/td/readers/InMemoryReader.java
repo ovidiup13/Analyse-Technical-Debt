@@ -14,7 +14,7 @@ public class InMemoryReader implements ItemReader<RepositoryModel> {
     private int next;
     private InMemoryStore store;
 
-    public InMemoryReader(InMemoryStore store){
+    public InMemoryReader(InMemoryStore store) {
         assert store != null;
         this.store = store;
     }
@@ -23,11 +23,10 @@ public class InMemoryReader implements ItemReader<RepositoryModel> {
     public RepositoryModel read() throws Exception {
         RepositoryModel repositoryModel = null;
 
-        if(next < store.getRepositoryModels().size()){
+        if (next < store.getRepositoryModels().size()) {
             repositoryModel = store.getRepositoryModels().get(next++);
             System.out.println("Reading repository " + repositoryModel.getName());
         }
-
 
         return repositoryModel;
     }

@@ -56,7 +56,7 @@ public class VersionControlHelper implements AutoCloseable {
         List<CommitModel> result = new ArrayList<>();
         try {
             Iterable<RevCommit> commits = gitProject.log().all().call();
-            int count = 2000; //TODO: remove this. Added for performance reasons
+            int count = 1; //TODO: remove this. Added for performance reasons
             for (RevCommit commit : commits) {
                 PersonIdent committer = commit.getCommitterIdent();
                 Date date = committer.getWhen();
@@ -67,7 +67,7 @@ public class VersionControlHelper implements AutoCloseable {
                 model.setAuthor(committer.getName());
                 model.setMessage(commit.getFullMessage());
                 model.setTimestamp(LocalDateTime.ofInstant(date.toInstant(), zone.toZoneId()));
-//                model.setDiff(this.getDiff(model.getSha() + "^", model.getSha()));
+                //                model.setDiff(this.getDiff(model.getSha() + "^", model.getSha()));
 
                 result.add(model);
 
@@ -128,19 +128,19 @@ public class VersionControlHelper implements AutoCloseable {
 
         for (DiffEntry diff : diffs) {
             switch (diff.getChangeType()) {
-                case ADD:
-                case COPY: {
-                    diffModel.add(diff.getNewPath());
-                    break;
-                }
-                case RENAME:
-                case MODIFY: {
-                    diffModel.modify(diff.getNewPath());
-                    break;
-                }
-                case DELETE: {
-                    diffModel.delete(diff.getOldPath());
-                }
+            case ADD:
+            case COPY: {
+                diffModel.add(diff.getNewPath());
+                break;
+            }
+            case RENAME:
+            case MODIFY: {
+                diffModel.modify(diff.getNewPath());
+                break;
+            }
+            case DELETE: {
+                diffModel.delete(diff.getOldPath());
+            }
             }
         }
 

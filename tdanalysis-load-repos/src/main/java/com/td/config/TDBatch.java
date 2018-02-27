@@ -71,49 +71,30 @@ public class TDBatch {
     @Bean
     public Job repositoryJob() {
 
-        Flow flow = new FlowBuilder<SimpleFlow>("flow")
-                .start(cloneRepositoriesStep())
-                .next(readCommitMetadataStep())
+        Flow flow = new FlowBuilder<SimpleFlow>("flow").start(cloneRepositoriesStep()).next(readCommitMetadataStep())
                 .build();
 
-        return jobBuilderFactory
-                .get("repositoryJob")
-                .incrementer(new RunIdIncrementer())
-                .start(flow)
-                .end()
-                .build();
+        return jobBuilderFactory.get("repositoryJob").incrementer(new RunIdIncrementer()).start(flow).end().build();
     }
 
     @Bean
     public Step cloneRepositoriesStep() {
-        return stepBuilderFactory
-                .get("cloneRepositoriesStep")
-                .<RepositoryModel, RepositoryModel>chunk(1)
-                .reader(csvFileReader())
-                .processor(repositoryProcessor)
-                .writer(mongoRepositoryWriter)
-                .taskExecutor(taskExecutor())
-                .build();
+        return stepBuilderFactory.get("cloneRepositoriesStep").<RepositoryModel, RepositoryModel>chunk(1)
+                .reader(csvFileReader()).processor(repositoryProcessor).writer(mongoRepositoryWriter)
+                .taskExecutor(taskExecutor()).build();
     }
 
     @Bean
     public Step readCommitMetadataStep() {
-        return stepBuilderFactory
-                .get("readCommitMetadataStep")
-                .<RepositoryModel, List<CommitModel>>chunk(1)
-                .reader(inMemoryReader)
-                .processor(commitProcessor)
-                .writer(mongoCommitWriter)
-                .taskExecutor(taskExecutor())
-                .throttleLimit(10)
-                .build();
+        return stepBuilderFactory.get("readCommitMetadataStep").<RepositoryModel, List<CommitModel>>chunk(1)
+                .reader(inMemoryReader).processor(commitProcessor).writer(mongoCommitWriter)
+                .taskExecutor(taskExecutor()).throttleLimit(10).build();
     }
 
     @Bean
-    public TaskExecutor taskExecutor(){
+    public TaskExecutor taskExecutor() {
         return new SimpleAsyncTaskExecutor("spring_batch");
     }
-
 
     @Bean
     ItemReader<RepositoryModel> csvFileReader() {
@@ -142,7 +123,7 @@ public class TDBatch {
     private LineTokenizer createRepoLineTokenizer() {
         DelimitedLineTokenizer repoLineTokenizer = new DelimitedLineTokenizer();
         repoLineTokenizer.setDelimiter(",");
-        repoLineTokenizer.setNames(new String[]{"id", "author", "name", "uri", "buildCommand"});
+        repoLineTokenizer.setNames(new String[] { "id", "author", "name", "uri", "issueTracker", "buildCommand" });
         return repoLineTokenizer;
     }
 
@@ -151,6 +132,5 @@ public class TDBatch {
         repoInfoMapper.setTargetType(RepositoryModel.class);
         return repoInfoMapper;
     }
-
 
 }
