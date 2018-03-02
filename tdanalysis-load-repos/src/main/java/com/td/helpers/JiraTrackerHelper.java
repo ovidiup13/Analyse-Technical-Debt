@@ -64,6 +64,8 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
 
         IssueModel result = new IssueModel();
 
+        // TODO: return null if issue does not exist -> throws RestClientException
+        // or, even better, make it return an Optional 
         Issue issue = jiraRestClient.getIssueClient().getIssue(issueKey).claim();
 
         // meta

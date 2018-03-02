@@ -104,7 +104,7 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
                 commit.setIssueIds(issueKeys);
 
-                // save all issues found
+                // TODO: do not write to db if an issue exists
                 issueRepository.save(issues);
 
                 // save the commit to db in case anything else breaks
