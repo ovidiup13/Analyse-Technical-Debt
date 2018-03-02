@@ -19,5 +19,7 @@ dependencies {
     compile group: 'com.atlassian.jira', name: 'jira-rest-java-client-api', version: '4.0.0'
     compile group: 'com.atlassian.jira', name: 'jira-rest-java-client-core', version: '4.0.0'
 
+    compile group: 'org.kohsuke', name: 'github-api', version: '1.92'
+
     compile project(":tdanalysis-db-module")
 }
