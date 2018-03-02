@@ -21,13 +21,9 @@ public class MongoRepositoryWriter implements ItemWriter<RepositoryModel> {
     @Autowired
     ProjectRepository projectRepository;
 
-    @Autowired
-    InMemoryStore inMemoryStore;
-
     @Override
     public void write(List<? extends RepositoryModel> items) {
         LOGGER.info("Writing repositories to DB...");
         projectRepository.save(items);
-        inMemoryStore.addRepositories((List<RepositoryModel>) items);
     }
 }

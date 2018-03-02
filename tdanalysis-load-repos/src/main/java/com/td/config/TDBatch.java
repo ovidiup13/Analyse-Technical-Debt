@@ -63,9 +63,6 @@ public class TDBatch {
     private MongoRepositoryReader mongoRepositoryReader;
 
     @Autowired
-    private InMemoryReader inMemoryReader;
-
-    @Autowired
     MongoTemplate mongoTemplate;
 
     @Bean
@@ -87,7 +84,7 @@ public class TDBatch {
     @Bean
     public Step readCommitMetadataStep() {
         return stepBuilderFactory.get("readCommitMetadataStep").<RepositoryModel, List<CommitModel>>chunk(1)
-                .reader(inMemoryReader).processor(commitProcessor).writer(mongoCommitWriter)
+                .reader(mongoRepositoryReader).processor(commitProcessor).writer(mongoCommitWriter)
                 .taskExecutor(taskExecutor()).throttleLimit(10).build();
     }
 
