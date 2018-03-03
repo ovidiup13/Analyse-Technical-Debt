@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class GithubTrackerHelper implements IssueTrackerHelper {
 
@@ -83,6 +84,7 @@ public class GithubTrackerHelper implements IssueTrackerHelper {
         result.setIssueKey(issueKey);
         result.setSummary(issue.getTitle());
         result.setDescription(issue.getBody());
+        result.setLabels(issue.getLabels().stream().map(gh -> gh.getName()).collect(Collectors.toSet()));
 
         // assignee
         List<GHUser> assignees = issue.getAssignees();

@@ -125,6 +125,7 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
         result.setDescription(issue.getDescription());
         result.setPriority(issue.getPriority() != null ? issue.getPriority().getName() : "None");
         result.setAssignee(issue.getAssignee() != null ? issue.getAssignee().getDisplayName() : "None");
+        result.setLabels(issue.getLabels());
 
         // time
         result.setCreated(fromDateTime(issue.getCreationDate()));

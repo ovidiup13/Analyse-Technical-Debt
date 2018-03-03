@@ -1,7 +1,7 @@
 package com.td.models;
 
 import java.time.LocalDateTime;
-
+import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -26,6 +26,8 @@ public class IssueModel {
     private LocalDateTime created;
     private LocalDateTime closed;
     private LocalDateTime due;
+
+    private Set<String> labels;
 
     private TimeTracker timeTracker;
 
@@ -223,6 +225,20 @@ public class IssueModel {
      */
     public void setIssueKey(String issueKey) {
         this.issueKey = issueKey;
+    }
+
+    /**
+     * @return the labels
+     */
+    public Set<String> getLabels() {
+        return labels;
+    }
+
+    /**
+     * @param labels the labels to set
+     */
+    public void setLabels(Set<String> labels) {
+        this.labels = labels;
     }
 
 }
