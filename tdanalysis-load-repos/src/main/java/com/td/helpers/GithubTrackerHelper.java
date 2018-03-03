@@ -28,11 +28,14 @@ public class GithubTrackerHelper implements IssueTrackerHelper {
     private GitHub github;
     private GHRepository repository;
 
+    private RepositoryModel repositoryModel;
+
     private Pattern issuePattern;
 
-    public GithubTrackerHelper(String login, String token, String repositoryName) throws IOException {
+    public GithubTrackerHelper(String login, String token, RepositoryModel repository) throws IOException {
         this.github = GitHub.connect(login, token);
-        this.repository = github.getRepository(repositoryName);
+        this.repository = github.getRepository(repository.getAuthor() + "/" + repository.getName());
+        this.repositoryModel = repository;
         this.issuePattern = Pattern.compile(ISSUE_PATTERN);
     }
 
@@ -72,8 +75,12 @@ public class GithubTrackerHelper implements IssueTrackerHelper {
     private IssueModel githubToIssueModel(GHIssue issue) throws IOException {
         IssueModel result = new IssueModel();
 
+        String repoName = repository.getName();
+        String issueKey = Integer.toString(issue.getNumber());
+
         // meta
-        result.setIssueId(Integer.toString(issue.getNumber()));
+        result.setIssueId(repoName + "/" + issueKey);
+        result.setIssueKey(issueKey);
         result.setSummary(issue.getTitle());
         result.setDescription(issue.getBody());
 
@@ -88,6 +95,8 @@ public class GithubTrackerHelper implements IssueTrackerHelper {
         if (closed != null) {
             result.setClosed(dateToLocalDateTime(closed));
         }
+
+        result.setRepositoryId(repositoryModel.getId());
 
         return result;
     }

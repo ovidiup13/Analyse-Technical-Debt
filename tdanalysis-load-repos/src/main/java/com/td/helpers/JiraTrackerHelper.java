@@ -107,8 +107,12 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
     private IssueModel jiraIssueToIssueModel(Issue issue) {
         IssueModel result = new IssueModel();
 
+        String repositoryName = repository.getName();
+        String issueKey = issue.getKey();
+
         // meta
-        result.setIssueId(issue.getKey());
+        result.setIssueId(repositoryName + "/" + issueKey);
+        result.setIssueKey(issueKey);
         result.setType(issue.getIssueType().getName());
         result.setStatus(issue.getStatus().getName());
 

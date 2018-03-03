@@ -105,14 +105,15 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
                 //     commit.setBugs(bugs);
                 // }
 
+                // get issues from commit description
                 List<String> issueKeys = issueTrackerHelper.getKeys(commit.getMessage());
-                commit.setIssueIds(issueKeys);
 
                 List<IssueModel> issues = issueKeys.stream().map(issueTrackerHelper::getIssue)
                         .flatMap(o -> streamopt(o)).collect(Collectors.toList());
-
-                // TODO: do not write to db if an issue exists
                 issueRepository.save(issues);
+
+                List<String> issueIds = issues.stream().map(issue -> issue.getIssueId()).collect(Collectors.toList());
+                commit.setIssueIds(issueIds);
 
                 // save the commit to db in case anything else breaks
                 commitRepository.save(commit);
@@ -135,8 +136,7 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
         if (repository.getIssueTrackerURI().contains("jira")) {
             return new JiraTrackerHelper(jiraUsername, jiraPassword, repository);
         } else {
-            String repositoryId = repository.getAuthor() + "/" + repository.getName();
-            return new GithubTrackerHelper(githubUsername, githubToken, repositoryId);
+            return new GithubTrackerHelper(githubUsername, githubToken, repository);
         }
     }
 

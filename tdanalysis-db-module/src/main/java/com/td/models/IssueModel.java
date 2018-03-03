@@ -2,17 +2,20 @@ package com.td.models;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "issues")
 public class IssueModel {
 
+    @Id
     private String issueId;
 
     @Indexed
     private String repositoryId;
 
+    private String issueKey;
     private String type;
     private String summary;
     private String description;
@@ -206,6 +209,20 @@ public class IssueModel {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * @return the issueKey
+     */
+    public String getIssueKey() {
+        return issueKey;
+    }
+
+    /**
+     * @param issueKey the issueKey to set
+     */
+    public void setIssueKey(String issueKey) {
+        this.issueKey = issueKey;
     }
 
 }
