@@ -9,12 +9,11 @@ import java.util.stream.Collectors;
 import com.td.db.CommitRepository;
 import com.td.db.IssueRepository;
 import com.td.helpers.BuildHelper;
+import com.td.helpers.GithubTrackerHelper;
 import com.td.helpers.IssueTrackerHelper;
 import com.td.helpers.JiraTrackerHelper;
 import com.td.helpers.StaticAnalysisHelper;
 import com.td.helpers.VersionControlHelper;
-import com.td.models.BugModel;
-import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
@@ -47,6 +46,12 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
     @Value("${jira.password}")
     private String jiraPassword;
 
+    @Value("${github.username}")
+    private String githubUsername;
+
+    @Value("${github.token}")
+    private String githubToken;
+
     @Autowired
     private CommitRepository commitRepository;
 
@@ -54,21 +59,21 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
     private IssueRepository issueRepository;
 
     @Override
-    public List<CommitModel> process(RepositoryModel respositoryModel) throws Exception {
-        LOGGER.info(String.format("Processing commits for repository %s:%s", respositoryModel.getAuthor(),
-                respositoryModel.getName()));
+    public List<CommitModel> process(RepositoryModel repositoryModel) throws Exception {
+        LOGGER.info(String.format("Processing commits for repository %s:%s", repositoryModel.getAuthor(),
+                repositoryModel.getName()));
 
         // helpers
         BuildHelper buildHelper = new BuildHelper(javaHomePath, mavenHomePath);
         StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper(findbugsPath);
-        IssueTrackerHelper issueTrackerHelper = new JiraTrackerHelper(jiraUsername, jiraPassword, respositoryModel);
+        IssueTrackerHelper issueTrackerHelper = getTrackerHelper(repositoryModel);
 
-        File repoPath = new File(Paths.get(tempFolder, respositoryModel.getName()).toString());
-        respositoryModel.setProjectFolder(repoPath);
+        File repoPath = new File(Paths.get(tempFolder, repositoryModel.getName()).toString());
+        repositoryModel.setProjectFolder(repoPath);
 
         List<CommitModel> commits = null;
 
-        String repositoryId = respositoryModel.getId();
+        String repositoryId = repositoryModel.getId();
 
         try (VersionControlHelper versionControlHelper = new VersionControlHelper(repoPath)) {
 
@@ -114,10 +119,23 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
             versionControlHelper.close();
 
         } catch (IOException e) {
-            LOGGER.error(String.format("An error occurred when processing repository %s", respositoryModel.getURI()),
-                    e);
+            LOGGER.error(String.format("An error occurred when processing repository %s", repositoryModel.getURI()), e);
         }
 
         return commits;
     }
+
+    /**
+     * Method that returns an instance of IssueTrackerHelper based on the type of issue tracker for each repository.
+     * TODO: might be a good idea to put this into a factory object
+     */
+    private IssueTrackerHelper getTrackerHelper(RepositoryModel repository) throws IOException {
+        if (repository.getIssueTrackerURI().contains("jira")) {
+            return new JiraTrackerHelper(jiraUsername, jiraPassword, repository);
+        } else {
+            String repositoryId = repository.getAuthor() + "/" + repository.getName();
+            return new GithubTrackerHelper(githubUsername, githubToken, repositoryId);
+        }
+    }
+
 }
