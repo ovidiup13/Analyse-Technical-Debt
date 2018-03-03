@@ -6,10 +6,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.RestClientException;
 import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.TimeTracking;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
@@ -57,49 +59,17 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
     /***
      * Retrieves the issue details associated with the issue key.
      */
-    public IssueModel getIssue(String issueKey) {
-
+    public Optional<IssueModel> getIssue(String issueKey) {
         LOGGER.info(
                 String.format("Retrieving issue %s from Jira URL %s", issueKey, this.repository.getIssueTrackerURI()));
 
-        IssueModel result = new IssueModel();
-
-        // TODO: return null if issue does not exist -> throws RestClientException
-        // or, even better, make it return an Optional 
-        Issue issue = jiraRestClient.getIssueClient().getIssue(issueKey).claim();
-
-        // meta
-        result.setIssueId(issueKey);
-        result.setType(issue.getIssueType().getName());
-        result.setStatus(issue.getStatus().getName());
-
-        // story points
-        // System.out.println(issue.getFieldByName(STORY_POINTS_FIELD));
-        // result.setStoryPoints();
-
-        // description
-        result.setSummary(issue.getSummary());
-        result.setDescription(issue.getDescription());
-        result.setPriority(issue.getPriority() != null ? issue.getPriority().getName() : "None");
-        result.setAssignee(issue.getAssignee() != null ? issue.getAssignee().getDisplayName() : "None");
-
-        // time
-        result.setCreated(fromDateTime(issue.getCreationDate()));
-        result.setClosed(fromDateTime(issue.getUpdateDate()));
-        result.setDue(fromDateTime(issue.getDueDate()));
-
-        //tracking
-        TimeTracking tracking = issue.getTimeTracking();
-        TimeTracker tracker = new TimeTracker();
-        tracker.setEstimate(tracking.getOriginalEstimateMinutes() != null ? tracking.getOriginalEstimateMinutes() : 0);
-        tracker.setRemaining(
-                tracking.getRemainingEstimateMinutes() != null ? tracking.getRemainingEstimateMinutes() : 0);
-        tracker.setLogged(tracking.getTimeSpentMinutes() != null ? tracking.getTimeSpentMinutes() : 0);
-        result.setTimeTracker(tracker);
-
-        result.setRepositoryId(this.repository.getId());
-
-        return result;
+        try {
+            Issue issue = jiraRestClient.getIssueClient().getIssue(issueKey).claim();
+            return Optional.of(jiraIssueToIssueModel(issue));
+        } catch (RestClientException e) {
+            LOGGER.error("Could not retrieve issue " + issueKey);
+            return Optional.empty();
+        }
     }
 
     public List<String> getKeys(String description) {
@@ -132,5 +102,42 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
         Instant instant = dt.toGregorianCalendar().toInstant();
         ZoneId zone = dt.getZone().toTimeZone().toZoneId();
         return LocalDateTime.ofInstant(instant, zone);
+    }
+
+    private IssueModel jiraIssueToIssueModel(Issue issue) {
+        IssueModel result = new IssueModel();
+
+        // meta
+        result.setIssueId(issue.getKey());
+        result.setType(issue.getIssueType().getName());
+        result.setStatus(issue.getStatus().getName());
+
+        // story points
+        // System.out.println(issue.getFieldByName(STORY_POINTS_FIELD));
+        // result.setStoryPoints();
+
+        // description
+        result.setSummary(issue.getSummary());
+        result.setDescription(issue.getDescription());
+        result.setPriority(issue.getPriority() != null ? issue.getPriority().getName() : "None");
+        result.setAssignee(issue.getAssignee() != null ? issue.getAssignee().getDisplayName() : "None");
+
+        // time
+        result.setCreated(fromDateTime(issue.getCreationDate()));
+        result.setClosed(fromDateTime(issue.getUpdateDate()));
+        result.setDue(fromDateTime(issue.getDueDate()));
+
+        //tracking
+        TimeTracking tracking = issue.getTimeTracking();
+        TimeTracker tracker = new TimeTracker();
+        tracker.setEstimate(tracking.getOriginalEstimateMinutes() != null ? tracking.getOriginalEstimateMinutes() : 0);
+        tracker.setRemaining(
+                tracking.getRemainingEstimateMinutes() != null ? tracking.getRemainingEstimateMinutes() : 0);
+        tracker.setLogged(tracking.getTimeSpentMinutes() != null ? tracking.getTimeSpentMinutes() : 0);
+        result.setTimeTracker(tracker);
+
+        result.setRepositoryId(this.repository.getId());
+
+        return result;
     }
 }

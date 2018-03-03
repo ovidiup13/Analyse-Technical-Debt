@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.td.db.CommitRepository;
 import com.td.db.IssueRepository;
@@ -104,10 +106,10 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
                 // }
 
                 List<String> issueKeys = issueTrackerHelper.getKeys(commit.getMessage());
-                List<IssueModel> issues = issueKeys.stream().map(issueTrackerHelper::getIssue)
-                        .collect(Collectors.toList());
-
                 commit.setIssueIds(issueKeys);
+
+                List<IssueModel> issues = issueKeys.stream().map(issueTrackerHelper::getIssue)
+                        .flatMap(o -> streamopt(o)).collect(Collectors.toList());
 
                 // TODO: do not write to db if an issue exists
                 issueRepository.save(issues);
@@ -136,6 +138,17 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
             String repositoryId = repository.getAuthor() + "/" + repository.getName();
             return new GithubTrackerHelper(githubUsername, githubToken, repositoryId);
         }
+    }
+
+    /**
+    * Turns an Optional<T> into a Stream<T> of length zero or one depending upon
+    * whether a value is present.
+    */
+    static <T> Stream<T> streamopt(Optional<T> opt) {
+        if (opt.isPresent())
+            return Stream.of(opt.get());
+        else
+            return Stream.empty();
     }
 
 }

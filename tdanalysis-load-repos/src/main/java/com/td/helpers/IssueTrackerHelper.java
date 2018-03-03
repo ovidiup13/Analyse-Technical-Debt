@@ -2,9 +2,11 @@ package com.td.helpers;
 
 import com.td.models.IssueModel;
 import java.util.List;
+import java.util.Optional;
 
 public interface IssueTrackerHelper {
-    IssueModel getIssue(String issueId);
+
+    Optional<IssueModel> getIssue(String issueId);
 
     List<String> getKeys(String description);
 }

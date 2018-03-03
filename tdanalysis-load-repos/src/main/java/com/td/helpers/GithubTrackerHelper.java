@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,14 +37,14 @@ public class GithubTrackerHelper implements IssueTrackerHelper {
     }
 
     @Override
-    public IssueModel getIssue(String issueId) {
+    public Optional<IssueModel> getIssue(String issueId) {
         GHIssue issue;
         try {
             issue = repository.getIssue(Integer.parseInt(issueId.substring(1)));
-            return githubToIssueModel(issue);
+            return Optional.of(githubToIssueModel(issue));
         } catch (NumberFormatException | IOException e) {
             LOGGER.error("An error occurred when retrieving issue " + issueId);
-            return null;
+            return Optional.empty();
         }
     }
 
