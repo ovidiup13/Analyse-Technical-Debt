@@ -23,7 +23,7 @@ public class BuildHelper {
     private static final List<String> PERFORMANCE_FLAGS = new ArrayList<String>() {
         {
             add("-T");
-            add("4");
+            add("2");
         }
     };
 
