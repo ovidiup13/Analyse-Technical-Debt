@@ -16,6 +16,8 @@ import com.td.helpers.IssueTrackerHelper;
 import com.td.helpers.JiraTrackerHelper;
 import com.td.helpers.StaticAnalysisHelper;
 import com.td.helpers.VersionControlHelper;
+import com.td.models.BugModel;
+import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
@@ -94,16 +96,16 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
                 versionControlHelper.checkoutRevision(commit.getSha());
 
                 // build the revision
-                // BuildStatus buildStatus = buildHelper.buildRepository(item);
+                BuildStatus buildStatus = buildHelper.buildRepository(repositoryModel);
 
                 // set build status
-                // commit.setBuildStatus(buildStatus);
+                commit.setBuildStatus(buildStatus);
 
                 // analyse for bugs
-                // if (buildStatus.equals(BuildStatus.SUCCESSFUL)) {
-                //     List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(item);
-                //     commit.setBugs(bugs);
-                // }
+                if (buildStatus.equals(BuildStatus.SUCCESSFUL)) {
+                    List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(repositoryModel);
+                    commit.setBugs(bugs);
+                }
 
                 // get issues from commit description
                 List<String> issueKeys = issueTrackerHelper.getKeys(commit.getMessage());

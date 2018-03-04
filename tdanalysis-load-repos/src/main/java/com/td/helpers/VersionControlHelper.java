@@ -50,13 +50,12 @@ public class VersionControlHelper implements AutoCloseable {
     /***
      * Retrieves all the list of commits on the main branch.
      *
-     * Edit: Also adds the diff between the previous commit as well.
      */
     public List<CommitModel> getCommits() {
         List<CommitModel> result = new ArrayList<>();
         try {
             Iterable<RevCommit> commits = gitProject.log().all().call();
-            int count = 1000; //TODO: remove this. Added for performance reasons
+            // int count = 100; //TODO: remove this. Added for performance reasons
             for (RevCommit commit : commits) {
                 PersonIdent committer = commit.getCommitterIdent();
                 Date date = committer.getWhen();
@@ -71,10 +70,10 @@ public class VersionControlHelper implements AutoCloseable {
                 result.add(model);
 
                 // TODO: remove this. Added for performance reasons
-                count--;
-                if (count < 1) {
-                    break;
-                }
+                // count--;
+                // if (count < 1) {
+                // break;
+                // }
             }
         } catch (GitAPIException | IOException e) {
             LOGGER.error("An exception occurred when retrieving list of commits.", e);

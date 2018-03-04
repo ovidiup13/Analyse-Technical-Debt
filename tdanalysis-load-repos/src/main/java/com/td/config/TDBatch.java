@@ -39,8 +39,6 @@ import java.util.List;
 @EnableBatchProcessing
 public class TDBatch {
 
-    private static final int CHUNK_SIZE = 10;
-
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
