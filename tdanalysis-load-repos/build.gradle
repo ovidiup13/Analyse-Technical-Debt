@@ -6,7 +6,7 @@ jar {
 }
 
 bootRun {
-    jvmArgs = ["-Xms128m", "-Xmx1g", "-Xss64m"]
+    jvmArgs = ["-Xms64m", "-Xmx256m", "-Xss64m"]
 }
 
 dependencies {
