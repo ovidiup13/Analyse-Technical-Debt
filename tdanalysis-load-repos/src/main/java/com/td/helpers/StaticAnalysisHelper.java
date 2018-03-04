@@ -22,15 +22,15 @@ public class StaticAnalysisHelper {
     private static final String JAR_EXTENSION = ".jar";
     private static final String FILE_EXTENSION_SEPARATOR = ".";
 
-    private static final String COMMAND_LINUX = "findbugs";
-    private static final String COMMAND_WINDOWS = "findbugs.bat";
+    private static final String COMMAND_LINUX = "spotbugs";
+    private static final String COMMAND_WINDOWS = "spotbugs.bat";
 
     private static final String COMMAND_LINE = "-textui";
     private static final String PRIORITY = "-high";
 
     private String findbugsPath;
 
-    public StaticAnalysisHelper(String analyserPath){
+    public StaticAnalysisHelper(String analyserPath) {
         this.findbugsPath = analyserPath;
     }
 
@@ -43,7 +43,8 @@ public class StaticAnalysisHelper {
      */
     public List<BugModel> executeAnalysis(RepositoryModel repositoryModel) throws IOException, InterruptedException {
 
-        LOGGER.info(String.format("Starting analysis for project %s:%s", repositoryModel.getName(), repositoryModel.getAuthor()));
+        LOGGER.info(String.format("Starting analysis for project %s:%s", repositoryModel.getName(),
+                repositoryModel.getAuthor()));
 
         Set<BugModel> results = Collections.synchronizedSet(new HashSet<>());
         String analysisCommand = System.getProperty("os.name").contains("Windows") ? COMMAND_WINDOWS : COMMAND_LINUX;
@@ -51,7 +52,7 @@ public class StaticAnalysisHelper {
 
         // process JARs in parallel to speed up analysis
         projectJars.parallelStream().forEach(jar -> {
-            LOGGER.info(String.format("Starting analysis for JAR %s in project %s",jar, repositoryModel.getName()));
+            LOGGER.info(String.format("Starting analysis for JAR %s in project %s", jar, repositoryModel.getName()));
             try {
                 results.addAll(analyseJar(analysisCommand, repositoryModel.getProjectFolder(), jar));
             } catch (IOException | InterruptedException e) {
@@ -71,7 +72,8 @@ public class StaticAnalysisHelper {
      * @throws IOException if the program is not found
      * @throws InterruptedException if the process is interrupted
      */
-    private Set<BugModel> analyseJar(String command, File projectDirectory, String jarPath) throws IOException, InterruptedException {
+    private Set<BugModel> analyseJar(String command, File projectDirectory, String jarPath)
+            throws IOException, InterruptedException {
 
         Set<BugModel> results = new HashSet<>();
         ProcessBuilder builder = new ProcessBuilder();
@@ -100,12 +102,12 @@ public class StaticAnalysisHelper {
         return results;
     }
 
-    private Optional<BugModel> parseBug(String line){
+    private Optional<BugModel> parseBug(String line) {
 
         BugModel bug = new BugModel();
         int index = line.indexOf(":");
 
-        if(index < 0){
+        if (index < 0) {
             return Optional.empty();
         }
 
@@ -125,17 +127,14 @@ public class StaticAnalysisHelper {
      * @throws IOException if the project folder does not exist
      */
     private List<String> getProjectJars(File projectFolder, String projectName) throws IOException {
-        return Files
-                .walk(Paths.get(projectFolder.getAbsolutePath()))
-                .filter(Files::isRegularFile)
-                .filter(path -> isProjectJar(path, projectName))
-                .map(Path::toString)
-                .collect(Collectors.toList());
+        return Files.walk(Paths.get(projectFolder.getAbsolutePath())).filter(Files::isRegularFile)
+                .filter(path -> isProjectJar(path, projectName)).map(Path::toString).collect(Collectors.toList());
     }
 
     private static boolean isProjectJar(Path path, String projectName) {
         String fileName = path.getFileName().toString();
-        return fileName.contains(projectName) && isJarFile(fileName) && !isSourcesJar(fileName) && !isDocsJar(fileName) && !isTestsJar(fileName);
+        return fileName.contains(projectName) && isJarFile(fileName) && !isSourcesJar(fileName) && !isDocsJar(fileName)
+                && !isTestsJar(fileName);
     }
 
     private static boolean isJarFile(String fileName) {
@@ -143,15 +142,15 @@ public class StaticAnalysisHelper {
         return index > 0 && fileName.substring(index).equals(JAR_EXTENSION);
     }
 
-    private static boolean isSourcesJar(String fileName){
+    private static boolean isSourcesJar(String fileName) {
         return fileName.contains("sources");
     }
 
-    private static boolean isDocsJar(String fileName){
+    private static boolean isDocsJar(String fileName) {
         return fileName.contains("doc");
     }
 
-    private static boolean isTestsJar(String fileName){
+    private static boolean isTestsJar(String fileName) {
         return fileName.contains("test");
     }
 }
