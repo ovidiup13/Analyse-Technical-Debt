@@ -1,2 +1,12 @@
 id,author,name,uri,issueTracker,buildCommand
+1,antlr,antlr4,https://github.com/antlr/antlr4.git,https://github.com/antlr/antlr4/issues,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+2,spring-projects,spring-hateoas,https://github.com/spring-projects/spring-hateoas.git,https://github.com/spring-projects/spring-hateoas/issues,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+3,checkstyle,checkstyle,https://github.com/checkstyle/checkstyle.git,https://github.com/checkstyle/checkstyle/issues,mvn clean install -Dmaven.test.skip -Dcheckstyle.ant.skip -Dmaven.javadoc.skip -Dcobertura.skip -Dsonar.skip -Dspotbugs.skip -Dfindbugs.skip -Dpmd.skip
 4,apache,commons-collections,https://github.com/apache/commons-collections.git,https://issues.apache.org/jira,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+5,apache,commons-lang,https://github.com/apache/commons-lang.git,https://issues.apache.org/jira/,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip -Dcheckstyle.skip -Dfindbugs.skip -Dpmd.skip
+6,spring-projects,spring-data-mongodb,https://github.com/spring-projects/spring-data-mongodb.git,https://jira.spring.io/browse/DATAMONGO,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip,
+7,cobertura,cobertura,https://github.com/cobertura/cobertura.git,https://github.com/cobertura/cobertura/issues,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip -Dmaven.war.skip=true -Dfindbugs.skip -Dpmd.skip -Dcobertura.skip -Dassembly.skipAssembly=true
+8,internetarchive,heritrix3,https://github.com/internetarchive/heritrix3.git,https://github.com/internetarchive/heritrix3/issues,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+9,google,guava,https://github.com/google/guava.git,https://github.com/google/guava/issues,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip -Danimal.sniffer.skip
+10,google,error-prone,https://github.com/google/error-prone.git,https://github.com/google/error-prone/issues,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
+11,google,closure-templates,https://github.com/google/closure-templates.git,https://github.com/google/closure-templates/issues,mvn clean install -Dmaven.test.skip -Dmaven.javadoc.skip
