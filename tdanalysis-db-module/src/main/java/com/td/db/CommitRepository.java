@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CommitRepository extends MongoRepository<CommitModel, String>{
+public interface CommitRepository extends MongoRepository<CommitModel, String> {
+
+    CommitModel findCommitModelByShaAndRepositoryId(String sha, String repositoryId);
 
     List<CommitModel> findCommitModelsByRepositoryId(String id);
 
