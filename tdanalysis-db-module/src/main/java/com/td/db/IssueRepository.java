@@ -10,5 +10,5 @@ public interface IssueRepository extends MongoRepository<IssueModel, String> {
 
     List<IssueModel> findIssueModelsByRepositoryId(String repositoryId);
 
-    IssueModel findIssueModelByIssueId(String issueId);
+    IssueModel findIssueModelByIssueIdAndRepositoryId(String issueId, String repositoryId);
 }
