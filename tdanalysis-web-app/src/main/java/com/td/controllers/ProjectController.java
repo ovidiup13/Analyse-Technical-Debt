@@ -1,29 +1,28 @@
 package com.td.controllers;
 
-import com.td.db.ProjectRepository;
-import com.td.models.RepositoryModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
+import com.td.db.ProjectRepository;
+import com.td.models.RepositoryModel;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
 @RestController
-@RequestMapping("/api")
-@CrossOrigin("*")
-public class ProjectController {
+public class ProjectController extends BaseController {
 
     @Autowired
     ProjectRepository repository;
 
-    @RequestMapping("")
-    public String index() {
-        return "Greetings dear friend!";
+    @GetMapping("/repos")
+    public List<RepositoryModel> getProjects() {
+        return repository.findAll();
     }
 
-    @RequestMapping("/projects")
-    public List<RepositoryModel> getProjects(){
-        return repository.findAll();
+    @GetMapping("/repos/{id}")
+    public RepositoryModel getRepository(@PathVariable("id") String id) {
+        return repository.findOne(id);
     }
 }
