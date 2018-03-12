@@ -1,6 +1,8 @@
 package com.td.controllers;
 
+import com.td.db.CommitRepository;
 import com.td.db.IssueRepository;
+import com.td.models.CommitModel;
 import com.td.models.IssueModel;
 import java.util.List;
 
@@ -16,16 +18,26 @@ public class IssueController extends BaseController {
     @Autowired
     private IssueRepository issueRepository;
 
+    @Autowired
+    private CommitRepository commitRepository;
+
     @GetMapping("/repos/{id}/issues")
     public List<IssueModel> getIssues(@PathVariable("id") String repoId) {
         return issueRepository.findIssueModelsByRepositoryId(repoId);
     }
 
-    @GetMapping("/repos/{id}/issues/{issueId}")
+    @GetMapping("/repos/{id}/issues/{key}")
     public ResponseEntity<IssueModel> getIssueById(@PathVariable("id") String repoId,
-            @PathVariable("issueId") String issueId) {
-        IssueModel issue = issueRepository.findIssueModelByIssueIdAndRepositoryId(issueId, repoId);
+            @PathVariable("key") String issueKey) {
+        IssueModel issue = issueRepository.findIssueModelByIssueKeyAndRepositoryId(issueKey, repoId);
         return issue == null ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(issue);
+    }
+
+    @GetMapping("/repos/{id}/issues/{key}/commits")
+    public List<CommitModel> getCommitsOfIssue(@PathVariable("id") String repoId,
+            @PathVariable("key") String issueKey) {
+        IssueModel issue = issueRepository.findIssueModelByIssueKeyAndRepositoryId(issueKey, repoId);
+        return commitRepository.findCommitModelsByIssueModels(issue.getIssueId());
     }
 
 }
