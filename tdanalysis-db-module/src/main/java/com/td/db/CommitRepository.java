@@ -19,4 +19,5 @@ public interface CommitRepository extends MongoRepository<CommitModel, String> {
     @Query(value = "{'issueIds': '?0'}")
     List<CommitModel> findCommitModelsByIssueModels(String issueId, Sort sort);
 
+    List<CommitModel> findCommitModelsByRepositoryIdAndAuthor(String id, String author, Sort sort);
 }
