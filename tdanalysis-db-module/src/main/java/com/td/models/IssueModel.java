@@ -1,5 +1,7 @@
 package com.td.models;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.util.Set;
 import org.springframework.data.annotation.Id;
@@ -146,6 +148,7 @@ public class IssueModel {
     /**
      * @return the created
      */
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getCreated() {
         return created;
     }
@@ -160,6 +163,7 @@ public class IssueModel {
     /**
      * @return the closed
      */
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getClosed() {
         return closed;
     }
@@ -174,6 +178,7 @@ public class IssueModel {
     /**
      * @return the due
      */
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getDue() {
         return due;
     }

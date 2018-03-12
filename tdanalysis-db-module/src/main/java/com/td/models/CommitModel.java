@@ -3,7 +3,8 @@ package com.td.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -70,6 +71,7 @@ public class CommitModel {
     /**
      * @return the timestamp
      */
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getTimestamp() {
         return timestamp;
     }
