@@ -24,7 +24,8 @@ public class IssueController extends BaseController {
 
     @GetMapping("/repos/{id}/issues")
     public List<IssueModel> getIssues(@PathVariable("id") String repoId) {
-        return issueRepository.findIssueModelsByRepositoryId(repoId);
+        Sort sort = new Sort(Sort.Direction.ASC, "issueKey");
+        return issueRepository.findIssueModelsByRepositoryId(repoId, sort);
     }
 
     @GetMapping("/repos/{id}/issues/{key}")
