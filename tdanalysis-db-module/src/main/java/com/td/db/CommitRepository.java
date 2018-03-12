@@ -20,7 +20,7 @@ public interface CommitRepository extends MongoRepository<CommitModel, String> {
     List<CommitModel> findCommitModelsByRepositoryId(String id, Sort sort);
 
     @Cacheable("issueCommits")
-    @Query(value = "{'issueIds': '?0'}")
+    @Query(value = "{'issueIds.0': '?0'}")
     List<CommitModel> findCommitModelsByIssueModels(String issueId, Sort sort);
 
     @Cacheable("authorCommits")
