@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RepositoryFacade {
 
-    private static final int OVER_COMMITS_PER_ISSUE = 0;
+    private static final int OVER_COMMITS_PER_ISSUE = 1;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -79,6 +79,14 @@ public class RepositoryFacade {
     public List<CommitModel> getAllCommits(String repositoryId) {
         Sort sort = new Sort(Sort.Direction.ASC, "timestamp");
         return commitRepository.findCommitModelsByRepositoryId(repositoryId, sort);
+    }
+
+    /***
+     * Returns all commits pushed by an author to the repository.
+     */
+    public List<CommitModel> getAllCommitsByAuthor(String repositoryId, String author) {
+        Sort sort = new Sort(Sort.Direction.ASC, "timestamp");
+        return commitRepository.findCommitModelsByRepositoryIdAndAuthor(repositoryId, author, sort);
     }
 
     /***
