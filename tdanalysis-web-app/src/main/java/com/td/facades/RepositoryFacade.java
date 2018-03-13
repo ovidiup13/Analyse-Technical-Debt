@@ -47,7 +47,7 @@ public class RepositoryFacade {
      */
     public Optional<RepositoryModel> getRepository(String repositoryId) {
         RepositoryModel result = projectRepository.findOne(repositoryId);
-        return Optional.of(result);
+        return Optional.ofNullable(result);
     }
 
     /***
@@ -70,7 +70,7 @@ public class RepositoryFacade {
      */
     public Optional<IssueModel> getIssue(String repositoryId, String issueKey) {
         IssueModel issue = issueRepository.findIssueModelByIssueKeyAndRepositoryId(issueKey, repositoryId);
-        return Optional.of(issue);
+        return Optional.ofNullable(issue);
     }
 
     /***
@@ -94,7 +94,7 @@ public class RepositoryFacade {
      */
     public Optional<CommitModel> getCommit(String repositoryId, String sha) {
         CommitModel result = commitRepository.findCommitModelByShaAndRepositoryId(sha, repositoryId);
-        return Optional.of(result);
+        return Optional.ofNullable(result);
     }
 
     /***
