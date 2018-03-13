@@ -14,7 +14,7 @@ import java.util.List;
 public interface CommitRepository extends MongoRepository<CommitModel, String> {
 
     @Cacheable("commit")
-    CommitModel findCommitModelByShaAndRepositoryId(String sha, String repositoryId, Sort sort);
+    CommitModel findCommitModelByShaAndRepositoryId(String sha, String repositoryId);
 
     @Cacheable("commits")
     List<CommitModel> findCommitModelsByRepositoryId(String id, Sort sort);

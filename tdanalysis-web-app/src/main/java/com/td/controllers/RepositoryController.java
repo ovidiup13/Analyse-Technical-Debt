@@ -1,12 +1,12 @@
 package com.td.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
-import com.td.db.ProjectRepository;
+import com.td.facades.RepositoryFacade;
 import com.td.models.RepositoryModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,17 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class RepositoryController extends BaseController {
 
     @Autowired
-    ProjectRepository repository;
+    private RepositoryFacade repositoryFacade;
 
     @GetMapping("/repos")
-    public List<RepositoryModel> getProjects() {
-        Sort sort = new Sort(Sort.Direction.ASC, "id");
-        return repository.findAll(sort);
+    public List<RepositoryModel> getRepositories() {
+        return repositoryFacade.getRepositories();
     }
 
     @GetMapping("/repos/{id}")
-    public ResponseEntity<RepositoryModel> getRepository(@PathVariable("id") String id) {
-        RepositoryModel result = repository.findOne(id);
-        return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(result);
+    public ResponseEntity<RepositoryModel> getRepository(@PathVariable String id) {
+        Optional<RepositoryModel> repo = repositoryFacade.getRepository(id);
+        return repo.isPresent() ? ResponseEntity.ok().body(repo.get()) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/repos/{id}/authors")
+    public List<String> getRepositoryCollaborators(@PathVariable String id) {
+        return this.repositoryFacade.getCollaborators(id);
     }
 }
