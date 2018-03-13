@@ -5,11 +5,13 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "commits")
-public class CommitModel {
+public class CommitModel implements Comparable<CommitModel> {
 
     @Id
     private String sha;
@@ -129,5 +131,11 @@ public class CommitModel {
      */
     public void setIssueIds(List<String> issueIds) {
         this.issueIds = issueIds;
+    }
+
+    @Override
+    public int compareTo(CommitModel o) {
+        long diff = Duration.between(this.getTimestamp(), o.getTimestamp()).toMinutes();
+        return (int) diff;
     }
 }

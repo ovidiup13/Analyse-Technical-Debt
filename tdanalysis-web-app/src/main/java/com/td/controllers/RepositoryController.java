@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.td.facades.RepositoryFacade;
+import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,10 @@ public class RepositoryController extends BaseController {
     @GetMapping("/repos/{id}/authors")
     public List<String> getRepositoryCollaborators(@PathVariable String id) {
         return this.repositoryFacade.getCollaborators(id);
+    }
+
+    @GetMapping("/repos/{id}/{author}")
+    public List<CommitModel> getChangesOfAuthor(@PathVariable String id, @PathVariable String author) {
+        return this.repositoryFacade.getAllCommitsByAuthor(id, author);
     }
 }
