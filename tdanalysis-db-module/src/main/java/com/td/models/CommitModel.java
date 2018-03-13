@@ -19,7 +19,9 @@ public class CommitModel {
 
     private List<String> issueIds;
 
+    @Indexed
     private LocalDateTime timestamp;
+
     private String message;
     private String author;
     private BuildStatus buildStatus;
