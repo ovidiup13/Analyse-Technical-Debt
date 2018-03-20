@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.td.models.CommitModel;
+import com.td.models.CommitStats;
 import com.td.models.IssueStats;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ public class StatsFacade {
     private RepositoryFacade repositoryFacade;
 
     /***
-     * Returns a map of statistics of the calculated work effort and technical debt.
+     * Returns a map of statistics of the calculated work effort and technical debt per issue.
      */
-    public List<IssueStats> getSimpleStats(String repositoryId) {
+    public List<IssueStats> getIssueStats(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
         List<IssueStats> result = new ArrayList<>(commits.size());
         commits.forEach(item -> {
@@ -43,6 +44,34 @@ public class StatsFacade {
             stats.setAuthor(issueCommits.get(0).getAuthor());
             result.add(stats);
         });
+        return result;
+    }
+
+    /***
+     * Returns statistics for commits in the repository.
+     * @param id repository ID 
+     */
+    public CommitStats getCommitStats(String id) {
+        CommitStats result = new CommitStats();
+
+        List<CommitModel> commits = this.repositoryFacade.getAllCommits(id);
+
+        int totalCommits = commits.size();
+        int withIssues = (int) commits.stream().filter(commit -> commit.getIssueIds().size() > 0).count();
+        int withoutIssues = totalCommits - withIssues;
+        int numberOfAuthors = repositoryFacade.getCollaborators(id).size();
+        double meanTicketsPerCommit = commits.stream().map(commit -> commit.getIssueIds().size()).reduce(0,
+                (prev, cur) -> prev + cur) / ((double) totalCommits);
+        double meanTDItemsPerCommit = commits.stream().map(commit -> commit.getBugs().size()).reduce(0,
+                (prev, cur) -> prev + cur) / ((double) totalCommits);
+
+        result.setTotalCommits(totalCommits);
+        result.setCommitsWithIssues(withIssues);
+        result.setCommitsWithoutIssues(withoutIssues);
+        result.setNumberOfAuthors(numberOfAuthors);
+        result.setMeanTicketsPerCommit(meanTicketsPerCommit);
+        result.setMeanTDItemsPerCommit(meanTDItemsPerCommit);
+
         return result;
     }
 
