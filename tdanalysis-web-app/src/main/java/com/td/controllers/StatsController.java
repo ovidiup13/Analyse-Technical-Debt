@@ -1,7 +1,7 @@
 package com.td.controllers;
 
 import com.td.facades.StatsFacade;
-import com.td.models.Stats;
+import com.td.models.IssueStats;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +15,7 @@ public class StatsController extends BaseController {
     private StatsFacade statsFacade;
 
     @GetMapping("/repos/{id}/stats/simple")
-    public List<Stats> getSimpleStats(@PathVariable String id) {
+    public List<IssueStats> getSimpleStats(@PathVariable String id) {
         return this.statsFacade.getSimpleStats(id);
     }
 

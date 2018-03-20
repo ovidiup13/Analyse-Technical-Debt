@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.td.models.CommitModel;
-import com.td.models.Stats;
+import com.td.models.IssueStats;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,16 +26,16 @@ public class StatsFacade {
     /***
      * Returns a map of statistics of the calculated work effort and technical debt.
      */
-    public List<Stats> getSimpleStats(String repositoryId) {
+    public List<IssueStats> getSimpleStats(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
-        List<Stats> result = new ArrayList<>(commits.size());
+        List<IssueStats> result = new ArrayList<>(commits.size());
         commits.forEach(item -> {
             Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
             String issueKey = entry.getKey();
             List<CommitModel> issueCommits = entry.getValue();
 
             // generate simple stats
-            Stats stats = new Stats();
+            IssueStats stats = new IssueStats();
             stats.setIssueKey(issueKey);
             stats.setTechnicalDebt(getSimpleTechnicalDebt(issueCommits));
             stats.setWorkEffort(getWorkEffortByCommits(issueCommits));
