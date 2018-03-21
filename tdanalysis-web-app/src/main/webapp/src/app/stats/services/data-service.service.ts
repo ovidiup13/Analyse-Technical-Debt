@@ -4,17 +4,14 @@ import { Observable } from "rxjs/Observable";
 
 // models
 import { Repository } from "../models/repository.interface";
-
-// env
-import { environment } from "../../../environments/environment.dev";
 import { Issue } from "../models/issue.interface";
 import { Commit, CommitMap } from "../models/commit.interface";
 import { IssueStats, CommitStats } from "../models/stats.interface";
 
+// env
+
 @Injectable()
 export class DataService {
-  private static API: string = environment.api;
-
   constructor(private http: HttpClient) {}
 
   /**
@@ -22,7 +19,7 @@ export class DataService {
    * @param id of the repository
    */
   getRepositories(): Observable<Repository[]> {
-    return this.http.get<Repository[]>(`${DataService.API}/repos`);
+    return this.http.get<Repository[]>(`/api/repos`);
   }
 
   /**
@@ -30,7 +27,7 @@ export class DataService {
    * @param id of the repository
    */
   getRepository(id: string): Observable<Repository> {
-    return this.http.get<Repository>(`${DataService.API}/repos/${id}`);
+    return this.http.get<Repository>(`/api/repos/${id}`);
   }
 
   /**
@@ -38,7 +35,7 @@ export class DataService {
    * @param id of the repository
    */
   getIssues(id: string): Observable<Issue[]> {
-    return this.http.get<Issue[]>(`${DataService.API}/repos/${id}/issues`);
+    return this.http.get<Issue[]>(`/api/repos/${id}/issues`);
   }
 
   /**
@@ -47,9 +44,7 @@ export class DataService {
    * @param issueId issue ID
    */
   getIssue(repoId: string, issueId: string): Observable<Issue> {
-    return this.http.get<Issue>(
-      `${DataService.API}/repos/${repoId}/issues/${issueId}`
-    );
+    return this.http.get<Issue>(`/api/repos/${repoId}/issues/${issueId}`);
   }
 
   /**
@@ -57,7 +52,7 @@ export class DataService {
    * @param id of the repository
    */
   getCommits(id: string): Observable<Commit[]> {
-    return this.http.get<Commit[]>(`${DataService.API}/repos/${id}/commits`);
+    return this.http.get<Commit[]>(`/api/repos/${id}/commits`);
   }
 
   /**
@@ -66,9 +61,7 @@ export class DataService {
    * @param sha commit SHA
    */
   getCommit(repoId: string, sha: string): Observable<Commit> {
-    return this.http.get<Commit>(
-      `${DataService.API}/repos/${repoId}/commits/${sha}`
-    );
+    return this.http.get<Commit>(`/api/repos/${repoId}/commits/${sha}`);
   }
 
   /**
@@ -78,7 +71,7 @@ export class DataService {
    */
   getCommitsByIssue(repoId: string, issueId: string) {
     return this.http.get<Commit[]>(
-      `${DataService.API}/repos/${repoId}/issues/${issueId}/commits`
+      `/api/repos/${repoId}/issues/${issueId}/commits`
     );
   }
 
@@ -87,9 +80,7 @@ export class DataService {
    * @param repoId
    */
   getCommitsByIssues(repoId: string): Observable<CommitMap[]> {
-    return this.http.get<CommitMap[]>(
-      `${DataService.API}/repos/${repoId}/issue-commits`
-    );
+    return this.http.get<CommitMap[]>(`/api/repos/${repoId}/issue-commits`);
   }
 
   /**
@@ -98,9 +89,7 @@ export class DataService {
    * @param repoId repository ID
    */
   getTicketStats(repoId: string): Observable<IssueStats[]> {
-    return this.http.get<IssueStats[]>(
-      `${DataService.API}/repos/${repoId}/stats/tickets`
-    );
+    return this.http.get<IssueStats[]>(`/api/repos/${repoId}/stats/tickets`);
   }
 
   /**
@@ -110,7 +99,7 @@ export class DataService {
    */
   getTicketStatsRaw(repoId: string): Observable<IssueStats[]> {
     return this.http.get<IssueStats[]>(
-      `${DataService.API}/repos/${repoId}/stats/tickets/raw`
+      `/api/repos/${repoId}/stats/tickets/raw`
     );
   }
 
@@ -119,8 +108,6 @@ export class DataService {
    * @param repoId repository ID
    */
   getCommitStats(repoId: string): Observable<CommitStats> {
-    return this.http.get<CommitStats>(
-      `${DataService.API}/repos/${repoId}/stats/commits`
-    );
+    return this.http.get<CommitStats>(`/api/repos/${repoId}/stats/commits`);
   }
 }
