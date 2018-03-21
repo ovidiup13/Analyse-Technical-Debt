@@ -42,7 +42,7 @@ public class StatsFacade {
             // generate simple stats
             IssueStats stats = new IssueStats();
             stats.setIssueKey(issueKey);
-            stats.setTechnicalDebt(getSimpleTechnicalDebt(issueCommits));
+            stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
 
@@ -67,6 +67,7 @@ public class StatsFacade {
 
             IssueStats stats = new IssueStats();
             stats.setTotalCommits(issueCommits.size());
+            stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setIssueKey(issueKey);
             result.add(stats);
         });
@@ -140,7 +141,7 @@ public class StatsFacade {
     /***
      * Returns a count of the unique issues available in the list of commits. 
      */
-    private long getSimpleTechnicalDebt(List<CommitModel> commits) {
+    private long getTechnicalDebtCount(List<CommitModel> commits) {
         return commits.stream().map(commit -> commit.getBugs()).flatMap(bugs -> bugs.stream()).distinct().count();
     }
 
