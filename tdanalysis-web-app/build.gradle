@@ -1,13 +1,15 @@
 // Apply the application plugin to add support for building an application
 apply plugin: 'application'
 
+def webappDir = "$projectDir/src/main/webapp"
+
 sourceSets {
     main {
         java {
             srcDirs = ['src/main/java/']
         }
         resources {
-            srcDirs = ['src/main/resources']
+            srcDirs = ['src/main/resources', "$webappDir/dist"]
         }
     }
     test {
@@ -18,7 +20,6 @@ sourceSets {
 }
 
 mainClassName = "com.td.App"
-
 springBoot {
     mainClass = 'com.td.App'
 }
@@ -31,5 +32,32 @@ dependencies {
     compile project(':tdanalysis-db-module')
 }
 
-// Define the main class for the application
-mainClassName = 'App'
+processResources {
+	dependsOn "buildAngular"
+}
+
+task buildAngular(type:Exec) {
+	// installAngular should be run prior to this task
+	dependsOn "installAngular"
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	// Add task to the standard build group
+	group = BasePlugin.BUILD_GROUP
+	// ng doesn't exist as a file in windows -> ng.cmd
+	if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+		commandLine "yarn.cmd", "build"
+	} else {
+		commandLine "yarn", "build"
+	}
+}
+
+task installAngular(type:Exec) {
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")){
+		commandLine "yarn.cmd", "install"
+	} else {
+		commandLine "yarn", "install"
+	}
+}

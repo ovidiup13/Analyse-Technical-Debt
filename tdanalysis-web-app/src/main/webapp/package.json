@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "yarn run config-dev && ng serve --environment=dev",
-    "build": "ng build --prod",
+    "build": "yarn run config-dev && ng build --environment=dev",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
