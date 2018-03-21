@@ -16,8 +16,13 @@ public class StatsController extends BaseController {
     private StatsFacade statsFacade;
 
     @GetMapping("/repos/{id}/stats/tickets")
-    public List<IssueStats> getSimpleStats(@PathVariable String id) {
+    public List<IssueStats> getTicketStatsFiltered(@PathVariable String id) {
         return this.statsFacade.getIssueStats(id);
+    }
+
+    @GetMapping("/repos/{id}/stats/tickets/raw")
+    public List<IssueStats> getIssueStatsRaw(@PathVariable String id) {
+        return this.statsFacade.getIssueStatsRaw(id);
     }
 
     @GetMapping("/repos/{id}/stats/commits")

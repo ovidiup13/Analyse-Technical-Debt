@@ -1,5 +1,6 @@
 package com.td.facades;
 
+import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ public class StatsFacade {
     public List<IssueStats> getIssueStats(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
         List<IssueStats> result = new ArrayList<>(commits.size());
+
+        DecimalFormat formatter = new DecimalFormat("#0.00");
+
         commits.forEach(item -> {
             Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
             String issueKey = entry.getKey();
@@ -39,11 +43,34 @@ public class StatsFacade {
             IssueStats stats = new IssueStats();
             stats.setIssueKey(issueKey);
             stats.setTechnicalDebt(getSimpleTechnicalDebt(issueCommits));
-            stats.setWorkEffort(getWorkEffortByCommits(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
+
+            double workEffort = Double.parseDouble(formatter.format(getWorkEffortByCommits(issueCommits)));
+            stats.setWorkEffort(workEffort);
+
             result.add(stats);
         });
+        return result;
+    }
+
+    /**
+     * Returns a list of total number of commits for all issues.
+     */
+    public List<IssueStats> getIssueStatsRaw(String repositoryId) {
+        List<Map<String, List<CommitModel>>> issues = repositoryFacade.getIssuesAndCommitsRaw(repositoryId);
+        List<IssueStats> result = new ArrayList<>(issues.size());
+        issues.forEach(item -> {
+            Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
+            String issueKey = entry.getKey();
+            List<CommitModel> issueCommits = entry.getValue();
+
+            IssueStats stats = new IssueStats();
+            stats.setTotalCommits(issueCommits.size());
+            stats.setIssueKey(issueKey);
+            result.add(stats);
+        });
+
         return result;
     }
 
