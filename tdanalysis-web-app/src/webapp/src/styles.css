@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+.page {
+  margin: 5% 10%;
+}
+
+.title {
+  margin-top: 5%;
+  text-align: center;
+}
+
+.chart {
+  margin: 30px auto;
+}

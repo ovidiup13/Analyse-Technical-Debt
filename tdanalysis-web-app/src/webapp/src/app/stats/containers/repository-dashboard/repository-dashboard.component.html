@@ -1,0 +1,8 @@
+<div>
+
+  <h1 class="title">Repository Dashboard</h1>
+
+  <app-repository-detail *ngFor="let repository of repositories$ | async" [repository]="repository" (view)="viewRepository($event)">
+  </app-repository-detail>
+
+</div>
