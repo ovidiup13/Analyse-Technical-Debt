@@ -1,22 +1,24 @@
 package com.td.models;
 
+import com.td.models.TechnicalDebtItem.CompositeKey;
+
 public class CommitTD {
 
-    private String id;
+    private CompositeKey id;
     private TechnicalDebtPriority priority;
     private CodeLocation location;
 
     /**
      * @return the id
      */
-    public String getId() {
+    public CompositeKey getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(CompositeKey id) {
         this.id = id;
     }
 

@@ -1,5 +1,6 @@
 package com.td.models;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -13,15 +14,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "tditems")
 public class TechnicalDebtItem {
 
-    /**
-     * Format: [Category initial] [Issue code]
-     * 
-     * e.g. P Bx
-     * 
-     * http://findbugs.sourceforge.net/bugDescriptions.html
-     */
     @Id
-    private String id;
+    private CompositeKey id;
 
     @Indexed
     private String category;
@@ -50,14 +44,14 @@ public class TechnicalDebtItem {
     /**
      * @return the id
      */
-    public String getId() {
+    public CompositeKey getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(CompositeKey id) {
         this.id = id;
     }
 
@@ -73,6 +67,41 @@ public class TechnicalDebtItem {
      */
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public class CompositeKey implements Serializable {
+        private static final long serialVersionUID = -5455868338014840934L;
+
+        private Character categoryInitial;
+        private String issueCode;
+
+        /**
+         * @return the categoryInitial
+         */
+        public Character getCategoryInitial() {
+            return categoryInitial;
+        }
+
+        /**
+         * @param categoryInitial the categoryInitial to set
+         */
+        public void setCategoryInitial(Character categoryInitial) {
+            this.categoryInitial = categoryInitial;
+        }
+
+        /**
+         * @return the issueCode
+         */
+        public String getIssueCode() {
+            return issueCode;
+        }
+
+        /**
+         * @param issueCode the issueCode to set
+         */
+        public void setIssueCode(String issueCode) {
+            this.issueCode = issueCode;
+        }
     }
 
 }
