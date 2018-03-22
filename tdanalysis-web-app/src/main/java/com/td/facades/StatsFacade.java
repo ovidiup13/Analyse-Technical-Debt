@@ -12,6 +12,7 @@ import java.util.Optional;
 
 import com.td.models.CommitModel;
 import com.td.models.CommitStats;
+import com.td.models.IssueModel;
 import com.td.models.IssueStats;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,9 @@ public class StatsFacade {
     private RepositoryFacade repositoryFacade;
 
     /***
-     * Returns a map of statistics of the calculated work effort and technical debt per issue.
+     * Returns list of issue stats by calculating work effort using commit timestamps.
      */
-    public List<IssueStats> getIssueStats(String repositoryId) {
+    public List<IssueStats> getIssueStatsByCommitTimestamp(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
         List<IssueStats> result = new ArrayList<>(commits.size());
 
@@ -46,7 +47,45 @@ public class StatsFacade {
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
 
-            double workEffort = Double.parseDouble(formatter.format(getWorkEffortByCommits(issueCommits)));
+            double workEffort = Double.parseDouble(formatter.format(getWorkEffortByCommitTimestamp(issueCommits)));
+            stats.setWorkEffort(workEffort);
+
+            result.add(stats);
+        });
+        return result;
+    }
+
+    /***
+    * Returns a list of issue stats by calculating work effort using ticket timestamps.
+    */
+    public List<IssueStats> getIssueStatsByIssueTimestamp(String repositoryId) {
+        List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
+        List<IssueStats> result = new ArrayList<>(commits.size());
+
+        DecimalFormat formatter = new DecimalFormat("#0.00");
+
+        commits.forEach(item -> {
+            Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
+            String issueKey = entry.getKey();
+
+            // get issue model
+            Optional<IssueModel> issueOpt = repositoryFacade.getIssue(repositoryId, issueKey);
+            if (!issueOpt.isPresent()) {
+                return;
+            }
+            IssueModel issue = issueOpt.get();
+
+            List<CommitModel> issueCommits = entry.getValue();
+
+            // generate simple stats
+            IssueStats stats = new IssueStats();
+            stats.setIssueKey(issueKey);
+            stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
+            stats.setTotalCommits(issueCommits.size());
+            stats.setAuthor(issueCommits.get(0).getAuthor());
+
+            String effort = formatter.format(getWorkEffortByTicketTimestamp(issue, issueCommits));
+            double workEffort = Double.parseDouble(effort);
             stats.setWorkEffort(workEffort);
 
             result.add(stats);
@@ -104,10 +143,10 @@ public class StatsFacade {
     }
 
     /***
-     * Returns the overall work effort spent on a sequence of commits, based on commit timestamps.
-     * It is a crude way to calculate work effort, there are better approaches.
+     * Returns the overall work effort spent on a sequence of commits, based on
+     * commit timestamps.
      */
-    private double getWorkEffortByCommits(List<CommitModel> commits) {
+    private double getWorkEffortByCommitTimestamp(List<CommitModel> commits) {
         int numberOfCommits = commits.size();
         CommitModel firstCommit = commits.get(0);
         CommitModel lastCommit = commits.get(numberOfCommits - 1);
@@ -119,6 +158,16 @@ public class StatsFacade {
         CommitModel previousCommit = previousOpt.isPresent() ? previousOpt.get() : firstCommit;
 
         return normalizeWorkEffort(lastCommit.getTimestamp(), previousCommit.getTimestamp());
+    }
+
+    /***
+    * Returns the overall work effort spent on a sequence of commits, based on
+    * ticket creation date and last commit by author.
+    */
+    private double getWorkEffortByTicketTimestamp(IssueModel issue, List<CommitModel> commits) {
+        int numberOfCommits = commits.size();
+        CommitModel lastCommit = commits.get(numberOfCommits - 1);
+        return normalizeWorkEffort(lastCommit.getTimestamp(), issue.getCreated());
     }
 
     /**
@@ -146,7 +195,8 @@ public class StatsFacade {
     }
 
     /**
-     * Calculates the work effort between two dates, assuming that the normal working day is 8 hours.
+     * Calculates the work effort between two dates, assuming that the normal
+     * working day is 8 hours.
      */
     private double normalizeWorkEffort(LocalDateTime t1, LocalDateTime t2) {
         Duration duration = Duration.between(t1, t2);
