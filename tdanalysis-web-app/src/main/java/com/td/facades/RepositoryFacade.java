@@ -149,7 +149,7 @@ public class RepositoryFacade {
      */
     private boolean filterByCount(Map<String, List<CommitModel>> item) {
         Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
-        return entry.getValue().size() > OVER_COMMITS_PER_ISSUE;
+        return entry.getValue().size() >= OVER_COMMITS_PER_ISSUE;
     }
 
     /**
