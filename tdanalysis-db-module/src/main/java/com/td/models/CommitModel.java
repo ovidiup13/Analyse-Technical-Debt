@@ -28,6 +28,8 @@ public class CommitModel implements Comparable<CommitModel> {
     private String author;
     private BuildStatus buildStatus;
     private CommitDiff diff;
+
+    @Deprecated
     private List<BugModel> bugs;
 
     /**
@@ -95,10 +97,12 @@ public class CommitModel implements Comparable<CommitModel> {
         this.diff = diff;
     }
 
+    @Deprecated
     public List<BugModel> getBugs() {
         return bugs;
     }
 
+    @Deprecated
     public void setBugs(List<BugModel> bugs) {
         this.bugs = bugs;
     }

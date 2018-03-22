@@ -9,7 +9,7 @@ public class TechnicalDebt {
     private int mediumCount;
     private int lowCount;
 
-    private List<String> items;
+    private List<CommitTD> tdItems;
 
     /**
      * @return the totalCount
@@ -68,17 +68,17 @@ public class TechnicalDebt {
     }
 
     /**
-     * @return the items
+     * @return the tdItems
      */
-    public List<String> getItems() {
-        return items;
+    public List<CommitTD> getTdItems() {
+        return tdItems;
     }
 
     /**
-     * @param items the items to set
+     * @param tdItems the tdItems to set
      */
-    public void setItems(List<String> items) {
-        this.items = items;
+    public void setTdItems(List<CommitTD> tdItems) {
+        this.tdItems = tdItems;
     }
 
 }
