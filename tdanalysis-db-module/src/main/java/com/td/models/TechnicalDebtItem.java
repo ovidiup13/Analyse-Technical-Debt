@@ -69,7 +69,7 @@ public class TechnicalDebtItem {
         this.category = category;
     }
 
-    public class CompositeKey implements Serializable {
+    public static class CompositeKey implements Serializable {
         private static final long serialVersionUID = -5455868338014840934L;
 
         private Character categoryInitial;
