@@ -27,7 +27,7 @@ public class CommitModel implements Comparable<CommitModel> {
     private String message;
     private String author;
     private BuildStatus buildStatus;
-    private DiffModel diff;
+    private CommitDiff diff;
     private List<BugModel> bugs;
 
     /**
@@ -87,11 +87,11 @@ public class CommitModel implements Comparable<CommitModel> {
         this.timestamp = timestamp;
     }
 
-    public DiffModel getDiff() {
+    public CommitDiff getDiff() {
         return diff;
     }
 
-    public void setDiff(DiffModel diff) {
+    public void setDiff(CommitDiff diff) {
         this.diff = diff;
     }
 
