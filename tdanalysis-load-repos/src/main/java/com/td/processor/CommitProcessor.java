@@ -41,9 +41,6 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
     @Value("${maven.home.path}")
     private String mavenHomePath;
 
-    @Value("${findbugs.home.path}")
-    private String findbugsPath;
-
     @Value("${jira.username}")
     private String jiraUsername;
 
@@ -55,6 +52,9 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
     @Value("${github.token}")
     private String githubToken;
+
+    @Autowired
+    private StaticAnalysisHelper staticAnalysisHelper;
 
     @Autowired
     private CommitRepository commitRepository;
@@ -69,7 +69,6 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
         // helpers
         BuildHelper buildHelper = new BuildHelper(javaHomePath, mavenHomePath);
-        StaticAnalysisHelper staticAnalysisHelper = new StaticAnalysisHelper(findbugsPath);
         IssueTrackerHelper issueTrackerHelper = getTrackerHelper(repositoryModel);
 
         File repoPath = new File(Paths.get(tempFolder, repositoryModel.getName()).toString());

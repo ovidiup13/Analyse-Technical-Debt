@@ -4,6 +4,8 @@ import com.td.models.BugModel;
 import com.td.models.RepositoryModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class StaticAnalysisHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StaticAnalysisHelper.class);
@@ -22,17 +25,20 @@ public class StaticAnalysisHelper {
     private static final String JAR_EXTENSION = ".jar";
     private static final String FILE_EXTENSION_SEPARATOR = ".";
 
-    private static final String COMMAND_LINUX = "spotbugs";
-    private static final String COMMAND_WINDOWS = "spotbugs.bat";
+    @Value("{findbugs.command.linux}")
+    private String findBugsCommandLinux;
 
-    private static final String COMMAND_LINE = "-textui";
-    private static final String PRIORITY = "-high";
+    @Value("{findbugs.command.windows}")
+    private String findBugsCommandWindows;
 
-    private String findbugsPath;
+    @Value("{findbugs.command.ui}")
+    private String findBugsUIParam;
 
-    public StaticAnalysisHelper(String analyserPath) {
-        this.findbugsPath = analyserPath;
-    }
+    @Value("{findbugs.command.priority}")
+    private String findBugsPriority;
+
+    @Value("{findbugs.home.path}")
+    private String findBugsPath;
 
     /***
      * Executes the analysis for all project JARs found in the directory.
@@ -47,7 +53,8 @@ public class StaticAnalysisHelper {
                 repositoryModel.getAuthor()));
 
         Set<BugModel> results = Collections.synchronizedSet(new HashSet<>());
-        String analysisCommand = System.getProperty("os.name").contains("Windows") ? COMMAND_WINDOWS : COMMAND_LINUX;
+        String analysisCommand = System.getProperty("os.name").contains("Windows") ? findBugsCommandWindows
+                : findBugsCommandLinux;
         List<String> projectJars = getProjectJars(repositoryModel.getProjectFolder(), repositoryModel.getName());
 
         // process JARs in parallel to speed up analysis
@@ -79,12 +86,12 @@ public class StaticAnalysisHelper {
         ProcessBuilder builder = new ProcessBuilder();
 
         // set up process
-        builder.command(command, COMMAND_LINE, PRIORITY, jarPath);
+        builder.command(command, findBugsUIParam, findBugsPriority, jarPath);
         builder.directory(projectDirectory);
 
         // make sure findbugs is in process path
         Map<String, String> envs = builder.environment();
-        envs.put("PATH", findbugsPath + File.pathSeparator + System.getenv("PATH"));
+        envs.put("PATH", findBugsPath + File.pathSeparator + System.getenv("PATH"));
 
         Process p = builder.start();
 
