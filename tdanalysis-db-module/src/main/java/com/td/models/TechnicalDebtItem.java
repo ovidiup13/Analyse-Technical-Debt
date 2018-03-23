@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class TechnicalDebtItem {
 
     @Id
-    private CompositeKey id;
+    private CompositeKey _id;
 
     @Indexed
     private String category;
@@ -45,14 +45,14 @@ public class TechnicalDebtItem {
      * @return the id
      */
     public CompositeKey getId() {
-        return id;
+        return _id;
     }
 
     /**
      * @param id the id to set
      */
     public void setId(CompositeKey id) {
-        this.id = id;
+        this._id = id;
     }
 
     /**
