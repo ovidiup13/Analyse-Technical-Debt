@@ -29,7 +29,7 @@ public class CommitModel implements Comparable<CommitModel> {
     private BuildStatus buildStatus;
     private CommitDiff diff;
 
-    private CommitTD technicalDebt;
+    private TechnicalDebt technicalDebt;
 
     @Deprecated
     private List<BugModel> bugs;
@@ -148,14 +148,14 @@ public class CommitModel implements Comparable<CommitModel> {
     /**
      * @return the technicalDebt
      */
-    public CommitTD getTechnicalDebt() {
+    public TechnicalDebt getTechnicalDebt() {
         return technicalDebt;
     }
 
     /**
      * @param technicalDebt the technicalDebt to set
      */
-    public void setTechnicalDebt(CommitTD technicalDebt) {
+    public void setTechnicalDebt(TechnicalDebt technicalDebt) {
         this.technicalDebt = technicalDebt;
     }
 }

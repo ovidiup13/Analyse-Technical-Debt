@@ -50,10 +50,18 @@ public class CommitTD {
         this.location = location;
     }
 
-    public class CodeLocation {
+    public static class CodeLocation {
 
         private String fileName;
         private int lineNumber;
+
+        public CodeLocation() {
+        }
+
+        public CodeLocation(String fileName, int number) {
+            this.fileName = fileName;
+            this.lineNumber = number;
+        }
 
         /**
          * @return the file name

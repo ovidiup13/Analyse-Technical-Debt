@@ -72,20 +72,28 @@ public class TechnicalDebtItem {
     public static class CompositeKey implements Serializable {
         private static final long serialVersionUID = -5455868338014840934L;
 
-        private Character categoryInitial;
+        private String categoryInitial;
         private String issueCode;
+
+        public CompositeKey() {
+        }
+
+        public CompositeKey(String category, String issueCode) {
+            this.categoryInitial = category;
+            this.issueCode = issueCode;
+        }
 
         /**
          * @return the categoryInitial
          */
-        public Character getCategoryInitial() {
+        public String getCategoryInitial() {
             return categoryInitial;
         }
 
         /**
          * @param categoryInitial the categoryInitial to set
          */
-        public void setCategoryInitial(Character categoryInitial) {
+        public void setCategoryInitial(String categoryInitial) {
             this.categoryInitial = categoryInitial;
         }
 

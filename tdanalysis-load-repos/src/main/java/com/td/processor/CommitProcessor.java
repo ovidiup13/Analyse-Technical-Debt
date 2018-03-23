@@ -14,18 +14,20 @@ import com.td.helpers.BuildHelper;
 import com.td.helpers.GithubTrackerHelper;
 import com.td.helpers.IssueTrackerHelper;
 import com.td.helpers.JiraTrackerHelper;
-import com.td.helpers.StaticAnalysisHelper;
 import com.td.helpers.VersionControlHelper;
-import com.td.models.BugModel;
+import com.td.helpers.analysis.FindBugsAnalysisHelper;
+import com.td.helpers.analysis.StaticAnalysisHelper;
 import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
+import com.td.models.TechnicalDebt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +56,8 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
     private String githubToken;
 
     @Autowired
-    private StaticAnalysisHelper staticAnalysisHelper;
+    @Qualifier("findBugsAnalysisHelper")
+    private FindBugsAnalysisHelper findBugsAnalysisHelper;
 
     @Autowired
     private CommitRepository commitRepository;
@@ -102,8 +105,8 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
 
                 // analyse for bugs
                 if (buildStatus.equals(BuildStatus.SUCCESSFUL)) {
-                    List<BugModel> bugs = staticAnalysisHelper.executeAnalysis(repositoryModel);
-                    commit.setBugs(bugs);
+                    TechnicalDebt td = findBugsAnalysisHelper.executeAnalysis(repositoryModel);
+                    commit.setTechnicalDebt(td);
                 }
 
                 // get issues from commit description

@@ -1,11 +1,4 @@
-package com.td.helpers;
-
-import com.td.models.BugModel;
-import com.td.models.RepositoryModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+package com.td.helpers.analysis;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,13 +7,29 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
-public class StaticAnalysisHelper {
+import com.td.models.CommitTD;
+import com.td.models.RepositoryModel;
+import com.td.models.TechnicalDebt;
+import com.td.models.TechnicalDebtPriority;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StaticAnalysisHelper.class);
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class FindBugsAnalysisHelper implements StaticAnalysisHelper {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FindBugsAnalysisHelper.class);
 
     private static final String JAR_EXTENSION = ".jar";
     private static final String FILE_EXTENSION_SEPARATOR = ".";
@@ -47,12 +56,12 @@ public class StaticAnalysisHelper {
      * @throws IOException if the program is not found
      * @throws InterruptedException if any of the processes is interrupted.
      */
-    public List<BugModel> executeAnalysis(RepositoryModel repositoryModel) throws IOException, InterruptedException {
+    public TechnicalDebt executeAnalysis(RepositoryModel repositoryModel) {
 
         LOGGER.info(String.format("Starting analysis for project %s:%s", repositoryModel.getName(),
                 repositoryModel.getAuthor()));
 
-        Set<BugModel> results = Collections.synchronizedSet(new HashSet<>());
+        Set<CommitTD> results = Collections.synchronizedSet(new HashSet<>());
         String analysisCommand = System.getProperty("os.name").contains("Windows") ? findBugsCommandWindows
                 : findBugsCommandLinux;
         List<String> projectJars = getProjectJars(repositoryModel.getProjectFolder(), repositoryModel.getName());
@@ -60,14 +69,30 @@ public class StaticAnalysisHelper {
         // process JARs in parallel to speed up analysis
         projectJars.parallelStream().forEach(jar -> {
             LOGGER.info(String.format("Starting analysis for JAR %s in project %s", jar, repositoryModel.getName()));
-            try {
-                results.addAll(analyseJar(analysisCommand, repositoryModel.getProjectFolder(), jar));
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            results.addAll(analyseJar(analysisCommand, repositoryModel.getProjectFolder(), jar));
         });
 
-        return new ArrayList<>(results);
+        return analyseResults(results);
+    }
+
+    TechnicalDebt analyseResults(Set<CommitTD> tdItems) {
+        TechnicalDebt td = new TechnicalDebt();
+
+        int highPriority = getPriorityCount(TechnicalDebtPriority.HIGH, tdItems);
+        int mediumPriority = getPriorityCount(TechnicalDebtPriority.MEDIUM, tdItems);
+        int lowPriority = getPriorityCount(TechnicalDebtPriority.LOW, tdItems);
+
+        td.setTotalCount(tdItems.size());
+        td.setHighCount(highPriority);
+        td.setMediumCount(mediumPriority);
+        td.setLowCount(lowPriority);
+        td.setTdItems(new ArrayList<>(tdItems));
+
+        return td;
+    }
+
+    int getPriorityCount(TechnicalDebtPriority priority, Set<CommitTD> tdItems) {
+        return (int) tdItems.stream().filter(item -> item.getPriority().equals(priority)).count();
     }
 
     /***
@@ -79,10 +104,9 @@ public class StaticAnalysisHelper {
      * @throws IOException if the program is not found
      * @throws InterruptedException if the process is interrupted
      */
-    private Set<BugModel> analyseJar(String command, File projectDirectory, String jarPath)
-            throws IOException, InterruptedException {
+    Set<CommitTD> analyseJar(String command, File projectDirectory, String jarPath) {
 
-        Set<BugModel> results = new HashSet<>();
+        Set<CommitTD> results = new HashSet<>();
         ProcessBuilder builder = new ProcessBuilder();
 
         // set up process
@@ -93,36 +117,35 @@ public class StaticAnalysisHelper {
         Map<String, String> envs = builder.environment();
         envs.put("PATH", findBugsPath + File.pathSeparator + System.getenv("PATH"));
 
-        Process p = builder.start();
+        Process p;
+        try {
+            p = builder.start();
+        } catch (IOException e) {
+            LOGGER.error("An error occurred when starting the find bugs process", e);
+            return results;
+        }
 
         // store the results as they are found
         BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line;
-        while ((line = reader.readLine()) != null) {
-            Optional<BugModel> optional = parseBug(line);
-            optional.ifPresent(results::add);
+        try {
+            while ((line = reader.readLine()) != null) {
+                Optional<CommitTD> optional = TechnicalDebtMapper.parseFindBugsOutput(line);
+                optional.ifPresent(results::add);
+            }
+        } catch (IOException e) {
+            LOGGER.error("An error occurred when processing findbugs output", e);
+            return results;
         }
 
         // wait for process to complete
-        p.waitFor();
-
-        return results;
-    }
-
-    private Optional<BugModel> parseBug(String line) {
-
-        BugModel bug = new BugModel();
-        int index = line.indexOf(":");
-
-        if (index < 0) {
-            return Optional.empty();
+        try {
+            p.waitFor();
+        } catch (InterruptedException e) {
+            LOGGER.error("An error occurred when processing findbugs output", e);
         }
 
-        bug.setType(line.substring(0, index - 1));
-        bug.setText(line.substring(index + 1));
-        bug.setFullText(line);
-
-        return Optional.of(bug);
+        return results;
     }
 
     /**
@@ -133,31 +156,37 @@ public class StaticAnalysisHelper {
      * @return a list of all the jars in the form of absolute paths
      * @throws IOException if the project folder does not exist
      */
-    private List<String> getProjectJars(File projectFolder, String projectName) throws IOException {
-        return Files.walk(Paths.get(projectFolder.getAbsolutePath())).filter(Files::isRegularFile)
-                .filter(path -> isProjectJar(path, projectName)).map(Path::toString).collect(Collectors.toList());
+    List<String> getProjectJars(File projectFolder, String projectName) {
+        Path paths = Paths.get(projectFolder.getAbsolutePath());
+        try {
+            return Files.walk(paths).filter(Files::isRegularFile).filter(path -> isProjectJar(path, projectName))
+                    .map(Path::toString).collect(Collectors.toList());
+        } catch (IOException e) {
+            LOGGER.error("An error occurred when searching for project JARs", e);
+            return new ArrayList<>();
+        }
     }
 
-    private static boolean isProjectJar(Path path, String projectName) {
+    boolean isProjectJar(Path path, String projectName) {
         String fileName = path.getFileName().toString();
         return fileName.contains(projectName) && isJarFile(fileName) && !isSourcesJar(fileName) && !isDocsJar(fileName)
                 && !isTestsJar(fileName);
     }
 
-    private static boolean isJarFile(String fileName) {
+    boolean isJarFile(String fileName) {
         int index = fileName.lastIndexOf(FILE_EXTENSION_SEPARATOR);
         return index > 0 && fileName.substring(index).equals(JAR_EXTENSION);
     }
 
-    private static boolean isSourcesJar(String fileName) {
+    boolean isSourcesJar(String fileName) {
         return fileName.contains("sources");
     }
 
-    private static boolean isDocsJar(String fileName) {
+    boolean isDocsJar(String fileName) {
         return fileName.contains("doc");
     }
 
-    private static boolean isTestsJar(String fileName) {
+    boolean isTestsJar(String fileName) {
         return fileName.contains("test");
     }
 }
