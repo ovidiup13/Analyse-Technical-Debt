@@ -1,0 +1,1309 @@
+[
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "BC" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Equals method should not assume anything about the type of its argument\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "BIT" },
+    "category": "Bad practice",
+    "descriptions": ["Check for sign of bitwise operation\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "CN" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Class implements Cloneable but does not define or use clone method\r",
+      "clone method does not call super.clone()\r",
+      "Class defines clone() but doesn't implement Cloneable\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "CNT" },
+    "category": "Bad practice",
+    "descriptions": ["Rough value of known constant found\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "Co" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Abstract class defines covariant compareTo() method\r",
+      "compareTo()/compare() incorrectly handles float or double value\r",
+      "compareTo()/compare() returns Integer.MIN_VALUE\r",
+      "Covariant compareTo() method defined\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "DE" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Method might drop exception\r",
+      "Method might ignore exception\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "DMI" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Adding elements of an entry set may fail due to reuse of Entry objects\r",
+      "Random object created and used only once\r",
+      "Don't use removeAll to clear a collection\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "Dm" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Method invokes System.exit(...)\r",
+      "Method invokes dangerous method runFinalizersOnExit\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "ES" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Comparison of String parameter using == or !=\r",
+      "Comparison of String objects using == or !=\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "Eq" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Abstract class defines covariant equals() method\r",
+      "Equals checks for incompatible operand\r",
+      "Class defines compareTo(...) and uses Object.equals()\r",
+      "equals method fails for subtypes\r",
+      "Covariant equals() method defined\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "FI" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Empty finalizer should be deleted\r",
+      "Explicit invocation of finalizer\r",
+      "Finalizer nulls fields\r",
+      "Finalizer only nulls fields\r",
+      "Finalizer does not call superclass finalizer\r",
+      "Finalizer nullifies superclass finalizer\r",
+      "Finalizer does nothing but call superclass finalizer\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "FS" },
+    "category": "Bad practice",
+    "descriptions": ["Format string should use %n rather than \\n\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "GC" },
+    "category": "Bad practice",
+    "descriptions": ["Unchecked type in generic call\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "HE" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Class defines equals() but not hashCode()\r",
+      "Class defines equals() and uses Object.hashCode()\r",
+      "Class defines hashCode() but not equals()\r",
+      "Class defines hashCode() and uses Object.equals()\r",
+      "Class inherits equals() and uses Object.hashCode()\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "IC" },
+    "category": "Bad practice",
+    "descriptions": ["Superclass uses subclass during initialization\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "IMSE" },
+    "category": "Bad practice",
+    "descriptions": ["Dubious catching of IllegalMonitorStateException\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "ISC" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Needless instantiation of class that only supplies static methods\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "It" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Iterator next() method can't throw NoSuchElementException\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "J2EE" },
+    "category": "Bad practice",
+    "descriptions": ["Store of non serializable object into HttpSession\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "JCIP" },
+    "category": "Bad practice",
+    "descriptions": ["Fields of immutable classes should be final\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "ME" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Public enum method unconditionally sets its field\r",
+      "Enum field is public and mutable\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "NP" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Method with Boolean return type returns explicit null\r",
+      "Clone method may return null\r",
+      "equals() method does not check for null argument\r",
+      "toString method may return null\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "Nm" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Class names should start with an upper case letter\r",
+      "Class is not derived from an Exception, even though it is named as such\r",
+      "Confusing method names\r",
+      "Field names should start with a lower case letter\r",
+      "Use of identifier that is a keyword in later versions of Java\r",
+      "Use of identifier that is a keyword in later versions of Java\r",
+      "Method names should start with a lower case letter\r",
+      "Class names shouldn't shadow simple name of implemented interface\r",
+      "Class names shouldn't shadow simple name of superclass\r",
+      "Very confusing method names (but perhaps intentional)\r",
+      "Method doesn't override method in superclass due to wrong package for parameter\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "ODR" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Method may fail to close database resource\r",
+      "Method may fail to close database resource on exception\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "OS" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Method may fail to close stream\r",
+      "Method may fail to close stream on exception\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "PZ" },
+    "category": "Bad practice",
+    "descriptions": ["Don't reuse entry objects in iterators\r"]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "RC" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Suspicious reference comparison to constant\r",
+      "Suspicious reference comparison of Boolean values\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "RR" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Method ignores results of InputStream.read()\r",
+      "Method ignores results of InputStream.skip()\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "RV" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Negating the result of compareTo()/compare()\r",
+      "Method ignores exceptional return value\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "SI" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Static initializer creates instance before all static final fields assigned\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "SW" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Certain swing methods needs to be invoked in Swing thread\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "Se" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Non-transient non-serializable instance field in serializable class\r",
+      "Non-serializable class has a serializable inner class\r",
+      "Non-serializable value stored into instance field of a serializable class\r",
+      "Comparator doesn't implement Serializable\r",
+      "Serializable inner class\r",
+      "serialVersionUID isn't final\r",
+      "serialVersionUID isn't long\r",
+      "serialVersionUID isn't static\r",
+      "Class is Serializable but its superclass doesn't define a void constructor\r",
+      "Class is Externalizable but doesn't define a void constructor\r",
+      "The readResolve method must be declared with a return type of Object. \r",
+      "Transient field that isn't set by deserialization. \r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "SnVI" },
+    "category": "Bad practice",
+    "descriptions": [
+      "Class is Serializable, but doesn't define serialVersionUID\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "B", "issueCode": "UI" },
+    "category": "Bad practice",
+    "descriptions": ["Usage of GetResource may be unsafe if class is extended"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "BC" },
+    "category": "Correctness",
+    "descriptions": [
+      "Impossible cast\r",
+      "Impossible downcast\r",
+      "Impossible downcast of toArray() result\r",
+      "instanceof will always return false\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "BIT" },
+    "category": "Correctness",
+    "descriptions": [
+      "Bitwise add of signed byte value\r",
+      "Incompatible bit masks\r",
+      "Check to see if ((...) & 0) == 0\r",
+      "Incompatible bit masks\r",
+      "Bitwise OR of signed byte value\r",
+      "Check for sign of bitwise operation\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "BOA" },
+    "category": "Correctness",
+    "descriptions": [
+      "Class overrides a method implemented in super class Adapter wrongly\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "BSHIFT" },
+    "category": "Correctness",
+    "descriptions": [
+      "Possible bad parsing of shift operation\r",
+      "32 bit int shifted by an amount not in the range -31..31\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "DLS" },
+    "category": "Correctness",
+    "descriptions": [
+      "Useless increment in return statement\r",
+      "Dead store of class literal\r",
+      "Overwritten increment\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "DMI" },
+    "category": "Correctness",
+    "descriptions": [
+      "Reversed method arguments\r",
+      "Bad constant value for month\r",
+      "BigDecimal constructed from double that isn't represented precisely\r",
+      "hasNext method invokes next\r",
+      "Collections should not contain themselves\r",
+      "D'oh! A nonsensical method invocation\r",
+      "Invocation of hashCode on an array\r",
+      "Double.longBitsToDouble invoked on an int\r",
+      "Vacuous call to collections\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "Dm" },
+    "category": "Correctness",
+    "descriptions": [
+      "Can't use reflection to check for presence of annotation without runtime retention\r",
+      "Futile attempt to change max pool size of ScheduledThreadPoolExecutor\r",
+      "Creation of ScheduledThreadPoolExecutor with zero core threads\r",
+      "Useless/vacuous call to EasyMock method\r",
+      "Incorrect combination of Math.max and Math.min\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "EC" },
+    "category": "Correctness",
+    "descriptions": [
+      "equals() used to compare array and nonarray\r",
+      "Invocation of equals() on an array, which is equivalent to ==\r",
+      "equals(...) used to compare incompatible arrays\r",
+      "Call to equals(null)\r",
+      "Call to equals() comparing unrelated class and interface\r",
+      "Call to equals() comparing different interface types\r",
+      "Call to equals() comparing different types\r",
+      "Using pointer equality to compare different types\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "Eq" },
+    "category": "Correctness",
+    "descriptions": [
+      "equals method always returns false\r",
+      "equals method always returns true\r",
+      "equals method compares class names rather than class objects\r",
+      "Covariant equals() method defined for enum\r",
+      "equals() method defined that doesn't override equals(Object)\r",
+      "equals() method defined that doesn't override Object.equals(Object)\r",
+      "equals method overrides equals in superclass and may not be symmetric\r",
+      "Covariant equals() method defined, Object.equals(Object) inherited\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "FE" },
+    "category": "Correctness",
+    "descriptions": ["Doomed test for equality to NaN\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "FS" },
+    "category": "Correctness",
+    "descriptions": [
+      "Format string placeholder incompatible with passed argument\r",
+      "The type of a supplied argument doesn't match format specifier\r",
+      "MessageFormat supplied where printf style format expected\r",
+      "More arguments are passed than are actually used in the format string\r",
+      "Illegal format string\r",
+      "Format string references missing argument\r",
+      "No previous argument for format string\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "GC" },
+    "category": "Correctness",
+    "descriptions": [
+      "No relationship between generic parameter and method argument\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "HE" },
+    "category": "Correctness",
+    "descriptions": [
+      "Signature declares use of unhashable class in hashed construct\r",
+      "Use of class without a hashCode() method in a hashed data structure\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "ICAST" },
+    "category": "Correctness",
+    "descriptions": [
+      "int value converted to long and used as absolute time\r",
+      "Integral value cast to double and then passed to Math.ceil\r",
+      "int value cast to float and then passed to Math.round\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "IJU" },
+    "category": "Correctness",
+    "descriptions": [
+      "JUnit assertion in run method will not be noticed by JUnit\r",
+      "TestCase declares a bad suite method \r",
+      "TestCase has no tests\r",
+      "TestCase defines setUp that doesn't call super.setUp()\r",
+      "TestCase implements a non-static suite method \r",
+      "TestCase defines tearDown that doesn't call super.tearDown()\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "IL" },
+    "category": "Correctness",
+    "descriptions": [
+      "A collection is added to itself\r",
+      "An apparent infinite loop\r",
+      "An apparent infinite recursive loop\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "IM" },
+    "category": "Correctness",
+    "descriptions": ["Integer multiply of result of integer remainder\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "INT" },
+    "category": "Correctness",
+    "descriptions": [
+      "Bad comparison of int value with long constant\r",
+      "Bad comparison of nonnegative value with negative constant or zero\r",
+      "Bad comparison of signed byte\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "IO" },
+    "category": "Correctness",
+    "descriptions": ["Doomed attempt to append to an object output stream\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "IP" },
+    "category": "Correctness",
+    "descriptions": [
+      "A parameter is dead upon entry to a method but overwritten\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "MF" },
+    "category": "Correctness",
+    "descriptions": [
+      "Class defines field that masks a superclass field\r",
+      "Method defines a variable that obscures a field\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "NP" },
+    "category": "Correctness",
+    "descriptions": [
+      "Null pointer dereference\r",
+      "Null pointer dereference in method on exception path\r",
+      "Method does not check for null argument\r",
+      "close() invoked on a value that is always null\r",
+      "Null value is guaranteed to be dereferenced\r",
+      "Value is null and guaranteed to be dereferenced on exception path\r",
+      "Non-null field is not initialized\r",
+      "Method call passes null to a non-null parameter \r",
+      "Method may return null, but is declared @Nonnull\r",
+      "A known null value is checked to see if it is an instance of a type\r",
+      "Possible null pointer dereference\r",
+      "Possible null pointer dereference in method on exception path\r",
+      "Method call passes null for non-null parameter\r",
+      "Method call passes null for non-null parameter\r",
+      "Non-virtual method call passes null for non-null parameter\r",
+      "Method with Optional return type returns explicit null\r",
+      "Store of null value into field annotated @Nonnull\r",
+      "Read of unwritten field\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "Nm" },
+    "category": "Correctness",
+    "descriptions": [
+      "Class defines equal(Object); should it be equals(Object)?\r",
+      "Class defines hashcode(); should it be hashCode()?\r",
+      "Class defines tostring(); should it be toString()?\r",
+      "Apparent method/constructor confusion\r",
+      "Very confusing method names\r",
+      "Method doesn't override method in superclass due to wrong package for parameter\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "QBA" },
+    "category": "Correctness",
+    "descriptions": ["Method assigns boolean literal in boolean expression\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "RANGE" },
+    "category": "Correctness",
+    "descriptions": [
+      "Array index is out of bounds\r",
+      "Array length is out of bounds\r",
+      "Array offset is out of bounds\r",
+      "String index is out of bounds\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "RC" },
+    "category": "Correctness",
+    "descriptions": ["Suspicious reference comparison\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "RCN" },
+    "category": "Correctness",
+    "descriptions": ["Nullcheck of value previously dereferenced\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "RE" },
+    "category": "Correctness",
+    "descriptions": [
+      "Invalid syntax for regular expression\r",
+      "File.separator used for regular expression\r",
+      "\".\" or \"|\" used for regular expression\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "RV" },
+    "category": "Correctness",
+    "descriptions": [
+      "Random value from 0 to 1 is coerced to the integer 0\r",
+      "Bad attempt to compute absolute value of signed 32-bit hashcode \r",
+      "Bad attempt to compute absolute value of signed random integer\r",
+      "Code checks for specific values returned by compareTo\r",
+      "Exception created and dropped rather than thrown\r",
+      "Method ignores return value\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "RpC" },
+    "category": "Correctness",
+    "descriptions": ["Repeated conditional tests\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "SA" },
+    "category": "Correctness",
+    "descriptions": [
+      "Self assignment of field\r",
+      "Self comparison of field with itself\r",
+      "Nonsensical self computation involving a field (e.g., x & x)\r",
+      "Self assignment of local rather than assignment to field\r",
+      "Self comparison of value with itself\r",
+      "Nonsensical self computation involving a variable (e.g., x & x)\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "SF" },
+    "category": "Correctness",
+    "descriptions": [
+      "Dead store due to switch statement fall through\r",
+      "Dead store due to switch statement fall through to throw\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "SIC" },
+    "category": "Correctness",
+    "descriptions": [
+      "Deadly embrace of non-static inner class and thread local\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "SIO" },
+    "category": "Correctness",
+    "descriptions": ["Unnecessary type check done using instanceof operator\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "SQL" },
+    "category": "Correctness",
+    "descriptions": [
+      "Method attempts to access a prepared statement parameter with index 0\r",
+      "Method attempts to access a result set field with index 0\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "STI" },
+    "category": "Correctness",
+    "descriptions": [
+      "Unneeded use of currentThread() call, to call interrupted() \r",
+      "Static Thread.interrupted() method invoked on thread instance\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "Se" },
+    "category": "Correctness",
+    "descriptions": [
+      "Method must be private in order for serialization to work\r",
+      "The readResolve method must not be declared as a static method. \r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "TQ" },
+    "category": "Correctness",
+    "descriptions": [
+      "Value annotated as carrying a type qualifier used where a value that must not carry that qualifier is required\r",
+      "Comparing values with incompatible type qualifiers\r",
+      "Value that might not carry a type qualifier is always used in a way requires that type qualifier\r",
+      "Value that might carry a type qualifier is always used in a way prohibits it from having that type qualifier\r",
+      "Value annotated as never carrying a type qualifier used where value carrying that qualifier is required\r",
+      "Value without a type qualifier used where a value is required to have that qualifier\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "UMAC" },
+    "category": "Correctness",
+    "descriptions": ["Uncallable method defined in anonymous class\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "UR" },
+    "category": "Correctness",
+    "descriptions": [
+      "Uninitialized read of field in constructor\r",
+      "Uninitialized read of field method called from constructor of superclass\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "USELESS_STRING" },
+    "category": "Correctness",
+    "descriptions": [
+      "Invocation of toString on an unnamed array\r",
+      "Invocation of toString on an array\r",
+      "Array formatted in useless way using format string\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "UwF" },
+    "category": "Correctness",
+    "descriptions": ["Field only ever set to null\r", "Unwritten field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "C", "issueCode": "VA" },
+    "category": "Correctness",
+    "descriptions": [
+      "Primitive array passed to function expecting a variable number of object arguments"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "BC" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Questionable cast to abstract collection\r",
+      "Questionable cast to concrete collection\r",
+      "Unchecked/unconfirmed cast\r",
+      "Unchecked/unconfirmed cast of return value from method\r",
+      "instanceof will always return true\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "BSHIFT" },
+    "category": "Dodgy code",
+    "descriptions": ["Unsigned right shift cast to short/byte\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "CI" },
+    "category": "Dodgy code",
+    "descriptions": ["Class is final but declares protected field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "DB" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Method uses the same code for two branches\r",
+      "Method uses the same code for two switch clauses\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "DLS" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Dead store to local variable\r",
+      "Useless assignment in return statement\r",
+      "Dead store of null to local variable\r",
+      "Dead store to local variable that shadows field\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "DMI" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Code contains a hard coded reference to an absolute pathname\r",
+      "Non serializable object written to ObjectOutput\r",
+      "Invocation of substring(0), which returns the original value\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "Dm" },
+    "category": "Dodgy code",
+    "descriptions": ["Thread passed where Runnable expected\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "Eq" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Class doesn't override equals in superclass\r",
+      "Unusual equals method \r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "FE" },
+    "category": "Dodgy code",
+    "descriptions": ["Test for floating point equality\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "FS" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Non-Boolean argument formatted using %b format specifier\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "IA" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Potentially ambiguous invocation of either an inherited or outer method\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "IC" },
+    "category": "Dodgy code",
+    "descriptions": ["Initialization circularity\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "ICAST" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Integral division result cast to double or float\r",
+      "Result of integer multiplication cast to long\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "IM" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Computation of average could overflow\r",
+      "Check for oddness that won't work for negative numbers \r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "INT" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Integer remainder modulo 1\r",
+      "Vacuous bit mask operation on integer value\r",
+      "Vacuous comparison of integer value\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "MTIA" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Class extends Servlet class and uses instance variables\r",
+      "Class extends Struts Action class and uses instance variables\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "NP" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Dereference of the result of readLine() without nullcheck\r",
+      "Immediate dereference of the result of readLine()\r",
+      "Load of known null value\r",
+      "Method tightens nullness annotation on parameter\r",
+      "Method relaxes nullness annotation on return value\r",
+      "Possible null pointer dereference due to return value of called method\r",
+      "Possible null pointer dereference on branch that might be infeasible\r",
+      "Parameter must be non-null but is marked as nullable\r",
+      "Read of unwritten public or protected field\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "NS" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Potentially dangerous use of non-short-circuit logic\r",
+      "Questionable use of non-short-circuit logic\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "PZLA" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Consider returning a zero length array rather than null\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "QF" },
+    "category": "Dodgy code",
+    "descriptions": ["Complicated, subtle or wrong increment in for-loop \r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "RCN" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Redundant comparison of non-null value to null\r",
+      "Redundant comparison of two null values\r",
+      "Redundant nullcheck of value known to be non-null\r",
+      "Redundant nullcheck of value known to be null\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "REC" },
+    "category": "Dodgy code",
+    "descriptions": ["Exception is caught when Exception is not thrown\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "RI" },
+    "category": "Dodgy code",
+    "descriptions": ["Class implements same interface as superclass\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "RV" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Method checks to see if result of String.indexOf is positive\r",
+      "Method discards result of readLine after checking if it is non-null\r",
+      "Remainder of hashCode could be negative\r",
+      "Remainder of 32-bit signed random integer\r",
+      "Method ignores return value, is this OK?\r",
+      "Return value of method without side effect is ignored\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "SA" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Double assignment of field\r",
+      "Double assignment of local variable \r",
+      "Self assignment of local variable\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "SF" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Switch statement found where one case falls through to the next case\r",
+      "Switch statement found where default case is missing\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "ST" },
+    "category": "Dodgy code",
+    "descriptions": ["Write to static field from instance method\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "Se" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Private readResolve method not inherited by subclasses\r",
+      "Transient field of class that isn't Serializable. \r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "TQ" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Value required to have type qualifier, but marked as unknown\r",
+      "Value required to not have type qualifier, but marked as unknown\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "UC" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Condition has no effect\r",
+      "Condition has no effect due to the variable type\r",
+      "Useless object created\r",
+      "Useless object created on stack\r",
+      "Useless non-empty void method\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "UCF" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Useless control flow\r",
+      "Useless control flow to next line\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "UrF" },
+    "category": "Dodgy code",
+    "descriptions": ["Unread public/protected field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "UuF" },
+    "category": "Dodgy code",
+    "descriptions": ["Unused public or protected field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "UwF" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Field not initialized in constructor but dereferenced without null check\r",
+      "Unwritten public or protected field\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "D", "issueCode": "XFB" },
+    "category": "Dodgy code",
+    "descriptions": [
+      "Method directly allocates a specific implementation of xml interfaces"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "X", "issueCode": "LG" },
+    "category": "Experimental",
+    "descriptions": [
+      "Potential lost logger changes due to weak reference in OpenJDK\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "X", "issueCode": "OBL" },
+    "category": "Experimental",
+    "descriptions": [
+      "Method may fail to clean up stream or resource\r",
+      "Method may fail to clean up stream or resource on checked exception"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "I", "issueCode": "Dm" },
+    "category": "Internationalisation",
+    "descriptions": [
+      "Consider using Locale parameterized version of invoked method\r",
+      "Reliance on default encoding"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "DP" },
+    "category": "Malicious code vulnerability",
+    "descriptions": [
+      "Classloaders should only be created inside doPrivileged block\r",
+      "Method invoked that should be only be invoked inside a doPrivileged block\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "EI" },
+    "category": "Malicious code vulnerability",
+    "descriptions": [
+      "May expose internal representation by returning reference to mutable object\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "EI2" },
+    "category": "Malicious code vulnerability",
+    "descriptions": [
+      "May expose internal representation by incorporating reference to mutable object\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "FI" },
+    "category": "Malicious code vulnerability",
+    "descriptions": ["Finalizer should be protected, not public\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "MS" },
+    "category": "Malicious code vulnerability",
+    "descriptions": [
+      "May expose internal static state by storing a mutable object into a static field\r",
+      "Field isn't final and can't be protected from malicious code\r",
+      "Public static method may expose internal representation by returning array\r",
+      "Field should be both final and package protected\r",
+      "Field is a mutable array\r",
+      "Field is a mutable collection\r",
+      "Field is a mutable collection which should be package protected\r",
+      "Field is a mutable Hashtable\r",
+      "Field should be moved out of an interface and made package protected\r",
+      "Field should be package protected\r",
+      "Field isn't final but should be\r",
+      "Field isn't final but should be refactored to be so"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "AT" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Sequence of calls to concurrent abstraction may not be atomic\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "DC" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Possible double check of field\r",
+      "Possible exposure of partially initialized object\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "DL" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Synchronization on Boolean\r",
+      "Synchronization on boxed primitive\r",
+      "Synchronization on interned String \r",
+      "Synchronization on boxed primitive values\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "Dm" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Monitor wait() called on Condition\r",
+      "A thread was created using the default empty run method\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "ESync" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Empty synchronized block\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "IS" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Inconsistent synchronization\r",
+      "Field not guarded against concurrent access\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "JLM" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Synchronization performed on Lock\r",
+      "Synchronization performed on util.concurrent instance\r",
+      "Using monitor style wait methods on util.concurrent abstraction\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "LI" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Incorrect lazy initialization of static field\r",
+      "Incorrect lazy initialization and update of static field\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "ML" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Synchronization on field in futile attempt to guard that field\r",
+      "Method synchronizes on an updated field\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "MSF" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Mutable servlet field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "MWN" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Mismatched notify()\r", "Mismatched wait()\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "NN" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Naked notify\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "NP" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Synchronize and null check on the same field.\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "No" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Using notify() rather than notifyAll()\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "RS" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Class's readObject() method is synchronized\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "RV" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Return value of putIfAbsent ignored, value passed to putIfAbsent reused\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "Ru" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Invokes run on a thread (did you mean to start it instead?)\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "SC" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Constructor invokes Thread.start()\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "SP" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Method spins on field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "STCAL" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Call to static Calendar\r",
+      "Call to static DateFormat\r",
+      "Static Calendar field\r",
+      "Static DateFormat\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "SWL" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Method calls Thread.sleep() with a lock held\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "TLW" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Wait with two locks held\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "UG" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Unsynchronized get method, synchronized set method\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "UL" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Method does not release lock on all paths\r",
+      "Method does not release lock on all exception paths\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "UW" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Unconditional wait\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "VO" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "An increment to a volatile field isn't atomic\r",
+      "A volatile reference to an array doesn't treat the array elements as volatile\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "WL" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Synchronization on getClass rather than class literal\r"]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "WS" },
+    "category": "Multithreaded correctness",
+    "descriptions": [
+      "Class's writeObject() method is synchronized but nothing else is\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "M", "issueCode": "Wa" },
+    "category": "Multithreaded correctness",
+    "descriptions": ["Condition.await() not in loop \r", "Wait not in loop "]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "Bx" },
+    "category": "Performance",
+    "descriptions": [
+      "Primitive value is boxed and then immediately unboxed\r",
+      "Primitive value is boxed then unboxed to perform primitive coercion\r",
+      "Primitive value is unboxed and coerced for ternary operator\r",
+      "Boxed value is unboxed and then immediately reboxed\r",
+      "Boxing a primitive to compare\r",
+      "Boxing/unboxing to parse a primitive\r",
+      "Method allocates a boxed primitive just to call toString\r",
+      "Method invokes inefficient floating-point Number constructor; use static valueOf instead\r",
+      "Method invokes inefficient Number constructor; use static valueOf instead\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "Dm" },
+    "category": "Performance",
+    "descriptions": [
+      "The equals and hashCode methods of URL are blocking\r",
+      "Maps and sets of URLs can be performance hogs\r",
+      "Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead\r",
+      "Explicit garbage collection; extremely dubious except in benchmarking code\r",
+      "Method allocates an object, only to get the class object\r",
+      "Use the nextInt method of Random rather than nextDouble to generate a random integer\r",
+      "Method invokes inefficient new String(String) constructor\r",
+      "Method invokes toString() method on a String\r",
+      "Method invokes inefficient new String() constructor\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "HSC" },
+    "category": "Performance",
+    "descriptions": [
+      "Huge string constants is duplicated across multiple class files\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "SBSC" },
+    "category": "Performance",
+    "descriptions": ["Method concatenates strings using + in a loop\r"]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "SIC" },
+    "category": "Performance",
+    "descriptions": [
+      "Should be a static inner class\r",
+      "Could be refactored into a named static inner class\r",
+      "Could be refactored into a static inner class\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "SS" },
+    "category": "Performance",
+    "descriptions": ["Unread field"]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "UM" },
+    "category": "Performance",
+    "descriptions": [
+      "Method calls static Math class method on a constant value\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "UPM" },
+    "category": "Performance",
+    "descriptions": ["Private method is never called\r"]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "UrF" },
+    "category": "Performance",
+    "descriptions": ["Unread field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "UuF" },
+    "category": "Performance",
+    "descriptions": ["Unused field\r"]
+  },
+  {
+    "_id": { "categoryInitial": "P", "issueCode": "WMI" },
+    "category": "Performance",
+    "descriptions": [
+      "Inefficient use of keySet iterator instead of entrySet iterator"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "S", "issueCode": "Dm" },
+    "category": "Security",
+    "descriptions": [
+      "Hardcoded constant database password\r",
+      "Empty database password\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "S", "issueCode": "HRS" },
+    "category": "Security",
+    "descriptions": [
+      "HTTP cookie formed from untrusted input\r",
+      "HTTP Response splitting vulnerability\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "S", "issueCode": "PT" },
+    "category": "Security",
+    "descriptions": [
+      "Absolute path traversal in servlet\r",
+      "Relative path traversal in servlet\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "S", "issueCode": "SQL" },
+    "category": "Security",
+    "descriptions": [
+      "Nonconstant string passed to execute or addBatch method on an SQL statement\r",
+      "A prepared statement is generated from a nonconstant String\r"
+    ]
+  },
+  {
+    "_id": { "categoryInitial": "S", "issueCode": "XSS" },
+    "category": "Security",
+    "descriptions": [
+      "JSP reflected cross site scripting vulnerability\r",
+      "Servlet reflected cross site scripting vulnerability in error page\r",
+      "Servlet reflected cross site scripting vulnerability"
+    ]
+  }
+]
