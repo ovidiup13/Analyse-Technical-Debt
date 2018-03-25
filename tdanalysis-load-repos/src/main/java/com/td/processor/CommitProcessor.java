@@ -10,13 +10,13 @@ import java.util.stream.Stream;
 
 import com.td.db.CommitRepository;
 import com.td.db.IssueRepository;
-import com.td.helpers.BuildHelper;
-import com.td.helpers.GithubTrackerHelper;
-import com.td.helpers.IssueTrackerHelper;
-import com.td.helpers.JiraTrackerHelper;
 import com.td.helpers.VersionControlHelper;
 import com.td.helpers.analysis.FindBugsAnalysisHelper;
-import com.td.helpers.analysis.StaticAnalysisHelper;
+import com.td.helpers.building.BuildHelper;
+import com.td.helpers.building.MavenBuildHelper;
+import com.td.helpers.tracker.GithubTrackerHelper;
+import com.td.helpers.tracker.IssueTrackerHelper;
+import com.td.helpers.tracker.JiraTrackerHelper;
 import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.IssueModel;
@@ -36,12 +36,6 @@ public class CommitProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommitProcessor.class);
     private static final String tempFolder = Paths.get(System.getProperty("user.dir"), "tmp").toString();
 
-    @Value("${java.home.path}")
-    private String javaHomePath;
-
-    @Value("${maven.home.path}")
-    private String mavenHomePath;
-
     @Value("${jira.username}")
     private String jiraUsername;
 
@@ -59,6 +53,9 @@ public class CommitProcessor {
     private FindBugsAnalysisHelper findBugsAnalysisHelper;
 
     @Autowired
+    private MavenBuildHelper mavenBuildHelper;
+
+    @Autowired
     private CommitRepository commitRepository;
 
     @Autowired
@@ -68,8 +65,6 @@ public class CommitProcessor {
         LOGGER.info(String.format("Processing commits for repository %s:%s", repositoryModel.getAuthor(),
                 repositoryModel.getName()));
 
-        // helpers
-        BuildHelper buildHelper = new BuildHelper(javaHomePath, mavenHomePath);
         IssueTrackerHelper issueTrackerHelper = getTrackerHelper(repositoryModel);
 
         File repoPath = new File(Paths.get(tempFolder, repositoryModel.getName()).toString());
@@ -96,7 +91,7 @@ public class CommitProcessor {
                 versionControlHelper.checkoutRevision(commit.getSha());
 
                 // build the revision
-                BuildStatus buildStatus = buildHelper.buildRepository(repositoryModel);
+                BuildStatus buildStatus = mavenBuildHelper.buildRepository(repositoryModel);
 
                 // set build status
                 commit.setBuildStatus(buildStatus);

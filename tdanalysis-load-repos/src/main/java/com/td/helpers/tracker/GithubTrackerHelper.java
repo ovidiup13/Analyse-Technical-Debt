@@ -1,4 +1,4 @@
-package com.td.helpers;
+package com.td.helpers.tracker;
 
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
