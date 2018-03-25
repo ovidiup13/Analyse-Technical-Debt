@@ -25,14 +25,13 @@ import com.td.models.TechnicalDebt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CommitProcessor implements ItemProcessor<RepositoryModel, List<CommitModel>> {
+public class CommitProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommitProcessor.class);
     private static final String tempFolder = Paths.get(System.getProperty("user.dir"), "tmp").toString();
@@ -65,7 +64,6 @@ public class CommitProcessor implements ItemProcessor<RepositoryModel, List<Comm
     @Autowired
     private IssueRepository issueRepository;
 
-    @Override
     public List<CommitModel> process(RepositoryModel repositoryModel) throws Exception {
         LOGGER.info(String.format("Processing commits for repository %s:%s", repositoryModel.getAuthor(),
                 repositoryModel.getName()));
