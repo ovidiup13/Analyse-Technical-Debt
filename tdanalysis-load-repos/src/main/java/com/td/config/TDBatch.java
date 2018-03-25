@@ -35,8 +35,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
 
-@Configuration
-@EnableBatchProcessing
+// @Configuration
+// @EnableBatchProcessing
 public class TDBatch {
 
     @Autowired
