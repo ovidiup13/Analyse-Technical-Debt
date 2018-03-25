@@ -27,7 +27,11 @@ public class CommitModel implements Comparable<CommitModel> {
     private String message;
     private String author;
     private BuildStatus buildStatus;
-    private DiffModel diff;
+    private CommitDiff diff;
+
+    private TechnicalDebt technicalDebt;
+
+    @Deprecated
     private List<BugModel> bugs;
 
     /**
@@ -87,18 +91,20 @@ public class CommitModel implements Comparable<CommitModel> {
         this.timestamp = timestamp;
     }
 
-    public DiffModel getDiff() {
+    public CommitDiff getDiff() {
         return diff;
     }
 
-    public void setDiff(DiffModel diff) {
+    public void setDiff(CommitDiff diff) {
         this.diff = diff;
     }
 
+    @Deprecated
     public List<BugModel> getBugs() {
         return bugs;
     }
 
+    @Deprecated
     public void setBugs(List<BugModel> bugs) {
         this.bugs = bugs;
     }
@@ -137,5 +143,19 @@ public class CommitModel implements Comparable<CommitModel> {
     public int compareTo(CommitModel o) {
         long diff = Duration.between(this.getTimestamp(), o.getTimestamp()).toMinutes();
         return (int) diff;
+    }
+
+    /**
+     * @return the technicalDebt
+     */
+    public TechnicalDebt getTechnicalDebt() {
+        return technicalDebt;
+    }
+
+    /**
+     * @param technicalDebt the technicalDebt to set
+     */
+    public void setTechnicalDebt(TechnicalDebt technicalDebt) {
+        this.technicalDebt = technicalDebt;
     }
 }

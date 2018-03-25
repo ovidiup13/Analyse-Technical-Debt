@@ -3,7 +3,7 @@ package com.td.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiffModel {
+public class CommitDiff {
 
     private int totalChanges;
 
@@ -15,7 +15,7 @@ public class DiffModel {
     private List<String> deletionSet;
     private List<String> modificationSet;
 
-    public DiffModel() {
+    public CommitDiff() {
         this.additionSet = new ArrayList<>();
         this.deletionSet = new ArrayList<>();
         this.modificationSet = new ArrayList<>();
@@ -77,17 +77,17 @@ public class DiffModel {
         this.modificationSet = modificationSet;
     }
 
-    public void add(String addition){
+    public void add(String addition) {
         this.additionSet.add(addition);
         this.additions++;
     }
 
-    public void modify(String modification){
+    public void modify(String modification) {
         this.modificationSet.add(modification);
         this.modifications++;
     }
 
-    public void delete(String deletion){
+    public void delete(String deletion) {
         this.deletionSet.add(deletion);
         this.deletions++;
     }

@@ -1,7 +1,7 @@
 package com.td.helpers;
 
 import com.td.models.CommitModel;
-import com.td.models.DiffModel;
+import com.td.models.CommitDiff;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -109,12 +109,12 @@ public class VersionControlHelper implements AutoCloseable {
      * @throws GitAPIException
      * @throws IOException
      */
-    public DiffModel getDiff(String oldCommit, String newCommit) throws GitAPIException, IOException {
+    public CommitDiff getDiff(String oldCommit, String newCommit) throws GitAPIException, IOException {
         Repository repository = gitProject.getRepository();
         final List<DiffEntry> diffs = gitProject.diff().setOldTree(prepareTreeParser(repository, oldCommit))
                 .setNewTree(prepareTreeParser(repository, newCommit)).call();
 
-        DiffModel diffModel = new DiffModel();
+        CommitDiff diffModel = new CommitDiff();
         diffModel.setTotalChanges(diffs.size());
 
         for (DiffEntry diff : diffs) {

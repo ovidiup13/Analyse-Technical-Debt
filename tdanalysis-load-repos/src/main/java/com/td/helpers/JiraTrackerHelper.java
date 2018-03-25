@@ -17,7 +17,7 @@ import com.atlassian.jira.rest.client.api.domain.TimeTracking;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
-import com.td.models.TimeTracker;
+import com.td.models.IssueModel.TimeTracker;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -134,7 +134,7 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
 
         //tracking
         TimeTracking tracking = issue.getTimeTracking();
-        TimeTracker tracker = new TimeTracker();
+        TimeTracker tracker = new IssueModel.TimeTracker();
         tracker.setEstimate(tracking.getOriginalEstimateMinutes() != null ? tracking.getOriginalEstimateMinutes() : 0);
         tracker.setRemaining(
                 tracking.getRemainingEstimateMinutes() != null ? tracking.getRemainingEstimateMinutes() : 0);
