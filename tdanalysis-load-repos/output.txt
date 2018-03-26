@@ -1,0 +1,68 @@
+:tdanalysis-db-module:compileJava UP-TO-DATE
+:tdanalysis-db-module:processResources UP-TO-DATE
+:tdanalysis-db-module:classes UP-TO-DATE
+:tdanalysis-db-module:jar UP-TO-DATE
+:tdanalysis-load-repos:compileJava UP-TO-DATE
+:tdanalysis-load-repos:processResources UP-TO-DATE
+:tdanalysis-load-repos:classes UP-TO-DATE
+:tdanalysis-load-repos:findMainClass
+:tdanalysis-load-repos:bootRun
+01:38:16,878 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback.groovy]
+01:38:16,879 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Could NOT find resource [logback-test.xml]
+01:38:16,879 |-INFO in ch.qos.logback.classic.LoggerContext[default] - Found resource [logback.xml] at [file:/mnt/d/Documents/university/year5/project/workspace/source/tdanalysis-load-repos/build/resources/main/logback.xml]
+01:38:16,993 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - debug attribute not set
+01:38:16,994 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+01:38:17,005 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+01:38:17,013 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+01:38:17,169 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+01:38:17,170 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+01:38:17,174 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to ERROR
+01:38:17,175 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - Could not find an appender named [STDERR]. Did you define it below instead of above in the configuration file?
+01:38:17,175 |-ERROR in ch.qos.logback.core.joran.action.AppenderRefAction - See http://logback.qos.ch/codes.html#appender_order for more details.
+01:38:17,175 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+01:38:17,176 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@6be46e8f - Registering current configuration as safe fallback point
+
+01:38:30.723 [ForkJoinPool.commonPool-worker-1] ERROR c.t.h.tracker.GithubTrackerHelper - An error occurred when connecting to GitHub
+org.kohsuke.github.GHFileNotFoundException: {"message":"Not Found","documentation_url":"https://developer.github.com/v3"}
+	at org.kohsuke.github.Requester.handleApiError(Requester.java:691)
+	at org.kohsuke.github.Requester._to(Requester.java:298)
+	at org.kohsuke.github.Requester.to(Requester.java:239)
+	at org.kohsuke.github.GitHub.getRepository(GitHub.java:474)
+	at com.td.helpers.tracker.GithubTrackerHelper.initialise(GithubTrackerHelper.java:37)
+	at com.td.helpers.tracker.GithubTrackerHelper.<init>(GithubTrackerHelper.java:31)
+	at com.td.processor.IssueProcessor.getTrackerHelper(IssueProcessor.java:65)
+	at com.td.processor.IssueProcessor.<init>(IssueProcessor.java:27)
+	at com.td.processor.RepositoryProcessor.createIssueProcessor(RepositoryProcessor.java:112)
+	at com.td.processor.RepositoryProcessor.lambda$processRepositories$1(RepositoryProcessor.java:58)
+	at java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:184)
+	at java.util.ArrayList$ArrayListSpliterator.forEachRemaining(ArrayList.java:1382)
+	at java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:481)
+	at java.util.stream.ForEachOps$ForEachTask.compute(ForEachOps.java:291)
+	at java.util.concurrent.CountedCompleter.exec(CountedCompleter.java:731)
+	at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+	at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+	at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+	at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+Caused by: java.io.FileNotFoundException: https://api.github.com/repos/https:/
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+	at sun.net.www.protocol.http.HttpURLConnection$10.run(HttpURLConnection.java:1944)
+	at sun.net.www.protocol.http.HttpURLConnection$10.run(HttpURLConnection.java:1939)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at sun.net.www.protocol.http.HttpURLConnection.getChainedException(HttpURLConnection.java:1938)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1508)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1492)
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:263)
+	at org.kohsuke.github.Requester.parse(Requester.java:617)
+	at org.kohsuke.github.Requester.parse(Requester.java:599)
+	at org.kohsuke.github.Requester._to(Requester.java:277)
+	... 17 common frames omitted
+Caused by: java.io.FileNotFoundException: https://api.github.com/repos/https:/
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1890)
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1492)
+	at java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:480)
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:347)
+	at org.kohsuke.github.Requester.parse(Requester.java:607)
+	... 19 common frames omitted

@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface TDReferenceRepository extends MongoRepository<TechnicalDebtItem, String> {
 
     @Cacheable("tditems")
-    TechnicalDebtItem findOne(CompositeKey id);
+    TechnicalDebtItem findTechnicalDebtItemById(CompositeKey id);
 
 }

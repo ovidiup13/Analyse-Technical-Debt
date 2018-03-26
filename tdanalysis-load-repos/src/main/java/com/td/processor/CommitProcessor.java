@@ -1,7 +1,5 @@
 package com.td.processor;
 
-import java.util.List;
-
 import com.td.db.CommitRepository;
 import com.td.helpers.analysis.FindBugsAnalysisHelper;
 import com.td.helpers.building.MavenBuildHelper;
@@ -13,7 +11,6 @@ import com.td.models.TechnicalDebt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,7 +19,6 @@ public class CommitProcessor {
     private static final Logger logger = LoggerFactory.getLogger(CommitProcessor.class);
 
     @Autowired
-    @Qualifier("findBugsAnalysisHelper")
     private FindBugsAnalysisHelper findBugsAnalysisHelper;
 
     @Autowired
@@ -31,6 +27,9 @@ public class CommitProcessor {
     @Autowired
     private CommitRepository commitRepository;
 
+    /**
+     * Builds and analyses revision of repository.
+     */
     public CommitModel processCommit(CommitModel commit, RepositoryModel repo) {
         // // set the repository id
         commit.setRepositoryId(repo.getId());
@@ -51,13 +50,21 @@ public class CommitProcessor {
      * TODO: make it work for gradle builds
      */
     public BuildStatus buildRevision(RepositoryModel repo) {
+        logger.info("Building current revision of repo", repo.getName());
         return mavenBuildHelper.buildRepository(repo);
     }
 
+    /**
+     * Analyses the current revision for technical debt.
+     */
     public TechnicalDebt analyseDebt(RepositoryModel repo) {
+        logger.info("Starting technical debt analysis for repository", repo.getName());
         return findBugsAnalysisHelper.executeAnalysis(repo);
     }
 
+    /**
+     * Writes the commit to the commit collection.
+     */
     public void saveCommit(CommitModel commit) {
         commitRepository.save(commit);
     }

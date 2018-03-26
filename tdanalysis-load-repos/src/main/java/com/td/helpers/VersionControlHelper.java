@@ -25,10 +25,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class VersionControlHelper implements AutoCloseable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VersionControlHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(VersionControlHelper.class);
     private static final String GIT_FOLDER = ".git";
 
     private Git gitProject;
@@ -47,9 +49,35 @@ public class VersionControlHelper implements AutoCloseable {
         this.gitProject = cloneProject(uri, path);
     }
 
+    public Stream<CommitModel> getCommitStream() {
+        try {
+            Iterable<RevCommit> commitIterable = gitProject.log().all().call();
+            return StreamSupport.stream(commitIterable.spliterator(), false).map(commit -> {
+                PersonIdent committer = commit.getCommitterIdent();
+                Date date = committer.getWhen();
+                TimeZone zone = committer.getTimeZone();
+
+                CommitModel model = new CommitModel();
+                model.setSha(commit.getName());
+                model.setAuthor(committer.getName());
+                model.setMessage(commit.getFullMessage());
+                model.setTimestamp(LocalDateTime.ofInstant(date.toInstant(), zone.toZoneId()));
+                try {
+                    model.setDiff(getDiff(commit.getName() + "^", commit.getName()));
+                } catch (GitAPIException | IOException e) {
+                    logger.error("An exception occurred when retrieving diff between commits.", e);
+                }
+
+                return model;
+            });
+        } catch (GitAPIException | IOException e) {
+            logger.error("An exception occurred when retrieving list of commits.", e);
+            return Stream.empty();
+        }
+    }
+
     /***
      * Retrieves all the list of commits on the main branch.
-     *
      */
     public List<CommitModel> getCommits() {
         List<CommitModel> result = new ArrayList<>();
@@ -65,11 +93,12 @@ public class VersionControlHelper implements AutoCloseable {
                 model.setAuthor(committer.getName());
                 model.setMessage(commit.getFullMessage());
                 model.setTimestamp(LocalDateTime.ofInstant(date.toInstant(), zone.toZoneId()));
+                model.setDiff(getDiff(commit.getName() + "^", commit.getName()));
 
                 result.add(model);
             }
         } catch (GitAPIException | IOException e) {
-            LOGGER.error("An exception occurred when retrieving list of commits.", e);
+            logger.error("An exception occurred when retrieving list of commits.", e);
         }
 
         return result;
@@ -80,16 +109,22 @@ public class VersionControlHelper implements AutoCloseable {
      * @param commitSHA SHA of commit to be checked out
      * @throws GitAPIException in case of error (e.g. commit does not exist)
      */
-    public void checkoutRevision(String commitSHA) throws GitAPIException {
-        LOGGER.info(String.format("Checking out revision %s", commitSHA));
-        gitProject.checkout().setName(commitSHA).call();
+    public boolean checkoutRevision(String commitSHA) {
+        logger.info(String.format("Checking out revision %s", commitSHA));
+        try {
+            gitProject.checkout().setName(commitSHA).call();
+            return true;
+        } catch (GitAPIException e) {
+            logger.error("An error occurred when checking a revision.", e);
+            return false;
+        }
     }
 
     /**
      * Opens an existing repository.
      */
     private Git openProject(File repoFile) throws IOException {
-        LOGGER.info(String.format("Opening git project residing at %s", repoFile.getAbsolutePath()));
+        logger.info(String.format("Opening git project residing at %s", repoFile.getAbsolutePath()));
         return new Git(new FileRepositoryBuilder().setGitDir(repoFile).readEnvironment().findGitDir().build());
     }
 
@@ -97,7 +132,7 @@ public class VersionControlHelper implements AutoCloseable {
      * Clones a repository from URI to a path.
      */
     private Git cloneProject(String uri, File path) throws GitAPIException {
-        LOGGER.info(String.format("Cloning git project from %s to path %s", uri, path.getAbsolutePath()));
+        logger.info(String.format("Cloning git project from %s to path %s", uri, path.getAbsolutePath()));
         return Git.cloneRepository().setURI(uri).setDirectory(path).call();
     }
 

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.td.db.IssueRepository;
 import com.td.helpers.VersionControlHelper;
+import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -54,12 +55,25 @@ public class RepositoryProcessor {
             }
 
             VersionControlHelper vch = optVc.get();
+            IssueProcessor issueProcessor = createIssueProcessor(repo);
 
-            // // get diff
-            // commit.setDiff(versionControlHelper.getDiff(commit.getSha() + "^", commit.getSha()));
+            // process commits
+            vch.getCommitStream().forEachOrdered(commit -> {
 
-            // // checkout revision
-            // versionControlHelper.checkoutRevision(commit.getSha());
+                // checkout revision
+                if (!vch.checkoutRevision(commit.getSha())) {
+                    return;
+                }
+
+                // get issues
+                List<IssueModel> issues = issueProcessor.getIssues(commit);
+                commit.setIssueIds(issueProcessor.getIssueIds(issues));
+                issueRepository.save(issues);
+
+                // process commit
+                commitProcessor.processCommit(commit, repo);
+                commitProcessor.saveCommit(commit);
+            });
 
             vch.close();
         });
@@ -89,5 +103,13 @@ public class RepositoryProcessor {
         }
 
         return Optional.ofNullable(versionControlHelper);
+    }
+
+    private IssueProcessor createIssueProcessor(RepositoryModel repo) {
+        if (repo.getIssueTrackerURI().contains("jira")) {
+            return new IssueProcessor(jiraUsername, jiraPassword, repo);
+        } else {
+            return new IssueProcessor(githubUsername, githubToken, repo);
+        }
     }
 }

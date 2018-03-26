@@ -60,9 +60,11 @@ public class IssueProcessor {
     */
     private IssueTrackerHelper getTrackerHelper() {
         if (repositoryModel.getIssueTrackerURI().contains("jira")) {
-            return new JiraTrackerHelper(URI.create(repositoryModel.getIssueTrackerURI()), username, password);
+            URI uri = URI.create(repositoryModel.getIssueTrackerURI());
+            return new JiraTrackerHelper(uri, username, password);
         } else {
-            return new GithubTrackerHelper(repositoryModel.getIssueTrackerURI(), username, password);
+            String repoId = repositoryModel.getAuthor() + "/" + repositoryModel.getName();
+            return new GithubTrackerHelper(repoId, username, password);
         }
     }
 
