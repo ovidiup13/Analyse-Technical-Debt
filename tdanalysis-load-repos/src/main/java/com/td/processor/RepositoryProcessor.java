@@ -6,12 +6,15 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import com.td.db.IssueRepository;
 import com.td.helpers.VersionControlHelper;
 import com.td.models.RepositoryModel;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,6 +22,24 @@ public class RepositoryProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(RepositoryProcessor.class);
     private static final String tempFolder = Paths.get(System.getProperty("user.dir"), "tmp").toString();
+
+    @Value("${jira.username}")
+    private String jiraUsername;
+
+    @Value("${jira.password}")
+    private String jiraPassword;
+
+    @Value("${github.username}")
+    private String githubUsername;
+
+    @Value("${github.token}")
+    private String githubToken;
+
+    @Autowired
+    private IssueRepository issueRepository;
+
+    @Autowired
+    private CommitProcessor commitProcessor;
 
     /**
      * Process the repositories in the file as follows:
@@ -28,11 +49,21 @@ public class RepositoryProcessor {
     public void processRepositories(List<RepositoryModel> repositories) {
         repositories.stream().parallel().forEach(repo -> {
             Optional<VersionControlHelper> optVc = readOrCloneRepository(repo);
-            if (optVc.isPresent()) {
-                VersionControlHelper vch = optVc.get();
-                vch.close();
+            if (!optVc.isPresent()) {
+                return;
             }
+
+            VersionControlHelper vch = optVc.get();
+
+            // // get diff
+            // commit.setDiff(versionControlHelper.getDiff(commit.getSha() + "^", commit.getSha()));
+
+            // // checkout revision
+            // versionControlHelper.checkoutRevision(commit.getSha());
+
+            vch.close();
         });
+
     }
 
     /**

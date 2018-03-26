@@ -12,7 +12,7 @@ public abstract class IssueTrackerHelper {
 
     protected Pattern issuePattern;
 
-    abstract Optional<IssueModel> getIssue(String issueId);
+    public abstract Optional<IssueModel> getIssue(String issueId);
 
     /**
      * Returns all the issue IDs from the commit description.
