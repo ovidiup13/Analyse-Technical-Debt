@@ -34,19 +34,19 @@ public class FindBugsAnalysisHelper implements StaticAnalysisHelper {
     private static final String JAR_EXTENSION = ".jar";
     private static final String FILE_EXTENSION_SEPARATOR = ".";
 
-    @Value("{findbugs.command.linux}")
+    @Value("${findbugs.command.linux}")
     private String findBugsCommandLinux;
 
-    @Value("{findbugs.command.windows}")
+    @Value("${findbugs.command.windows}")
     private String findBugsCommandWindows;
 
-    @Value("{findbugs.command.ui}")
+    @Value("${findbugs.command.ui}")
     private String findBugsUIParam;
 
-    @Value("{findbugs.command.priority}")
+    @Value("${findbugs.command.priority}")
     private String findBugsPriority;
 
-    @Value("{findbugs.home.path}")
+    @Value("${findbugs.home.path}")
     private String findBugsPath;
 
     /***
@@ -121,7 +121,8 @@ public class FindBugsAnalysisHelper implements StaticAnalysisHelper {
         try {
             p = builder.start();
         } catch (IOException e) {
-            LOGGER.error("An error occurred when starting the find bugs process", e);
+            LOGGER.error("An error occurred when starting the findbugs process", e);
+            e.printStackTrace();
             return results;
         }
 
@@ -135,6 +136,7 @@ public class FindBugsAnalysisHelper implements StaticAnalysisHelper {
             }
         } catch (IOException e) {
             LOGGER.error("An error occurred when processing findbugs output", e);
+            e.printStackTrace();
             return results;
         }
 
@@ -143,6 +145,7 @@ public class FindBugsAnalysisHelper implements StaticAnalysisHelper {
             p.waitFor();
         } catch (InterruptedException e) {
             LOGGER.error("An error occurred when processing findbugs output", e);
+            e.printStackTrace();
         }
 
         return results;

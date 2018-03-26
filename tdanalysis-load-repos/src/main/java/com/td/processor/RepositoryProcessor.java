@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.td.db.IssueRepository;
+import com.td.db.ProjectRepository;
 import com.td.helpers.VersionControlHelper;
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
@@ -40,6 +41,9 @@ public class RepositoryProcessor {
     private IssueRepository issueRepository;
 
     @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
     private CommitProcessor commitProcessor;
 
     /**
@@ -48,36 +52,45 @@ public class RepositoryProcessor {
      * 2. Process each commit one by one.
      */
     public void processRepositories(List<RepositoryModel> repositories) {
-        repositories.stream().parallel().forEach(repo -> {
-            Optional<VersionControlHelper> optVc = readOrCloneRepository(repo);
-            if (!optVc.isPresent()) {
-                return;
-            }
+        // add repos to database
+        projectRepository.save(repositories);
 
-            VersionControlHelper vch = optVc.get();
+        repositories.stream().forEach(repo -> {
+
             IssueProcessor issueProcessor = createIssueProcessor(repo);
 
-            // process commits
-            vch.getCommitStream().forEachOrdered(commit -> {
-
-                // checkout revision
-                if (!vch.checkoutRevision(commit.getSha())) {
+            Runnable run = () -> {
+                Optional<VersionControlHelper> optVc = readOrCloneRepository(repo);
+                if (!optVc.isPresent()) {
                     return;
                 }
 
-                // get issues
-                List<IssueModel> issues = issueProcessor.getIssues(commit);
-                commit.setIssueIds(issueProcessor.getIssueIds(issues));
-                issueRepository.save(issues);
+                VersionControlHelper vch = optVc.get();
 
-                // process commit
-                commitProcessor.processCommit(commit, repo);
-                commitProcessor.saveCommit(commit);
-            });
+                // process commits
+                vch.getCommitStream().forEachOrdered(commit -> {
 
-            vch.close();
+                    // checkout revision
+                    if (!vch.checkoutRevision(commit.getSha())) {
+                        return;
+                    }
+
+                    // get issues
+                    List<IssueModel> issues = issueProcessor.getIssues(commit);
+                    commit.setIssueIds(issueProcessor.getIssueIds(issues));
+                    issueRepository.save(issues);
+
+                    // process commit
+                    commitProcessor.processCommit(commit, repo);
+                    commitProcessor.saveCommit(commit);
+                });
+
+                vch.close();
+            };
+
+            Thread t = new Thread(run);
+            t.start();
         });
-
     }
 
     /**

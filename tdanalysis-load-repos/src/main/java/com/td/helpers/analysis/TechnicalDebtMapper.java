@@ -44,7 +44,7 @@ class TechnicalDebtMapper {
         int lastIndex = line.lastIndexOf("]");
 
         String fileName = line.substring(nameIndex, separatorIndex);
-        int lineNumber = Integer.parseInt(line.substring(separatorIndex + 6, lastIndex));
+        int lineNumber = Integer.parseInt(line.substring(separatorIndex + 6, lastIndex).trim());
 
         return new CodeLocation(fileName, lineNumber);
     }
