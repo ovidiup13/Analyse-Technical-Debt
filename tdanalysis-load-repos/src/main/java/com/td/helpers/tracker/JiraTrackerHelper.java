@@ -4,10 +4,7 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
@@ -16,78 +13,45 @@ import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.TimeTracking;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.td.models.IssueModel;
-import com.td.models.RepositoryModel;
 import com.td.models.IssueModel.TimeTracker;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JiraTrackerHelper implements IssueTrackerHelper {
+public class JiraTrackerHelper extends IssueTrackerHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JiraTrackerHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(JiraTrackerHelper.class);
 
-    private static final String STORY_POINTS_FIELD = "Story Points";
-    private static final String ISSUE_PATTERN = "[A-Z]+-[0-9]+";
-
-    private String username;
-    private String password;
-
-    private RepositoryModel repository;
-
-    private Pattern issuePattern;
+    // private static final String STORY_POINTS_FIELD = "Story Points";
+    private static final String PATTERN = "[A-Z]+-[0-9]+";
 
     private JiraRestClient jiraRestClient;
 
-    public JiraTrackerHelper(String username, String password, RepositoryModel repositoryModel) {
-        this.username = username;
-        this.password = password;
-        this.repository = repositoryModel;
-        this.issuePattern = Pattern.compile(ISSUE_PATTERN);
-        this.jiraRestClient = initialise();
-    }
-
-    /***
-     * Initializes the REST client to retrieve Jira details.
-     */
-    private JiraRestClient initialise() {
-        LOGGER.info("Initialising the Jira REST client");
-        return new AsynchronousJiraRestClientFactory().createWithBasicHttpAuthentication(getJiraURI(), this.username,
-                this.password);
+    public JiraTrackerHelper(URI uri, String username, String password) {
+        this.issuePattern = Pattern.compile(PATTERN);
+        initialise(uri, username, password);
     }
 
     /***
      * Retrieves the issue details associated with the issue key.
      */
     public Optional<IssueModel> getIssue(String issueKey) {
-        LOGGER.info(
-                String.format("Retrieving issue %s from Jira URL %s", issueKey, this.repository.getIssueTrackerURI()));
-
         try {
             Issue issue = jiraRestClient.getIssueClient().getIssue(issueKey).claim();
             return Optional.of(jiraIssueToIssueModel(issue));
         } catch (RestClientException e) {
-            LOGGER.error("Could not retrieve issue " + issueKey);
+            logger.error("Could not retrieve issue " + issueKey);
             return Optional.empty();
         }
     }
 
-    public List<String> getKeys(String description) {
-        List<String> keys = new ArrayList<>();
-
-        Matcher matcher = issuePattern.matcher(description);
-        while (matcher.find()) {
-            keys.add(matcher.group());
-        }
-
-        return keys;
+    AsynchronousJiraRestClientFactory getJiraFactory() {
+        return new AsynchronousJiraRestClientFactory();
     }
 
-    /***
-     * Returns a URI object of the Jira instance.
-     */
-    private URI getJiraURI() {
-        return URI.create(this.repository.getIssueTrackerURI());
+    void initialise(URI uri, String username, String password) {
+        this.jiraRestClient = getJiraFactory().createWithBasicHttpAuthentication(uri, username, password);
     }
 
     /***
@@ -107,11 +71,13 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
     private IssueModel jiraIssueToIssueModel(Issue issue) {
         IssueModel result = new IssueModel();
 
-        String repositoryName = repository.getName();
+        // String repositoryName = repository.getName();
+        // result.setRepositoryId(this.repository.getId());
+        // result.setIssueId(repositoryName + "/" + issueKey);
+
         String issueKey = issue.getKey();
 
         // meta
-        result.setIssueId(repositoryName + "/" + issueKey);
         result.setIssueKey(issueKey);
         result.setType(issue.getIssueType().getName());
         result.setStatus(issue.getStatus().getName());
@@ -140,8 +106,6 @@ public class JiraTrackerHelper implements IssueTrackerHelper {
                 tracking.getRemainingEstimateMinutes() != null ? tracking.getRemainingEstimateMinutes() : 0);
         tracker.setLogged(tracking.getTimeSpentMinutes() != null ? tracking.getTimeSpentMinutes() : 0);
         result.setTimeTracker(tracker);
-
-        result.setRepositoryId(this.repository.getId());
 
         return result;
     }

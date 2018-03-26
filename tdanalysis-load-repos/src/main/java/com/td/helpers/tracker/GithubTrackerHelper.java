@@ -1,7 +1,16 @@
 package com.td.helpers.tracker;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import com.td.models.IssueModel;
-import com.td.models.RepositoryModel;
+
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
@@ -9,35 +18,26 @@ import org.kohsuke.github.GitHub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+public class GithubTrackerHelper extends IssueTrackerHelper {
 
-public class GithubTrackerHelper implements IssueTrackerHelper {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GithubTrackerHelper.class);
-
-    private static final String ISSUE_PATTERN = "#[0-9]+";
+    private static final Logger logger = LoggerFactory.getLogger(GithubTrackerHelper.class);
+    private static final String PATTERN = "#[0-9]+";
 
     private GitHub github;
     private GHRepository repository;
 
-    private RepositoryModel repositoryModel;
+    public GithubTrackerHelper(String repo, String login, String token) {
+        this.issuePattern = Pattern.compile(PATTERN);
+        initialise(repo, login, token);
+    }
 
-    private Pattern issuePattern;
-
-    public GithubTrackerHelper(String login, String token, RepositoryModel repository) throws IOException {
-        this.github = GitHub.connect(login, token);
-        this.repository = github.getRepository(repository.getAuthor() + "/" + repository.getName());
-        this.repositoryModel = repository;
-        this.issuePattern = Pattern.compile(ISSUE_PATTERN);
+    void initialise(String repo, String login, String token) {
+        try {
+            this.github = GitHub.connect(login, token);
+            this.repository = github.getRepository(repo);
+        } catch (IOException e) {
+            logger.error("An error occurred when connecting to GitHub", e);
+        }
     }
 
     @Override
@@ -47,24 +47,9 @@ public class GithubTrackerHelper implements IssueTrackerHelper {
             issue = repository.getIssue(Integer.parseInt(issueId.substring(1)));
             return Optional.of(githubToIssueModel(issue));
         } catch (NumberFormatException | IOException e) {
-            LOGGER.error("An error occurred when retrieving issue " + issueId);
+            logger.error("An error occurred when retrieving issue " + issueId);
             return Optional.empty();
         }
-    }
-
-    /**
-     * Returns all the issue IDs from the commit description.
-     * @param description - commit text
-     */
-    public List<String> getKeys(String description) {
-        List<String> keys = new ArrayList<>();
-
-        Matcher matcher = issuePattern.matcher(description);
-        while (matcher.find()) {
-            keys.add(matcher.group());
-        }
-
-        return keys;
     }
 
     /**
@@ -97,8 +82,6 @@ public class GithubTrackerHelper implements IssueTrackerHelper {
         if (closed != null) {
             result.setClosed(dateToLocalDateTime(closed));
         }
-
-        result.setRepositoryId(repositoryModel.getId());
 
         return result;
     }

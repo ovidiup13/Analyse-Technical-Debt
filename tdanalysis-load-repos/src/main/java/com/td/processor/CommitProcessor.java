@@ -2,6 +2,7 @@ package com.td.processor;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,6 @@ import com.td.db.CommitRepository;
 import com.td.db.IssueRepository;
 import com.td.helpers.VersionControlHelper;
 import com.td.helpers.analysis.FindBugsAnalysisHelper;
-import com.td.helpers.building.BuildHelper;
 import com.td.helpers.building.MavenBuildHelper;
 import com.td.helpers.tracker.GithubTrackerHelper;
 import com.td.helpers.tracker.IssueTrackerHelper;
@@ -127,13 +127,12 @@ public class CommitProcessor {
 
     /**
      * Method that returns an instance of IssueTrackerHelper based on the type of issue tracker for each repository.
-     * TODO: might be a good idea to put this into a factory object
      */
     private IssueTrackerHelper getTrackerHelper(RepositoryModel repository) throws IOException {
         if (repository.getIssueTrackerURI().contains("jira")) {
-            return new JiraTrackerHelper(jiraUsername, jiraPassword, repository);
+            return new JiraTrackerHelper(URI.create(repository.getIssueTrackerURI()), jiraUsername, jiraPassword);
         } else {
-            return new GithubTrackerHelper(githubUsername, githubToken, repository);
+            return new GithubTrackerHelper(repository.getIssueTrackerURI(), githubUsername, githubToken);
         }
     }
 
