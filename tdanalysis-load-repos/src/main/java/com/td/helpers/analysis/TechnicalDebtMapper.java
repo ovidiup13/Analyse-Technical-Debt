@@ -7,7 +7,12 @@ import com.td.models.TechnicalDebtPriority;
 import com.td.models.CommitTD.CodeLocation;
 import com.td.models.TechnicalDebtItem.CompositeKey;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class TechnicalDebtMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(TechnicalDebtMapper.class);
 
     static final String SEPARATOR = ":";
 
@@ -19,25 +24,41 @@ public class TechnicalDebtMapper {
 
     public static Optional<CommitTD> parseFindBugsOutput(String line) {
 
-        CommitTD result = new CommitTD();
-        int firstIndex = line.indexOf(SEPARATOR);
+        try {
+            CommitTD result = new CommitTD();
+            int firstIndex = line.indexOf(SEPARATOR);
 
-        if (firstIndex < 0) {
+            if (firstIndex < 0) {
+                return Optional.empty();
+            }
+
+            String[] codes = line.substring(0, firstIndex).split(" ");
+
+            String categoryInitial = codes[1];
+            String issueCode = codes[2];
+            CodeLocation location = parseLocation(line);
+            TechnicalDebtPriority priority = getPriority(codes[0]);
+
+            result.setId(new CompositeKey(categoryInitial, issueCode));
+            result.setLocation(location);
+            result.setPriority(priority);
+
+            return Optional.of(result);
+        } catch (Exception e) {
+            /**
+             * I know this is generic, and things like this should not appear in
+             * the code. However, findbugs output is a mess and it extremely
+             * difficult to parse. There might be some lines of the output which
+             * are weird and not covered by the parsing algorithm.
+             *
+             * This try-catch block aims to cover these issues and keep the
+             * thread running in case of an exception. The line will be ignored
+             * in such cases.
+             */
+            logger.error("An error occurred while parsing findbugs output.");
+            logger.error("Line error: " + line);
             return Optional.empty();
         }
-
-        String[] codes = line.substring(0, firstIndex).split(" ");
-
-        String categoryInitial = codes[1];
-        String issueCode = codes[2];
-        CodeLocation location = parseLocation(line);
-        TechnicalDebtPriority priority = getPriority(codes[0]);
-
-        result.setId(new CompositeKey(categoryInitial, issueCode));
-        result.setLocation(location);
-        result.setPriority(priority);
-
-        return Optional.of(result);
     }
 
     /**
