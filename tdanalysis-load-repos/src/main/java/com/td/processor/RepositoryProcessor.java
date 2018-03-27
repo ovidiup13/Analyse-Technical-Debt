@@ -23,7 +23,9 @@ import org.springframework.stereotype.Component;
 public class RepositoryProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(RepositoryProcessor.class);
-    private static final String tempFolder = Paths.get(System.getProperty("user.dir"), "tmp").toString();
+
+    @Value("${git.clone.path}")
+    private String tempFolder;
 
     @Value("${jira.username}")
     private String jiraUsername;
@@ -52,45 +54,44 @@ public class RepositoryProcessor {
      * 2. Process each commit one by one.
      */
     public void processRepositories(List<RepositoryModel> repositories) {
-        // add repos to database
-        projectRepository.save(repositories);
+        repositories.stream().forEach(this::processRepository);
+    }
 
-        repositories.stream().forEach(repo -> {
+    public void processRepository(RepositoryModel repo) {
+        projectRepository.save(repo);
+        IssueProcessor issueProcessor = createIssueProcessor(repo);
 
-            IssueProcessor issueProcessor = createIssueProcessor(repo);
+        Runnable run = () -> {
+            Optional<VersionControlHelper> optVc = readOrCloneRepository(repo);
+            if (!optVc.isPresent()) {
+                return;
+            }
 
-            Runnable run = () -> {
-                Optional<VersionControlHelper> optVc = readOrCloneRepository(repo);
-                if (!optVc.isPresent()) {
+            VersionControlHelper vch = optVc.get();
+
+            // process commits
+            vch.getCommitStream().forEachOrdered(commit -> {
+
+                // checkout revision
+                if (!vch.checkoutRevision(commit.getSha())) {
                     return;
                 }
 
-                VersionControlHelper vch = optVc.get();
+                // get issues
+                List<IssueModel> issues = issueProcessor.getIssues(commit);
+                commit.setIssueIds(issueProcessor.getIssueIds(issues));
+                issueRepository.save(issues);
 
-                // process commits
-                vch.getCommitStream().forEachOrdered(commit -> {
+                // process commit
+                commitProcessor.processCommit(commit, repo);
+                commitProcessor.saveCommit(commit);
+            });
 
-                    // checkout revision
-                    if (!vch.checkoutRevision(commit.getSha())) {
-                        return;
-                    }
+            vch.close();
+        };
 
-                    // get issues
-                    List<IssueModel> issues = issueProcessor.getIssues(commit);
-                    commit.setIssueIds(issueProcessor.getIssueIds(issues));
-                    issueRepository.save(issues);
-
-                    // process commit
-                    commitProcessor.processCommit(commit, repo);
-                    commitProcessor.saveCommit(commit);
-                });
-
-                vch.close();
-            };
-
-            Thread t = new Thread(run);
-            t.start();
-        });
+        Thread t = new Thread(run);
+        t.start();
     }
 
     /**

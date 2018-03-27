@@ -6,14 +6,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import com.td.models.BuildStatus;
 import com.td.models.RepositoryModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,12 +19,6 @@ public class MavenBuildHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(MavenBuildHelper.class);
     protected final String BUILD_FAILURE_MESSAGE = "BUILD FAILURE";
-
-    @Value("${java.home.path}")
-    private String javaHomePath;
-
-    @Value("${maven.home.path}")
-    private String mavenHomePath;
 
     private static final List<String> PERFORMANCE_FLAGS = new ArrayList<String>() {
         private static final long serialVersionUID = 1L;
