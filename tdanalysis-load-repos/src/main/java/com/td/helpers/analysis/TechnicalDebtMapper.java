@@ -100,6 +100,7 @@ public class TechnicalDebtMapper {
             return TechnicalDebtPriority.HIGH;
         case "M":
             return TechnicalDebtPriority.MEDIUM;
+        case "L":
         default:
             return TechnicalDebtPriority.LOW;
         }
