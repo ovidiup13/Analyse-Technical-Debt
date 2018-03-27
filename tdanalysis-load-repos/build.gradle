@@ -5,6 +5,22 @@ jar {
     version = "0.0.1-SNAPSHOT"
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java/']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java/']
+        }
+    }
+}
+
 bootRun {
     jvmArgs = ["-Xms64m", "-Xmx256m", "-Xss64m"]
 }
@@ -22,4 +38,5 @@ dependencies {
     compile group: 'org.kohsuke', name: 'github-api', version: '1.92'
 
     compile project(":tdanalysis-db-module")
+    testCompile project(":tdanalysis-db-module")
 }

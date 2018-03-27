@@ -7,11 +7,17 @@ import com.td.models.TechnicalDebtPriority;
 import com.td.models.CommitTD.CodeLocation;
 import com.td.models.TechnicalDebtItem.CompositeKey;
 
-class TechnicalDebtMapper {
+public class TechnicalDebtMapper {
 
     static final String SEPARATOR = ":";
 
-    static Optional<CommitTD> parseFindBugsOutput(String line) {
+    // denotes lines
+    static final String SEPARATOR_AT = "at ";
+
+    // denotes class
+    static final String SEPARATOR_IN = "in ";
+
+    public static Optional<CommitTD> parseFindBugsOutput(String line) {
 
         CommitTD result = new CommitTD();
         int firstIndex = line.indexOf(SEPARATOR);
@@ -38,15 +44,33 @@ class TechnicalDebtMapper {
      * Parses a line of findbugs output to CodeLocation object.
      * E.g. M D NP: executor must be non-null but is marked as nullable  At AsyncCompleter.java:[line 287]
      */
-    static CodeLocation parseLocation(String line) {
+    public static CodeLocation parseLocation(String line) {
+        String lowerCaseLine = line.toLowerCase();
+        int separatorAt = lowerCaseLine.lastIndexOf(SEPARATOR_AT);
+        int separatorIn = lowerCaseLine.lastIndexOf(SEPARATOR_IN);
+
+        if (separatorAt < 0) {
+            return parseClassLocation(line.substring(separatorIn));
+        }
+
+        return parseCodeLocation(line.substring(separatorAt));
+    }
+
+    static CodeLocation parseClassLocation(String line) {
+        String className = line.split(" ")[1].trim();
+        return new CodeLocation(className, null);
+    }
+
+    static CodeLocation parseCodeLocation(String line) {
         int separatorIndex = line.lastIndexOf(SEPARATOR);
-        int nameIndex = line.lastIndexOf("At ") + 3; // note the space
-        int lastIndex = line.lastIndexOf("]");
+        int nameIndex = line.indexOf("At ") + 3; // note the space
+        int bracketOpenIndex = line.indexOf("[");
+        int bracketClosedIndex = line.indexOf("]");
 
-        String fileName = line.substring(nameIndex, separatorIndex);
-        int lineNumber = Integer.parseInt(line.substring(separatorIndex + 6, lastIndex).trim());
+        String className = line.substring(nameIndex, separatorIndex).trim();
+        String location = line.substring(bracketOpenIndex + 1, bracketClosedIndex).split(" ")[1];
 
-        return new CodeLocation(fileName, lineNumber);
+        return new CodeLocation(className, location);
     }
 
     static TechnicalDebtPriority getPriority(String c) {
