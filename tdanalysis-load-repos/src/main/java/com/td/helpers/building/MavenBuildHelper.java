@@ -42,9 +42,6 @@ public class MavenBuildHelper {
         commands.addAll(PERFORMANCE_FLAGS);
 
         builder.command(commands);
-        Map<String, String> envs = builder.environment();
-        // envs.put("JAVA_HOME", javaHomePath);
-        // envs.put("MAVEN_HOME", mavenHomePath);
         builder.directory(repo.getProjectFolder());
 
         logger.info(String.format("Starting build process for repository %s", repo.getName()));

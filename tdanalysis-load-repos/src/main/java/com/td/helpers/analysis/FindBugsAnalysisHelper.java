@@ -46,9 +46,6 @@ public class FindBugsAnalysisHelper implements StaticAnalysisHelper {
     @Value("${findbugs.command.priority}")
     private String findBugsPriority;
 
-    @Value("${findbugs.home.path}")
-    private String findBugsPath;
-
     /***
      * Executes the analysis for all project JARs found in the directory.
      * @param repositoryModel the repository model object
@@ -112,10 +109,6 @@ public class FindBugsAnalysisHelper implements StaticAnalysisHelper {
         // set up process
         builder.command(command, findBugsUIParam, findBugsPriority, jarPath);
         builder.directory(projectDirectory);
-
-        // make sure findbugs is in process path
-        Map<String, String> envs = builder.environment();
-        envs.put("PATH", findBugsPath + File.pathSeparator + System.getenv("PATH"));
 
         Process p;
         try {
