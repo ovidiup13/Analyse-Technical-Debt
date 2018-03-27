@@ -13,7 +13,12 @@ import com.td.models.CommitModel;
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class IssueProcessor {
+
+    private static Logger logger = LoggerFactory.getLogger(IssueProcessor.class);
 
     private String username;
     private String password;
@@ -25,13 +30,22 @@ public class IssueProcessor {
         this.password = password;
         this.repositoryModel = repo;
         this.issueTrackerHelper = getTrackerHelper();
+        logger.info(String.format("Successfully initialised IssueTrackerHelper for repository %s", repo.getName()));
     }
 
+    /***
+     * Retrieve all issues associated with the commit.
+     */
     public List<IssueModel> getIssues(CommitModel commit) {
+        logger.info(String.format("Retrieving issues for commit %s", commit.getSha()));
         List<String> issueKeys = getIssueKeys(commit);
 
-        return issueKeys.stream().map(issueTrackerHelper::getIssue).flatMap(o -> streamopt(o))
+        // retrieve issues and set id
+        List<IssueModel> issues = issueKeys.stream().map(issueTrackerHelper::getIssue).flatMap(o -> streamopt(o))
                 .collect(Collectors.toList());
+        issues.forEach(issue -> issue.setIssueId(repositoryModel.getName() + "/" + issue.getIssueKey()));
+
+        return issues;
     }
 
     public List<String> getIssueIds(List<IssueModel> issues) {

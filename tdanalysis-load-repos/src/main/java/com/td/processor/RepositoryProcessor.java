@@ -64,6 +64,7 @@ public class RepositoryProcessor {
         Runnable run = () -> {
             Optional<VersionControlHelper> optVc = readOrCloneRepository(repo);
             if (!optVc.isPresent()) {
+                logger.error(String.format("Unable to read or clone repository %s, thread will exit.", repo.getName()));
                 return;
             }
 
