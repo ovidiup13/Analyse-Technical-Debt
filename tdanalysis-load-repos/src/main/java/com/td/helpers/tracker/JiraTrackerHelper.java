@@ -107,6 +107,11 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
             result.setCreated(LocalDateTime.parse(created.toString(DATE_TIME_PATTERN), df));
         }
 
+        DateTime updated = issue.getUpdateDate();
+        if (updated != null) {
+            result.setUpdated(LocalDateTime.parse(updated.toString(DATE_TIME_PATTERN), df));
+        }
+
         DateTime due = issue.getDueDate();
         if (due != null) {
             result.setDue(LocalDateTime.parse(due.toString(DATE_TIME_PATTERN), df));
@@ -114,6 +119,7 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
 
         // closed date is given by transitions
         if (!result.getStatus().equals("Open") && !result.getStatus().equals("In Progress")) {
+            System.out.println(result.getStatus());
             result.setClosed(getClosedDate(transitions));
         }
 
@@ -139,6 +145,10 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
         // filter and count
         Stream<Transition> stream = filterTransitionByClosed(transitions.stream());
         long count = stream.count();
+
+        if (count < 1) {
+            return null;
+        }
 
         // get last "closed element" element
         // need to create and filter the stream again since count() is a terminal operation
@@ -198,22 +208,26 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
                 LocalDateTime created = LocalDateTime.parse(s, df);
                 JSONArray items = history.getJSONArray("items");
                 for (int j = 0; j < items.length(); j++) {
+
                     JSONObject item = items.getJSONObject(j);
                     String field = item.getString("field");
+
+                    // only interested in status transitions                    
+                    if (!field.equals("status")) {
+                        break;
+                    }
+
                     String fromString = item.getString("fromString");
                     String toString = item.getString("toString");
 
-                    // only interested in status transitions
-                    if (field.equals("status")) {
-                        Transition transition = new Transition();
-                        transition.setCreated(created);
-                        transition.setField("status");
-                        transition.setFrom(fromString);
-                        transition.setTo(toString);
-                        transition.setAuthor(author);
+                    Transition transition = new Transition();
+                    transition.setCreated(created);
+                    transition.setField("status");
+                    transition.setFrom(fromString);
+                    transition.setTo(toString);
+                    transition.setAuthor(author);
 
-                        transitions.add(transition);
-                    }
+                    transitions.add(transition);
                 }
             }
         } catch (JSONException e) {

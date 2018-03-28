@@ -27,6 +27,7 @@ public class IssueModel {
     private String priority;
     private String status;
     private LocalDateTime created;
+    private LocalDateTime updated;
     private LocalDateTime closed;
     private LocalDateTime due;
 
@@ -395,5 +396,19 @@ public class IssueModel {
         public void setAuthor(String author) {
             this.author = author;
         }
+    }
+
+    /**
+     * @return the updated
+     */
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+    /**
+     * @param updated the updated to set
+     */
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
     }
 }
