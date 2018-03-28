@@ -43,7 +43,10 @@ public class IssueProcessor {
         // retrieve issues and set id
         List<IssueModel> issues = issueKeys.stream().map(issueTrackerHelper::getIssue).flatMap(o -> streamopt(o))
                 .collect(Collectors.toList());
-        issues.forEach(issue -> issue.setIssueId(repositoryModel.getName() + "/" + issue.getIssueKey()));
+        issues.forEach(issue -> {
+            issue.setIssueId(repositoryModel.getName() + "/" + issue.getIssueKey());
+            issue.setRepositoryId(repositoryModel.getId());
+        });
 
         return issues;
     }
