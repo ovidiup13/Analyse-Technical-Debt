@@ -37,6 +37,8 @@ dependencies {
 
     compile group: 'org.kohsuke', name: 'github-api', version: '1.92'
 
+    compile group: 'org.json', name: 'json', version: '20180130'
+
     compile project(":tdanalysis-db-module")
     testCompile project(":tdanalysis-db-module")
 }
