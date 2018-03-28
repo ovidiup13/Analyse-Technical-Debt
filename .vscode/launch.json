@@ -6,7 +6,18 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Debug (Launch)-App<source>",
+      "name": "Debug Test",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "com.td.Test",
+      "projectName": "tdanalysis-load-repos",
+      "args": ""
+    },
+    {
+      "type": "java",
+      "name": "Debug Load",
       "request": "launch",
       "cwd": "${workspaceFolder}/tdanalysis-load-repos",
       "console": "internalConsole",
