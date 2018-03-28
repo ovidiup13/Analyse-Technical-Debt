@@ -25,11 +25,6 @@ springBoot {
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
-    compile "org.springframework.boot:spring-boot-starter-data-mongodb"
-    compile "org.springframework.boot:spring-boot-starter-cache"
-
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0"
-
     compile project(':tdanalysis-db-module')
 }
 

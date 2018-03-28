@@ -7,7 +7,7 @@
  */
 
 buildscript {
-    ext.spring_boot_version = '1.5.7.RELEASE'
+    ext.spring_boot_version = '1.5.9.RELEASE'
 
     repositories {
         jcenter()
@@ -17,10 +17,14 @@ buildscript {
     }
 }
 
-allprojects {
+subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
+
+    bootRepackage {
+        enabled = false
+    }
 
     repositories {
         jcenter()
@@ -31,8 +35,10 @@ allprojects {
         compile "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
         compile "org.springframework.boot:spring-boot-devtools"
         compile "org.springframework.boot:spring-boot-starter-actuator"
+        compile "org.springframework.boot:spring-boot-starter-cache"
 
         testCompile 'junit:junit:4.12'
+        testCompile "org.springframework.boot:spring-boot-starter-test:$spring_boot_version"
     }
 }
 

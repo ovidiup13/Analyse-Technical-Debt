@@ -53,12 +53,12 @@ public class CommitTD {
     public static class CodeLocation {
 
         private String fileName;
-        private int lineNumber;
+        private String lineNumber;
 
         public CodeLocation() {
         }
 
-        public CodeLocation(String fileName, int number) {
+        public CodeLocation(String fileName, String number) {
             this.fileName = fileName;
             this.lineNumber = number;
         }
@@ -80,15 +80,21 @@ public class CommitTD {
         /**
          * @return the line number
          */
-        public int getLine() {
+        public String getLine() {
             return lineNumber;
         }
 
         /**
          * @param line the line number to set
          */
-        public void setLine(int line) {
+        public void setLine(String line) {
             this.lineNumber = line;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            CodeLocation other = (CodeLocation) o;
+            return this.getFileName().equals(other.getFileName()) && this.getLine().equals(other.getLine());
         }
 
     }

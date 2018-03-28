@@ -3,6 +3,7 @@ package com.td.models;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -32,6 +33,8 @@ public class IssueModel {
     private Set<String> labels;
 
     private TimeTracker timeTracker;
+
+    private List<Transition> transitions;
 
     /**
      * @return the issueId
@@ -246,6 +249,23 @@ public class IssueModel {
         this.labels = labels;
     }
 
+    /**
+    * @return the transitions
+    */
+    public List<Transition> getTransitions() {
+        return transitions;
+    }
+
+    /**
+     * @param transitions the transitions to set
+     */
+    public void setTransitions(List<Transition> transitions) {
+        this.transitions = transitions;
+    }
+
+    /**
+     * Time tracker class.
+     */
     public static class TimeTracker {
 
         private int estimate;
@@ -295,4 +315,85 @@ public class IssueModel {
         }
     }
 
+    /**
+     * Transition class.
+     */
+    public static class Transition {
+        private String field;
+        private String from;
+        private String to;
+        private String author;
+        private LocalDateTime created;
+
+        /**
+         * @return the field
+         */
+        public String getField() {
+            return field;
+        }
+
+        /**
+         * @param field the field to set
+         */
+        public void setField(String field) {
+            this.field = field;
+        }
+
+        /**
+         * @return the from
+         */
+        public String getFrom() {
+            return from;
+        }
+
+        /**
+         * @param from the from to set
+         */
+        public void setFrom(String from) {
+            this.from = from;
+        }
+
+        /**
+         * @return the to
+         */
+        public String getTo() {
+            return to;
+        }
+
+        /**
+         * @param to the to to set
+         */
+        public void setTo(String to) {
+            this.to = to;
+        }
+
+        /**
+         * @return the created
+         */
+        @JsonSerialize(using = LocalDateTimeSerializer.class)
+        public LocalDateTime getCreated() {
+            return created;
+        }
+
+        /**
+         * @param created the created to set
+         */
+        public void setCreated(LocalDateTime created) {
+            this.created = created;
+        }
+
+        /**
+         * @return the author
+         */
+        public String getAuthor() {
+            return author;
+        }
+
+        /**
+         * @param author the author to set
+         */
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+    }
 }
