@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.RestClientException;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 
 public class JiraTrackerHelper extends IssueTrackerHelper {
 
@@ -55,12 +57,14 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
     /***
      * Retrieves the issue details associated with the issue key.
      */
+    @Cacheable("issues")
     public Optional<IssueModel> getIssue(String issueKey) {
         try {
             Issue issue = jiraRestClient.getIssueClient().getIssue(issueKey).claim();
             return Optional.of(jiraIssueToIssueModel(issue));
         } catch (RestClientException e) {
             logger.error("Could not retrieve issue " + issueKey);
+            e.printStackTrace();
             return Optional.empty();
         }
     }
@@ -75,11 +79,6 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
 
     private IssueModel jiraIssueToIssueModel(Issue issue) {
         IssueModel result = new IssueModel();
-
-        // String repositoryName = repository.getName();
-        // result.setRepositoryId(this.repository.getId());
-        // result.setIssueId(repositoryName + "/" + issueKey);
-
         String issueKey = issue.getKey();
 
         // meta
@@ -98,14 +97,25 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
         result.setAssignee(issue.getAssignee() != null ? issue.getAssignee().getDisplayName() : "None");
         result.setLabels(issue.getLabels());
 
+        // transitions
+        List<Transition> transitions = getTransitions(issueKey);
+        result.setTransitions(transitions);
+
         // time
         DateTime created = issue.getCreationDate();
+        if (created != null) {
+            result.setCreated(LocalDateTime.parse(created.toString(DATE_TIME_PATTERN), df));
+        }
+
         DateTime due = issue.getDueDate();
-        result.setCreated(LocalDateTime.parse(created.toString(DATE_TIME_PATTERN), df));
-        // result.(LocalDateTime.parse(created.toString(DATE_TIME_PATTERN), df));
-        result.setDue(LocalDateTime.parse(due.toString(DATE_TIME_PATTERN), df));
-        // result.setClosed(fromDateTime(issue.getUpdateDate()));
-        // result.setDue(fromDateTime(issue.getDueDate()));
+        if (due != null) {
+            result.setDue(LocalDateTime.parse(due.toString(DATE_TIME_PATTERN), df));
+        }
+
+        // closed date is given by transitions
+        if (!result.getStatus().equals("Open") && !result.getStatus().equals("In Progress")) {
+            result.setClosed(getClosedDate(transitions));
+        }
 
         //tracking
         TimeTracking tracking = issue.getTimeTracking();
@@ -116,10 +126,31 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
         tracker.setLogged(tracking.getTimeSpentMinutes() != null ? tracking.getTimeSpentMinutes() : 0);
         result.setTimeTracker(tracker);
 
-        // transitions
-        result.setTransitions(getTransitions(issueKey));
-
         return result;
+    }
+
+    /**
+     * Returns the date and time that the ticket was closed based on the ticket
+     * transitions. The last transition time which had its status set to
+     * "Resolved" or "Closed" is regarded as the closed time. 
+     */
+    private LocalDateTime getClosedDate(List<Transition> transitions) {
+
+        // filter and count
+        Stream<Transition> stream = filterTransitionByClosed(transitions.stream());
+        long count = stream.count();
+
+        // get last "closed element" element
+        // need to create and filter the stream again since count() is a terminal operation
+        stream = filterTransitionByClosed(transitions.stream());
+        Transition last = stream.skip(count - 1).findFirst().get();
+
+        return last.getCreated();
+    }
+
+    private Stream<Transition> filterTransitionByClosed(Stream<Transition> transitions) {
+        return transitions
+                .filter(transition -> transition.getTo().equals("Resolved") || transition.getTo().equals("Closed"));
     }
 
     /**
