@@ -1,9 +1,14 @@
 package com.td.helpers.tracker;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -14,8 +19,16 @@ import com.atlassian.jira.rest.client.api.domain.TimeTracking;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 import com.td.models.IssueModel;
 import com.td.models.IssueModel.TimeTracker;
+import com.td.models.IssueModel.Transition;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +38,16 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
 
     // private static final String STORY_POINTS_FIELD = "Story Points";
     private static final String PATTERN = "[A-Z]+-[0-9]+";
+    private static final String EXPAND_CHANGELOG = "?expand=changelog";
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+    DateTimeFormatter df = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
+
+    private URI uri;
     private JiraRestClient jiraRestClient;
 
     public JiraTrackerHelper(URI uri, String username, String password) {
+        this.uri = uri;
         this.issuePattern = Pattern.compile(PATTERN);
         initialise(uri, username, password);
     }
@@ -52,20 +71,6 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
 
     void initialise(URI uri, String username, String password) {
         this.jiraRestClient = getJiraFactory().createWithBasicHttpAuthentication(uri, username, password);
-    }
-
-    /***
-     * Converts from Joda DateTime object to Java LocalDateTime object.
-     */
-    private LocalDateTime fromDateTime(DateTime dt) {
-
-        if (dt == null) {
-            return null;
-        }
-
-        Instant instant = dt.toGregorianCalendar().toInstant();
-        ZoneId zone = dt.getZone().toTimeZone().toZoneId();
-        return LocalDateTime.ofInstant(instant, zone);
     }
 
     private IssueModel jiraIssueToIssueModel(Issue issue) {
@@ -94,9 +99,13 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
         result.setLabels(issue.getLabels());
 
         // time
-        result.setCreated(fromDateTime(issue.getCreationDate()));
-        result.setClosed(fromDateTime(issue.getUpdateDate()));
-        result.setDue(fromDateTime(issue.getDueDate()));
+        DateTime created = issue.getCreationDate();
+        DateTime due = issue.getDueDate();
+        result.setCreated(LocalDateTime.parse(created.toString(DATE_TIME_PATTERN), df));
+        // result.(LocalDateTime.parse(created.toString(DATE_TIME_PATTERN), df));
+        result.setDue(LocalDateTime.parse(due.toString(DATE_TIME_PATTERN), df));
+        // result.setClosed(fromDateTime(issue.getUpdateDate()));
+        // result.setDue(fromDateTime(issue.getDueDate()));
 
         //tracking
         TimeTracking tracking = issue.getTimeTracking();
@@ -107,6 +116,97 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
         tracker.setLogged(tracking.getTimeSpentMinutes() != null ? tracking.getTimeSpentMinutes() : 0);
         result.setTimeTracker(tracker);
 
+        // transitions
+        result.setTransitions(getTransitions(issueKey));
+
         return result;
+    }
+
+    /**
+     * Method that sends a request to the Jira URI and retrieves a list of issue
+     * transitions.
+     */
+    List<Transition> getTransitions(String issueKey) {
+        String uri = this.uri.toString() + "/rest/api/latest/issue/" + issueKey + EXPAND_CHANGELOG;
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+
+            // http get request and body
+            HttpGet request = new HttpGet(uri);
+            request.addHeader("content-type", "application/json");
+            HttpResponse response = httpClient.execute(request);
+            String body = convertStreamToString(response.getEntity().getContent());
+            JSONObject json = new JSONObject(body);
+
+            return parseResponseBody(json);
+        } catch (IOException e) {
+            logger.error("An error occurred when retrieving changelog.");
+            e.printStackTrace();
+            return new ArrayList<>();
+        } catch (JSONException e) {
+            logger.error("An error occurred when parsing response body as JSON.");
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Method that parses the reponse body of the changelog and retrieves a list
+     * of transitions that the issue has been through.
+     */
+    List<Transition> parseResponseBody(JSONObject json) {
+        List<Transition> transitions = new ArrayList<>();
+
+        try {
+            JSONObject changelog = json.getJSONObject("changelog");
+            JSONArray histories = changelog.getJSONArray("histories");
+            for (int i = 0; i < histories.length(); i++) {
+
+                JSONObject history = histories.getJSONObject(i);
+                String s = history.getString("created");
+                String author = history.getJSONObject("author").getString("displayName");
+                LocalDateTime created = LocalDateTime.parse(s, df);
+                JSONArray items = history.getJSONArray("items");
+                for (int j = 0; j < items.length(); j++) {
+                    JSONObject item = items.getJSONObject(j);
+                    String field = item.getString("field");
+                    String fromString = item.getString("fromString");
+                    String toString = item.getString("toString");
+
+                    // only interested in status transitions
+                    if (field.equals("status")) {
+                        Transition transition = new Transition();
+                        transition.setCreated(created);
+                        transition.setField("status");
+                        transition.setFrom(fromString);
+                        transition.setTo(toString);
+                        transition.setAuthor(author);
+
+                        transitions.add(transition);
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            logger.error("An error occurred when parsing response body");
+            e.printStackTrace();
+        }
+
+        return transitions;
+    }
+
+    /**
+     * Utility method that turns a stream into a string.
+     */
+    private static String convertStreamToString(InputStream is) {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
     }
 }
