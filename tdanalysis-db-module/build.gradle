@@ -21,10 +21,6 @@ sourceSets {
     }
 }
 
-bootRepackage {
-    enabled = false
-}
-
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
     compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0"

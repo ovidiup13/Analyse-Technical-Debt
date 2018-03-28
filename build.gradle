@@ -17,10 +17,14 @@ buildscript {
     }
 }
 
-allprojects {
+subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
+
+    bootRepackage {
+        enabled = false
+    }
 
     repositories {
         jcenter()
