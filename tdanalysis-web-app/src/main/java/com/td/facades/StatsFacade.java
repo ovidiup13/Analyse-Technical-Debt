@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import com.td.models.CommitModel;
 import com.td.models.CommitStats;
 import com.td.models.IssueModel;
+import com.td.models.IssueModel.Transition;
 import com.td.models.IssueStats;
+import com.td.models.WorkEffort;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Component;
 public class StatsFacade {
 
     private static final int WORK_HOURS_PER_DAY = 8;
+    private static final DecimalFormat formatter = new DecimalFormat("#0.00");
 
     @Autowired
     private RepositoryFacade repositoryFacade;
@@ -32,8 +36,6 @@ public class StatsFacade {
     public List<IssueStats> getIssueStatsByCommitTimestamp(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
         List<IssueStats> result = new ArrayList<>(commits.size());
-
-        DecimalFormat formatter = new DecimalFormat("#0.00");
 
         commits.forEach(item -> {
             Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
@@ -46,9 +48,7 @@ public class StatsFacade {
             stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
-
-            double workEffort = Double.parseDouble(formatter.format(getWorkEffortByCommitTimestamp(issueCommits)));
-            stats.setWorkEffort(workEffort);
+            stats.setWorkEffort(getWorkEffortByCommitTimestamp(issueCommits));
 
             result.add(stats);
         });
@@ -61,8 +61,6 @@ public class StatsFacade {
     public List<IssueStats> getIssueStatsByIssueTimestamp(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
         List<IssueStats> result = new ArrayList<>(commits.size());
-
-        DecimalFormat formatter = new DecimalFormat("#0.00");
 
         commits.forEach(item -> {
             Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
@@ -83,10 +81,7 @@ public class StatsFacade {
             stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
-
-            String effort = formatter.format(getWorkEffortByTicketTimestamp(issue, issueCommits));
-            double workEffort = Double.parseDouble(effort);
-            stats.setWorkEffort(workEffort);
+            stats.setWorkEffort(getWorkEffortByTicketTimestamp(issue));
 
             result.add(stats);
         });
@@ -146,7 +141,7 @@ public class StatsFacade {
      * Returns the overall work effort spent on a sequence of commits, based on
      * commit timestamps.
      */
-    private double getWorkEffortByCommitTimestamp(List<CommitModel> commits) {
+    private WorkEffort getWorkEffortByCommitTimestamp(List<CommitModel> commits) {
         int numberOfCommits = commits.size();
         CommitModel firstCommit = commits.get(0);
         CommitModel lastCommit = commits.get(numberOfCommits - 1);
@@ -157,17 +152,37 @@ public class StatsFacade {
         // if "previous" commit does not exist, use first commit
         CommitModel previousCommit = previousOpt.isPresent() ? previousOpt.get() : firstCommit;
 
-        return normalizeWorkEffort(lastCommit.getTimestamp(), previousCommit.getTimestamp());
+        double normalized = normalizeWorkEffort(lastCommit.getTimestamp(), previousCommit.getTimestamp());
+        return new WorkEffort(Double.parseDouble(formatter.format(normalized)));
     }
 
     /***
     * Returns the overall work effort spent on a sequence of commits, based on
-    * ticket creation date and last commit by author.
+    * ticket timestamps.
     */
-    private double getWorkEffortByTicketTimestamp(IssueModel issue, List<CommitModel> commits) {
-        int numberOfCommits = commits.size();
-        CommitModel lastCommit = commits.get(numberOfCommits - 1);
-        return normalizeWorkEffort(lastCommit.getTimestamp(), issue.getCreated());
+    private WorkEffort getWorkEffortByTicketTimestamp(IssueModel issue) {
+        LocalDateTime started = getWorkStarted(issue.getTransitions()).orElse(issue.getCreated());
+        LocalDateTime ended = issue.getClosed() == null ? issue.getUpdated() : issue.getClosed();
+        double normalized = normalizeWorkEffort(started, ended);
+        return new WorkEffort(Double.parseDouble(formatter.format(normalized)));
+    }
+
+    /**
+     * Retrieves the time that work has started by looking at the issue
+     * transitions. If there is a transition from the state "Open" to "In
+     * Progress", then that is the start time. Otherwise, return an empty Optional.
+     */
+    private Optional<LocalDateTime> getWorkStarted(List<Transition> transitions) {
+        Predicate<Transition> condition = (transition) -> transition.getFrom().equals("Open")
+                && transition.getFrom().equals("In Progress");
+        long count = transitions.stream().filter(condition).count();
+
+        if (count < 0) {
+            return Optional.empty();
+        }
+
+        Transition t = transitions.stream().filter(condition).findFirst().get();
+        return Optional.of(t.getCreated());
     }
 
     /**
@@ -185,13 +200,6 @@ public class StatsFacade {
 
         // return previous commit
         return index < 1 ? Optional.empty() : Optional.of(allCommits.get(index - 1));
-    }
-
-    /***
-     * Returns a count of the unique issues available in the list of commits. 
-     */
-    private long getTechnicalDebtCount(List<CommitModel> commits) {
-        return commits.stream().map(commit -> commit.getBugs()).flatMap(bugs -> bugs.stream()).distinct().count();
     }
 
     /**
@@ -212,4 +220,11 @@ public class StatsFacade {
         return (days + 1) * WORK_HOURS_PER_DAY;
     }
 
+    /***
+    * Returns a count of the unique issues available in the list of commits.
+    * @deprecated Using TechnicalDebt model instead of bugs.
+    */
+    private long getTechnicalDebtCount(List<CommitModel> commits) {
+        return commits.stream().map(commit -> commit.getBugs()).flatMap(bugs -> bugs.stream()).distinct().count();
+    }
 }
