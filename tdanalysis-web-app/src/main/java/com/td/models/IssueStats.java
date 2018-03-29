@@ -8,6 +8,7 @@ public class IssueStats {
     private int totalCommits;
     private int totalIssues;
     private String author;
+    private TechnicalDebtStats tdStats;
 
     /**
      * @return the workEffort
@@ -91,6 +92,20 @@ public class IssueStats {
      */
     public void setTotalIssues(int totalIssues) {
         this.totalIssues = totalIssues;
+    }
+
+    /**
+     * @return the tdStats
+     */
+    public TechnicalDebtStats getTdStats() {
+        return tdStats;
+    }
+
+    /**
+     * @param tdStats the tdStats to set
+     */
+    public void setTdStats(TechnicalDebtStats tdStats) {
+        this.tdStats = tdStats;
     }
 
 }

@@ -110,6 +110,13 @@ public class TechnicalDebtItem {
         public void setIssueCode(String issueCode) {
             this.issueCode = issueCode;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            CompositeKey key = (CompositeKey) o;
+            return this.getCategoryInitial().equals(key.getCategoryInitial())
+                    && this.getIssueCode().equals(key.getIssueCode());
+        }
     }
 
 }
