@@ -16,6 +16,7 @@ import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueModel.Transition;
 import com.td.models.IssueStats;
+import com.td.models.TechnicalDebtStats;
 import com.td.models.WorkEffort;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,12 @@ public class StatsFacade {
     @Autowired
     private RepositoryFacade repositoryFacade;
 
+    @Autowired
+    private TDFacade tdFacade;
+
     /***
-     * Returns list of issue stats by calculating work effort using commit timestamps.
+     * Returns list of issue stats by calculating work effort using commit
+     * timestamps.
      */
     public List<IssueStats> getIssueStatsByCommitTimestamp(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
@@ -45,10 +50,13 @@ public class StatsFacade {
             // generate simple stats
             IssueStats stats = new IssueStats();
             stats.setIssueKey(issueKey);
-            stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
+            // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
             stats.setWorkEffort(getWorkEffortByCommitTimestamp(issueCommits));
+
+            Optional<TechnicalDebtStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
+            stats.setTdStats(opt.orElse(null));
 
             result.add(stats);
         });
@@ -56,7 +64,8 @@ public class StatsFacade {
     }
 
     /***
-    * Returns a list of issue stats by calculating work effort using ticket timestamps.
+    * Returns a list of issue stats by calculating work effort using ticket
+    * timestamps.
     */
     public List<IssueStats> getIssueStatsByIssueTimestamp(String repositoryId) {
         List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
@@ -78,10 +87,13 @@ public class StatsFacade {
             // generate simple stats
             IssueStats stats = new IssueStats();
             stats.setIssueKey(issueKey);
-            stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
+            // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
             stats.setWorkEffort(getWorkEffortByTicketTimestamp(issue));
+
+            Optional<TechnicalDebtStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
+            stats.setTdStats(opt.orElse(null));
 
             result.add(stats);
         });
@@ -170,7 +182,8 @@ public class StatsFacade {
     /**
      * Retrieves the time that work has started by looking at the issue
      * transitions. If there is a transition from the state "Open" to "In
-     * Progress", then that is the start time. Otherwise, return an empty Optional.
+     * Progress", then that is the start time. Otherwise, return an empty
+     * Optional.
      */
     private Optional<LocalDateTime> getWorkStarted(List<Transition> transitions) {
         Predicate<Transition> condition = (transition) -> transition.getFrom().equals("Open")
