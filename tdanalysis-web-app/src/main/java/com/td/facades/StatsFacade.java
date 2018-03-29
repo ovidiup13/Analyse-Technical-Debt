@@ -81,6 +81,9 @@ public class StatsFacade {
                 return;
             }
             IssueModel issue = issueOpt.get();
+            if (issue.getStatus().equalsIgnoreCase("Open")) {
+                return;
+            }
 
             List<CommitModel> issueCommits = entry.getValue();
 
@@ -186,6 +189,10 @@ public class StatsFacade {
      * Optional.
      */
     private Optional<LocalDateTime> getWorkStarted(List<Transition> transitions) {
+        if (transitions == null) {
+            return Optional.empty();
+        }
+
         Predicate<Transition> condition = (transition) -> transition.getFrom().equals("Open")
                 && transition.getFrom().equals("In Progress");
         long count = transitions.stream().filter(condition).count();
