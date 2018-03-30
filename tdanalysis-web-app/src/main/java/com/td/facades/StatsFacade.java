@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -216,7 +215,7 @@ public class StatsFacade {
         List<CommitModel> allCommits = repositoryFacade.getAllCommitsByAuthor(repoId, author);
 
         // binary search for current commit
-        int index = Collections.binarySearch(allCommits, commit);
+        int index = allCommits.indexOf(commit);
 
         // return previous commit
         return index < 1 ? Optional.empty() : Optional.of(allCommits.get(index - 1));
