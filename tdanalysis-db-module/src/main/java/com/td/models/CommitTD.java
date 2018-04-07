@@ -50,6 +50,13 @@ public class CommitTD {
         this.location = location;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        CommitTD target = (CommitTD) o;
+        return this.getId().equals(target.getId()) && this.getPriority().equals(target.getPriority())
+                && this.getLocation().equals(target.getLocation());
+    }
+
     public static class CodeLocation {
 
         private String fileName;
@@ -94,7 +101,15 @@ public class CommitTD {
         @Override
         public boolean equals(Object o) {
             CodeLocation other = (CodeLocation) o;
-            return this.getFileName().equals(other.getFileName()) && this.getLine().equals(other.getLine());
+            if (this.getLine() == null) {
+                if (other.getLine() == null) {
+                    return this.getFileName().equals(other.getFileName());
+                } else {
+                    return false;
+                }
+            } else {
+                return this.getFileName().equals(other.getFileName()) && this.getLine().equals(other.getLine());
+            }
         }
 
     }

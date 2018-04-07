@@ -6,6 +6,17 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Debug Web",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "projectName": "tdanalysis-web-app",
+      "mainClass": "com.td.App",
+      "args": ""
+    },
+    {
+      "type": "java",
       "name": "Debug Test",
       "request": "launch",
       "cwd": "${workspaceFolder}",

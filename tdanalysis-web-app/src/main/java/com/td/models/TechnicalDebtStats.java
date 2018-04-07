@@ -2,35 +2,50 @@ package com.td.models;
 
 public class TechnicalDebtStats {
 
-    private double mean;
-    private double standardDeviation;
+    private int added;
+    private int removed;
+    private int totalPain;
 
     /**
-     * @return the mean
+     * @return the added
      */
-    public double getMean() {
-        return mean;
+    public int getAdded() {
+        return added;
     }
 
     /**
-     * @param mean the mean to set
+     * @param added the added to set
      */
-    public void setMean(double mean) {
-        this.mean = mean;
+    public void setAdded(int added) {
+        this.added = added;
     }
 
     /**
-     * @return the standardDeviation
+     * @return the removed
      */
-    public double getStandardDeviation() {
-        return standardDeviation;
+    public int getRemoved() {
+        return removed;
     }
 
     /**
-     * @param standardDeviation the standardDeviation to set
+     * @param removed the removed to set
      */
-    public void setStandardDeviation(double standardDeviation) {
-        this.standardDeviation = standardDeviation;
+    public void setRemoved(int removed) {
+        this.removed = removed;
+    }
+
+    /**
+     * @return the totalPain
+     */
+    public int getTotalPain() {
+        return totalPain;
+    }
+
+    /**
+     * @param totalPain the totalPain to set
+     */
+    public void setTotalPain(int totalPain) {
+        this.totalPain = totalPain;
     }
 
 }

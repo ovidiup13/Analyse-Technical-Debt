@@ -3,23 +3,24 @@ package com.td.models;
 public class IssueStats {
 
     private String issueKey;
-    private double workEffort;
+    private WorkEffort workEffort;
     private long technicalDebt;
     private int totalCommits;
     private int totalIssues;
     private String author;
+    private TechnicalDebtStats tdStats;
 
     /**
      * @return the workEffort
      */
-    public double getWorkEffort() {
+    public WorkEffort getWorkEffort() {
         return workEffort;
     }
 
     /**
      * @param workEffort the workEffort to set
      */
-    public void setWorkEffort(double workEffort) {
+    public void setWorkEffort(WorkEffort workEffort) {
         this.workEffort = workEffort;
     }
 
@@ -91,6 +92,20 @@ public class IssueStats {
      */
     public void setTotalIssues(int totalIssues) {
         this.totalIssues = totalIssues;
+    }
+
+    /**
+     * @return the tdStats
+     */
+    public TechnicalDebtStats getTdStats() {
+        return tdStats;
+    }
+
+    /**
+     * @param tdStats the tdStats to set
+     */
+    public void setTdStats(TechnicalDebtStats tdStats) {
+        this.tdStats = tdStats;
     }
 
 }

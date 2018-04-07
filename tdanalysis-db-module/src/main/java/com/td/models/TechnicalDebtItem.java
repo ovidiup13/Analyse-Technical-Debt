@@ -69,8 +69,7 @@ public class TechnicalDebtItem {
         this.category = category;
     }
 
-    public static class CompositeKey implements Serializable {
-        private static final long serialVersionUID = -5455868338014840934L;
+    public static class CompositeKey {
 
         private String categoryInitial;
         private String issueCode;
@@ -109,6 +108,13 @@ public class TechnicalDebtItem {
          */
         public void setIssueCode(String issueCode) {
             this.issueCode = issueCode;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            CompositeKey key = (CompositeKey) o;
+            return this.getCategoryInitial().equals(key.getCategoryInitial())
+                    && this.getIssueCode().equals(key.getIssueCode());
         }
     }
 

@@ -158,4 +158,10 @@ public class CommitModel implements Comparable<CommitModel> {
     public void setTechnicalDebt(TechnicalDebt technicalDebt) {
         this.technicalDebt = technicalDebt;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        CommitModel commit = (CommitModel) o;
+        return this.getSha().equals(commit.getSha()) && this.getRepositoryId().equals(commit.getRepositoryId());
+    }
 }
