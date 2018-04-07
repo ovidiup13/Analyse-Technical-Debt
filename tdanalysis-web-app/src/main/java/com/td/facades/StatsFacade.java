@@ -17,7 +17,7 @@ import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueModel.Transition;
 import com.td.models.IssueStats;
-import com.td.models.TechnicalDebtStats;
+import com.td.models.TDStats;
 import com.td.models.WorkEffort;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class StatsFacade {
             stats.setAuthor(issueCommits.get(0).getAuthor());
             stats.setWorkEffort(getWorkEffortByCommitTimestamp(issueCommits));
 
-            Optional<TechnicalDebtStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
+            Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
 
             result.add(stats);
@@ -96,7 +96,7 @@ public class StatsFacade {
             stats.setAuthor(issueCommits.get(0).getAuthor());
             stats.setWorkEffort(getWorkEffortByTicketTimestamp(issue));
 
-            Optional<TechnicalDebtStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
+            Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
 
             result.add(stats);

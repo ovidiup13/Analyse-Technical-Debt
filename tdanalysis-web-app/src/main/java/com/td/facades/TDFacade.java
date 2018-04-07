@@ -9,7 +9,7 @@ import com.td.models.CommitModel;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtItem;
 import com.td.models.TechnicalDebtItem.CompositeKey;
-import com.td.models.TechnicalDebtStats;
+import com.td.models.TDStats;
 import com.td.utils.TDCalculator;
 
 import org.springframework.stereotype.Component;
@@ -56,7 +56,7 @@ public class TDFacade {
     * Returns statistics about the technical debt items which the developer had
     * to deal with.
     */
-    public Optional<TechnicalDebtStats> getTechnicalDebtForIssue(String repoId, List<CommitModel> commits) {
+    public Optional<TDStats> getTechnicalDebtForIssue(String repoId, List<CommitModel> commits) {
         List<CommitModel> allCommits = repositoryFacade.getAllCommits(repoId);
         return TDCalculator.getTechnicalDebtForIssue(commits, allCommits);
     }

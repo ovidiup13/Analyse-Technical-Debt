@@ -8,7 +8,7 @@ import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.CommitTD;
 import com.td.models.TechnicalDebt;
-import com.td.models.TechnicalDebtStats;
+import com.td.models.TDStats;
 
 public class TDCalculator {
 
@@ -16,7 +16,7 @@ public class TDCalculator {
     * Returns statistics about the technical debt items which the developer had
     * to deal with.
     */
-    public static Optional<TechnicalDebtStats> getTechnicalDebtForIssue(List<CommitModel> issueCommits,
+    public static Optional<TDStats> getTechnicalDebtForIssue(List<CommitModel> issueCommits,
             List<CommitModel> allCommits) {
 
         if (issueCommits.size() < 1) {
@@ -46,7 +46,7 @@ public class TDCalculator {
 
         // if previous does not exist, added is the number of TD items in the last commit.
         if (!previous.isPresent()) {
-            TechnicalDebtStats tdStats = new TechnicalDebtStats();
+            TDStats tdStats = new TDStats();
             tdStats.setAdded(last.getTechnicalDebt().getTotalCount());
             return Optional.of(tdStats);
         }
@@ -57,7 +57,7 @@ public class TDCalculator {
     /**
      * Computes technical debt statistics between two commits.
      */
-    public static Optional<TechnicalDebtStats> computeTechnicalDebtStats(CommitModel c1, CommitModel c2) {
+    public static Optional<TDStats> computeTechnicalDebtStats(CommitModel c1, CommitModel c2) {
 
         TechnicalDebt td1 = c1.getTechnicalDebt();
         TechnicalDebt td2 = c2.getTechnicalDebt();
@@ -66,7 +66,7 @@ public class TDCalculator {
             return Optional.empty();
         }
 
-        TechnicalDebtStats tdStats = new TechnicalDebtStats();
+        TDStats tdStats = new TDStats();
         tdStats.setTotalPain(c1.getTechnicalDebt().getTotalCount());
         tdStats.setAdded(calculateTechnicalDebtIntroduced(td1, td2));
         tdStats.setRemoved(calculateTechnicalDebtRemoved(td1, td2));

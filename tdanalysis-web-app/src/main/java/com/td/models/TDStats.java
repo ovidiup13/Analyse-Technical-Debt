@@ -1,6 +1,6 @@
 package com.td.models;
 
-public class TechnicalDebtStats {
+public class TDStats {
 
     private int added;
     private int removed;

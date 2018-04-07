@@ -15,7 +15,7 @@ import com.td.models.CommitTD.CodeLocation;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtItem.CompositeKey;
 import com.td.models.TechnicalDebtPriority;
-import com.td.models.TechnicalDebtStats;
+import com.td.models.TDStats;
 
 import org.junit.Test;
 
@@ -105,7 +105,7 @@ public class TDCalculatorTest {
 
                 List<CommitModel> issueCommits = new ArrayList<>();
 
-                Optional<TechnicalDebtStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
+                Optional<TDStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
 
                 assertFalse(result.isPresent());
         }
@@ -124,7 +124,7 @@ public class TDCalculatorTest {
                 List<CommitModel> issueCommits = new ArrayList<>();
                 issueCommits.add(createCommit("7", BuildStatus.FAILED));
 
-                Optional<TechnicalDebtStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
+                Optional<TDStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
 
                 assertFalse(result.isPresent());
         }
@@ -143,7 +143,7 @@ public class TDCalculatorTest {
                 List<CommitModel> issueCommits = new ArrayList<>();
                 issueCommits.add(createCommit("7", BuildStatus.FAILED));
 
-                Optional<TechnicalDebtStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
+                Optional<TDStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
 
                 assertFalse(result.isPresent());
         }
@@ -170,18 +170,17 @@ public class TDCalculatorTest {
                 last.setTechnicalDebt(td);
                 issueCommits.add(last);
 
-                Optional<TechnicalDebtStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
+                Optional<TDStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
 
                 assertTrue(result.isPresent());
-                TechnicalDebtStats actual = result.get();
+                TDStats actual = result.get();
                 assertEquals(totalExpected, actual.getAdded());
         }
 
         @Test
         public void computeTechnicalDebtStatsTestNull() {
 
-                Optional<TechnicalDebtStats> stats = TDCalculator.computeTechnicalDebtStats(new CommitModel(),
-                                new CommitModel());
+                Optional<TDStats> stats = TDCalculator.computeTechnicalDebtStats(new CommitModel(), new CommitModel());
 
                 assertFalse(stats.isPresent());
         }
