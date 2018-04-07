@@ -4,6 +4,8 @@ import com.td.facades.StatsFacade;
 import com.td.models.CommitStats;
 import com.td.models.IssueStats;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,17 +19,17 @@ public class StatsController extends BaseController {
 
     @GetMapping("/repos/{id}/stats/tickets/by-commit")
     public List<IssueStats> getTicketStatsByCommitTimestamp(@PathVariable String id) {
-        return this.statsFacade.getIssueStatsByCommitTimestamp(id);
+        return this.statsFacade.getIssueStatsByCommitTimestamp(id).collect(Collectors.toList());
     }
 
     @GetMapping("/repos/{id}/stats/tickets/by-ticket")
     public List<IssueStats> getTicketStatsByTicketTimestamp(@PathVariable String id) {
-        return this.statsFacade.getIssueStatsByIssueTimestamp(id);
+        return this.statsFacade.getIssueStatsByIssueTimestamp(id).collect(Collectors.toList());
     }
 
     @GetMapping("/repos/{id}/stats/tickets/raw")
     public List<IssueStats> getIssueStatsRaw(@PathVariable String id) {
-        return this.statsFacade.getIssueStatsRaw(id);
+        return this.statsFacade.getIssueStatsRaw(id).collect(Collectors.toList());
     }
 
     @GetMapping("/repos/{id}/stats/commits")

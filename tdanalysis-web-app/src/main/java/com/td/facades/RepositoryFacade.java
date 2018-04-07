@@ -1,5 +1,6 @@
 package com.td.facades;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.td.db.CommitRepository;
 import com.td.db.IssueRepository;
@@ -115,33 +117,40 @@ public class RepositoryFacade {
     * Returns an array of maps, with each map containing an issue-commits pair.
     * Issues are sorted by created date while commits are sorted by timestamp.
     */
-    public List<Map<String, List<CommitModel>>> getIssuesAndCommitsRaw(String repositoryId) {
-        Sort sortCreated = new Sort(Sort.Direction.ASC, "created");
+    public Stream<Map<String, List<CommitModel>>> getIssuesAndCommitsRaw(String repositoryId) {
+        Sort sortClosed = new Sort(Sort.Direction.ASC, "closed");
         Sort sortTimestamp = new Sort(Sort.Direction.ASC, "timestamp");
-        List<IssueModel> issues = issueRepository.findIssueModelsByRepositoryId(repositoryId, sortCreated);
+        List<IssueModel> issues = issueRepository.findIssueModelsByRepositoryId(repositoryId, sortClosed);
 
-        List<Map<String, List<CommitModel>>> result = new ArrayList<>(issues.size());
-        issues.forEach(issue -> {
+        return issues.stream().map(issue -> {
             Map<String, List<CommitModel>> map = new HashMap<>();
             List<CommitModel> commits = commitRepository.findCommitModelsByIssueModels(issue.getIssueId(),
                     sortTimestamp);
             map.put(issue.getIssueKey(), commits);
-            result.add(map);
+            return map;
         });
-
-        return result;
     }
 
     /***
      * Similar to the getIssuesAndCommitsRaw() method, but result is filtered by
-     * number of commits per issue and by author. 
+     * number of commits per issue and by author. Sorts the stream of
+     * issue-commits entries by the last commit timestamp. 
      */
-    public List<Map<String, List<CommitModel>>> getIssuesAndCommitsFiltered(String repositoryId) {
-        List<Map<String, List<CommitModel>>> result = getIssuesAndCommitsRaw(repositoryId);
-
+    public Stream<Map<String, List<CommitModel>>> getIssuesAndCommitsFiltered(String repositoryId) {
         // filter by author and number of commits
-        return result.parallelStream().map(this::filterByAuthor).filter(this::filterByCount)
-                .collect(Collectors.toList());
+        return getIssuesAndCommitsRaw(repositoryId).map(this::getItemsByAuthor).filter(this::filterByCount)
+                .sorted((item1, item2) -> {
+                    // sort by last commit timestamp?
+                    Entry<String, List<CommitModel>> entry1 = item1.entrySet().iterator().next();
+                    List<CommitModel> commits1 = entry1.getValue();
+                    LocalDateTime last1 = commits1.get(commits1.size() - 1).getTimestamp();
+
+                    Entry<String, List<CommitModel>> entry2 = item2.entrySet().iterator().next();
+                    List<CommitModel> commits2 = entry2.getValue();
+                    LocalDateTime last2 = commits2.get(commits2.size() - 1).getTimestamp();
+
+                    return last1.compareTo(last2);
+                });
     }
 
     /**
@@ -155,7 +164,7 @@ public class RepositoryFacade {
     /**
      * Filters map of issue-commits to only include revisions made by a single author.
      */
-    private Map<String, List<CommitModel>> filterByAuthor(Map<String, List<CommitModel>> item) {
+    private Map<String, List<CommitModel>> getItemsByAuthor(Map<String, List<CommitModel>> item) {
         Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
         String issue = entry.getKey();
         List<CommitModel> commits = filterByAuthor(entry.getValue());

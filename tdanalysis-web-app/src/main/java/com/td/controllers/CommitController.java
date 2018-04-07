@@ -3,6 +3,7 @@ package com.td.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.td.facades.RepositoryFacade;
 import com.td.models.CommitModel;
@@ -35,6 +36,6 @@ public class CommitController extends BaseController {
      */
     @GetMapping("/repos/{id}/issue-commits")
     public List<Map<String, List<CommitModel>>> getCommitsByIssue(@PathVariable String id) {
-        return repositoryFacade.getIssuesAndCommitsFiltered(id);
+        return repositoryFacade.getIssuesAndCommitsFiltered(id).collect(Collectors.toList());
     }
 }

@@ -3,22 +3,21 @@ package com.td.facades;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueModel.Transition;
+import com.td.models.IssueStats;
 import com.td.models.IssueStats.TDStats;
 import com.td.models.IssueStats.WorkEffort;
-import com.td.models.IssueStats;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -39,11 +38,8 @@ public class StatsFacade {
      * Returns list of issue stats by calculating work effort using commit
      * timestamps.
      */
-    public List<IssueStats> getIssueStatsByCommitTimestamp(String repositoryId) {
-        List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
-        List<IssueStats> result = new ArrayList<>(commits.size());
-
-        commits.forEach(item -> {
+    public Stream<IssueStats> getIssueStatsByCommitTimestamp(String repositoryId) {
+        return repositoryFacade.getIssuesAndCommitsFiltered(repositoryId).map(item -> {
             Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
             String issueKey = entry.getKey();
             List<CommitModel> issueCommits = entry.getValue();
@@ -59,31 +55,27 @@ public class StatsFacade {
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
 
-            result.add(stats);
+            return stats;
         });
-        return result;
     }
 
     /***
     * Returns a list of issue stats by calculating work effort using ticket
     * timestamps.
     */
-    public List<IssueStats> getIssueStatsByIssueTimestamp(String repositoryId) {
-        List<Map<String, List<CommitModel>>> commits = repositoryFacade.getIssuesAndCommitsFiltered(repositoryId);
-        List<IssueStats> result = new ArrayList<>(commits.size());
-
-        commits.forEach(item -> {
+    public Stream<IssueStats> getIssueStatsByIssueTimestamp(String repositoryId) {
+        return repositoryFacade.getIssuesAndCommitsFiltered(repositoryId).map(item -> {
             Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
             String issueKey = entry.getKey();
 
             // get issue model
             Optional<IssueModel> issueOpt = repositoryFacade.getIssue(repositoryId, issueKey);
             if (!issueOpt.isPresent()) {
-                return;
+                return null;
             }
             IssueModel issue = issueOpt.get();
             if (issue.getStatus().equalsIgnoreCase("Open")) {
-                return;
+                return null;
             }
 
             List<CommitModel> issueCommits = entry.getValue();
@@ -99,18 +91,15 @@ public class StatsFacade {
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
 
-            result.add(stats);
-        });
-        return result;
+            return stats;
+        }).filter(item -> item != null);
     }
 
     /**
      * Returns a list of total number of commits for all issues.
      */
-    public List<IssueStats> getIssueStatsRaw(String repositoryId) {
-        List<Map<String, List<CommitModel>>> issues = repositoryFacade.getIssuesAndCommitsRaw(repositoryId);
-        List<IssueStats> result = new ArrayList<>(issues.size());
-        issues.forEach(item -> {
+    public Stream<IssueStats> getIssueStatsRaw(String repositoryId) {
+        return repositoryFacade.getIssuesAndCommitsRaw(repositoryId).map(item -> {
             Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
             String issueKey = entry.getKey();
             List<CommitModel> issueCommits = entry.getValue();
@@ -122,10 +111,8 @@ public class StatsFacade {
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
 
-            result.add(stats);
+            return stats;
         });
-
-        return result;
     }
 
     /***
