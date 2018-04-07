@@ -16,9 +16,9 @@ import com.td.models.CommitModel;
 import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueModel.Transition;
+import com.td.models.IssueStats.TDStats;
+import com.td.models.IssueStats.WorkEffort;
 import com.td.models.IssueStats;
-import com.td.models.TDStats;
-import com.td.models.WorkEffort;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -241,13 +241,5 @@ public class StatsFacade {
 
         // case any other day
         return (days + 1) * WORK_HOURS_PER_DAY;
-    }
-
-    /***
-    * Returns a count of the unique issues available in the list of commits.
-    * @deprecated Using TechnicalDebt model instead of bugs.
-    */
-    private long getTechnicalDebtCount(List<CommitModel> commits) {
-        return commits.stream().map(commit -> commit.getBugs()).flatMap(bugs -> bugs.stream()).distinct().count();
     }
 }
