@@ -9,7 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.CommitStats;
 import com.td.models.IssueModel;
@@ -115,7 +117,7 @@ public class StatsFacade {
 
             IssueStats stats = new IssueStats();
             stats.setTotalCommits(issueCommits.size());
-            stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
+            // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setIssueKey(issueKey);
             result.add(stats);
         });
@@ -130,16 +132,18 @@ public class StatsFacade {
     public CommitStats getCommitStats(String id) {
         CommitStats result = new CommitStats();
 
-        List<CommitModel> commits = this.repositoryFacade.getAllCommits(id);
+        List<CommitModel> commits = this.repositoryFacade.getAllCommits(id).stream()
+                .filter(commit -> commit.getBuildStatus().equals(BuildStatus.SUCCESSFUL)).collect(Collectors.toList());
 
         int totalCommits = commits.size();
         int withIssues = (int) commits.stream().filter(commit -> commit.getIssueIds().size() > 0).count();
         int withoutIssues = totalCommits - withIssues;
         int numberOfAuthors = repositoryFacade.getCollaborators(id).size();
+
         double meanTicketsPerCommit = commits.stream().map(commit -> commit.getIssueIds().size()).reduce(0,
                 (prev, cur) -> prev + cur) / ((double) totalCommits);
-        double meanTDItemsPerCommit = commits.stream().map(commit -> commit.getBugs().size()).reduce(0,
-                (prev, cur) -> prev + cur) / ((double) totalCommits);
+        double meanTDItemsPerCommit = commits.stream().map(commit -> commit.getTechnicalDebt().getTotalCount())
+                .reduce(0, (prev, cur) -> prev + cur) / ((double) totalCommits);
 
         result.setTotalCommits(totalCommits);
         result.setCommitsWithIssues(withIssues);
