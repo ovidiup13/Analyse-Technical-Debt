@@ -47,7 +47,11 @@ public class TDCalculator {
         // if previous does not exist, added is the number of TD items in the last commit.
         if (!previous.isPresent()) {
             TDStats tdStats = new TDStats();
-            tdStats.setAdded(last.getTechnicalDebt().getTotalCount());
+            TechnicalDebt lastTd = last.getTechnicalDebt();
+            tdStats.setAdded(lastTd.getTotalCount());
+            tdStats.setHigh(lastTd.getHighCount());
+            tdStats.setMedium(lastTd.getMediumCount());
+            tdStats.setLow(lastTd.getLowCount());
             return Optional.of(tdStats);
         }
 
@@ -67,6 +71,10 @@ public class TDCalculator {
         }
 
         TDStats tdStats = new TDStats();
+        TechnicalDebt lastTd = c2.getTechnicalDebt();
+        tdStats.setHigh(lastTd.getHighCount());
+        tdStats.setMedium(lastTd.getMediumCount());
+        tdStats.setLow(lastTd.getLowCount());
         tdStats.setTotalPain(c1.getTechnicalDebt().getTotalCount());
         tdStats.setAdded(calculateTechnicalDebtIntroduced(td1, td2));
         tdStats.setRemoved(calculateTechnicalDebtRemoved(td1, td2));
