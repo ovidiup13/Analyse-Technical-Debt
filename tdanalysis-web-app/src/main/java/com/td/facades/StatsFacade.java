@@ -117,8 +117,11 @@ public class StatsFacade {
 
             IssueStats stats = new IssueStats();
             stats.setTotalCommits(issueCommits.size());
-            // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setIssueKey(issueKey);
+
+            Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
+            stats.setTdStats(opt.orElse(null));
+
             result.add(stats);
         });
 
