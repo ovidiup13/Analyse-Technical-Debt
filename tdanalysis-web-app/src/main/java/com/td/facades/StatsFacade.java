@@ -196,7 +196,7 @@ public class StatsFacade {
                 && transition.getFrom().equals("In Progress");
         long count = transitions.stream().filter(condition).count();
 
-        if (count < 0) {
+        if (count <= 0) {
             return Optional.empty();
         }
 
