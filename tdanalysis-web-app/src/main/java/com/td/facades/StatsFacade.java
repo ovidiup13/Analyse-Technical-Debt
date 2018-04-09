@@ -16,6 +16,7 @@ import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueModel.Transition;
 import com.td.models.IssueStats;
+import com.td.models.IssueStats.ChangeSetStats;
 import com.td.models.IssueStats.TDStats;
 import com.td.models.IssueStats.WorkEffort;
 
@@ -51,6 +52,7 @@ public class StatsFacade {
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
             stats.setWorkEffort(getWorkEffortByCommitTimestamp(issueCommits));
+            stats.setChangeSetStats(getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
@@ -87,6 +89,7 @@ public class StatsFacade {
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
             stats.setWorkEffort(getWorkEffortByTicketTimestamp(issue));
+            stats.setChangeSetStats(getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
@@ -107,12 +110,33 @@ public class StatsFacade {
             IssueStats stats = new IssueStats();
             stats.setTotalCommits(issueCommits.size());
             stats.setIssueKey(issueKey);
+            stats.setChangeSetStats(getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
 
             return stats;
         });
+    }
+
+    /**
+     * Aggregates all changesets within a list of commits.
+     */
+    public ChangeSetStats getChangeSetStats(List<CommitModel> commits) {
+        ChangeSetStats stats = new ChangeSetStats();
+
+        int additions = commits.stream().map(commit -> commit.getDiff().getAdditions()).reduce(0, (a, b) -> a + b);
+        int deletions = commits.stream().map(commit -> commit.getDiff().getDeletions()).reduce(0, (a, b) -> a + b);
+        int modifications = commits.stream().map(commit -> commit.getDiff().getModifications()).reduce(0,
+                (a, b) -> a + b);
+        int total = commits.stream().map(commit -> commit.getDiff().getTotalChanges()).reduce(0, (a, b) -> a + b);
+
+        stats.setAdditions(additions);
+        stats.setDeletions(deletions);
+        stats.setModifications(modifications);
+        stats.setTotalChanges(total);
+
+        return stats;
     }
 
     /***
