@@ -2,7 +2,7 @@ package com.td.models;
 
 import com.td.models.TechnicalDebtItem.CompositeKey;
 
-public class CommitTD {
+public class CommitTD implements Comparable<CommitTD> {
 
     private CompositeKey id;
     private TechnicalDebtPriority priority;
@@ -51,13 +51,28 @@ public class CommitTD {
     }
 
     @Override
+    public int compareTo(CommitTD o) {
+        int r1 = this.id.compareTo(o.getId());
+        if (r1 == 0) {
+            int r2 = this.priority.compareTo(o.getPriority());
+            if (r2 == 0) {
+                return this.location.compareTo(location);
+            }
+
+            return r2;
+        }
+
+        return r1;
+    }
+
+    @Override
     public boolean equals(Object o) {
         CommitTD target = (CommitTD) o;
         return this.getId().equals(target.getId()) && this.getPriority().equals(target.getPriority())
                 && this.getLocation().equals(target.getLocation());
     }
 
-    public static class CodeLocation {
+    public static class CodeLocation implements Comparable<CodeLocation> {
 
         private String fileName;
         private String lineNumber;
@@ -112,6 +127,15 @@ public class CommitTD {
             }
         }
 
-    }
+        @Override
+        public int compareTo(CodeLocation o) {
+            int res = this.fileName.compareTo(o.getFileName());
+            if (res == 0) {
+                return this.lineNumber == null ? 0 : this.lineNumber.compareTo(lineNumber);
+            }
 
+            return res;
+        }
+
+    }
 }

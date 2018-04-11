@@ -1,14 +1,19 @@
 package com.td.utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.CommitTD;
-import com.td.models.TechnicalDebt;
 import com.td.models.IssueStats.TDStats;
+import com.td.models.TechnicalDebt;
+import com.td.models.TechnicalDebtPriority;
 
 public class TDCalculator {
 
@@ -131,5 +136,67 @@ public class TDCalculator {
         td1Items.removeAll(td2Items);
 
         return td1Items.size();
+    }
+
+    /**
+     * Calculates the technical debt relevant for the changeset within a list of commits.
+     */
+    static TechnicalDebt getTechnicalDebtForCommits(List<CommitModel> commits) {
+
+        // get changes
+        Set<String> changes = getTotalChanges(commits);
+
+        // get all distinct TD items within list
+        Stream<CommitTD> tdStream = getDistinctCommitTDs(commits);
+
+        // filter technical debt items by changes
+        List<CommitTD> commitTDs = tdStream.filter(commitTD -> changes.contains(commitTD.getLocation().getFileName()))
+                .collect(Collectors.toList());
+
+        // return technical debt object
+        TechnicalDebt debt = new TechnicalDebt();
+        debt.setTdItems(commitTDs);
+        debt.setHighCount(
+                (int) commitTDs.stream().filter(td -> td.getPriority().equals(TechnicalDebtPriority.HIGH)).count());
+        debt.setMediumCount(
+                (int) commitTDs.stream().filter(td -> td.getPriority().equals(TechnicalDebtPriority.MEDIUM)).count());
+        debt.setLowCount(
+                (int) commitTDs.stream().filter(td -> td.getPriority().equals(TechnicalDebtPriority.LOW)).count());
+
+        return debt;
+    }
+
+    /**
+     * Returns all the distinct file names that have suffered changes over a period of commits.  
+     */
+    static Set<String> getTotalChanges(List<CommitModel> commits) {
+        Stream<String> totalAdditions = commits.stream().map(commit -> commit.getDiff())
+                .map(diff -> diff.getAdditionSet()).filter(item -> item != null).flatMap(List::stream);
+        Stream<String> totalDeletions = commits.stream().map(commit -> commit.getDiff())
+                .map(diff -> diff.getDeletionSet()).filter(item -> item != null).flatMap(List::stream);
+        Stream<String> totalModifications = commits.stream().map(commit -> commit.getDiff())
+                .map(diff -> diff.getModificationSet()).filter(item -> item != null).flatMap(List::stream);
+
+        Stream<String> totalChanges = Stream.concat(Stream.concat(totalAdditions, totalModifications), totalDeletions)
+                .sorted().distinct();
+
+        return totalChanges.filter(change -> {
+            return change != null;
+        }).map(change -> {
+            return TDCalculator.getFileNameFromPath(change);
+        }).peek(change -> System.out.println(change)).collect(Collectors.toCollection(HashSet::new));
+    }
+
+    static String getFileNameFromPath(String path) {
+        String[] pathElements = path.split("/");
+        return pathElements[pathElements.length - 1];
+    }
+
+    /**
+     * Returns all distinct technical debt items that have been found in a list of commits.
+     */
+    static Stream<CommitTD> getDistinctCommitTDs(List<CommitModel> commits) {
+        return commits.stream().filter(commit -> commit.getTechnicalDebt() != null)
+                .map(commit -> commit.getTechnicalDebt().getTdItems()).flatMap(List::stream).sorted().distinct();
     }
 }

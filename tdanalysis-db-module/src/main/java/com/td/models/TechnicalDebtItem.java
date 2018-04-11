@@ -1,6 +1,5 @@
 package com.td.models;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -69,7 +68,7 @@ public class TechnicalDebtItem {
         this.category = category;
     }
 
-    public static class CompositeKey {
+    public static class CompositeKey implements Comparable<CompositeKey> {
 
         private String categoryInitial;
         private String issueCode;
@@ -115,6 +114,16 @@ public class TechnicalDebtItem {
             CompositeKey key = (CompositeKey) o;
             return this.getCategoryInitial().equals(key.getCategoryInitial())
                     && this.getIssueCode().equals(key.getIssueCode());
+        }
+
+        @Override
+        public int compareTo(CompositeKey o) {
+            int res = this.categoryInitial.compareTo(o.getCategoryInitial());
+            if (res == 0) {
+                return this.issueCode.compareTo(o.getIssueCode());
+            }
+
+            return res;
         }
     }
 
