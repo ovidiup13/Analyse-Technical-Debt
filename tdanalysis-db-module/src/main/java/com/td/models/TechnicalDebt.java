@@ -1,5 +1,6 @@
 package com.td.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TechnicalDebt {
@@ -10,6 +11,10 @@ public class TechnicalDebt {
     private int lowCount;
 
     private List<CommitTD> tdItems;
+
+    public TechnicalDebt() {
+        this.tdItems = new ArrayList<>();
+    }
 
     /**
      * @return the totalCount

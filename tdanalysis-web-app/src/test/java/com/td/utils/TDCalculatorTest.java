@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.td.models.BuildStatus;
 import com.td.models.CommitDiff;
@@ -93,6 +92,9 @@ public class TDCalculatorTest {
         commit.setSha(sha);
         commit.setBuildStatus(status);
         commit.setRepositoryId("1"); //does not matter
+        CommitDiff diff = createDiff(Arrays.asList("ClassA.java"), Arrays.asList("ClassC.java"),
+                Arrays.asList("ClassB.java"));
+        commit.setDiff(diff);
         return commit;
     }
 
@@ -150,43 +152,6 @@ public class TDCalculatorTest {
         Optional<TDStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
 
         assertFalse(result.isPresent());
-    }
-
-    @Test
-    public void getTechnicalDebtForIssueTestPreviousAllFailed() {
-        List<CommitModel> allCommits = new ArrayList<>();
-        allCommits.add(createCommit("1", BuildStatus.FAILED));
-        allCommits.add(createCommit("2", BuildStatus.FAILED));
-        allCommits.add(createCommit("3", BuildStatus.FAILED));
-        allCommits.add(createCommit("4", BuildStatus.FAILED));
-        allCommits.add(createCommit("5", BuildStatus.FAILED));
-        allCommits.add(createCommit("6", BuildStatus.SUCCESSFUL));
-        allCommits.add(createCommit("7", BuildStatus.SUCCESSFUL));
-
-        List<CommitModel> issueCommits = new ArrayList<>();
-        issueCommits.add(createCommit("6", BuildStatus.SUCCESSFUL));
-
-        // last commit
-        CommitModel last = createCommit("7", BuildStatus.SUCCESSFUL);
-        TechnicalDebt td = new TechnicalDebt();
-        int totalExpected = 100;
-        td.setTotalCount(totalExpected);
-        last.setTechnicalDebt(td);
-        issueCommits.add(last);
-
-        Optional<TDStats> result = TDCalculator.getTechnicalDebtForIssue(issueCommits, allCommits);
-
-        assertTrue(result.isPresent());
-        TDStats actual = result.get();
-        assertEquals(totalExpected, actual.getAdded());
-    }
-
-    @Test
-    public void computeTechnicalDebtStatsTestNull() {
-
-        Optional<TDStats> stats = TDCalculator.computeTechnicalDebtStats(new CommitModel(), new CommitModel());
-
-        assertFalse(stats.isPresent());
     }
 
     @Test
@@ -275,36 +240,36 @@ public class TDCalculatorTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    public void getDistinctCommitTDsTest() {
-        List<CommitModel> allCommits = new ArrayList<>();
-        List<String> classes = Arrays.asList("ClassA.java", "ClassA.java", "ClassB.java");
-        List<CodeLocation> locations = createLocations(classes);
-        CommitModel commit = createCommitWithTD(locations);
-        allCommits.add(commit);
+    // @Test
+    // public void getDistinctCommitTDsTest() {
+    //     List<CommitModel> allCommits = new ArrayList<>();
+    //     List<String> classes = Arrays.asList("ClassA.java", "ClassA.java", "ClassB.java");
+    //     List<CodeLocation> locations = createLocations(classes);
+    //     CommitModel commit = createCommitWithTD(locations);
+    //     allCommits.add(commit);
 
-        List<CommitTD> actual = TDCalculator.getDistinctCommitTDs(allCommits).collect(Collectors.toList());
+    //     List<CommitTD> actual = TDCalculator.getDistinctCommitTDs(allCommits).collect(Collectors.toList());
 
-        assertEquals(2, actual.size());
+    //     assertEquals(2, actual.size());
 
-        List<CommitTD> b = actual.stream().filter(td -> td.getLocation().getFileName().equals("ClassB.java"))
-                .collect(Collectors.toList());
+    //     List<CommitTD> b = actual.stream().filter(td -> td.getLocation().getFileName().equals("ClassB.java"))
+    //             .collect(Collectors.toList());
 
-        assertFalse(b.isEmpty());
-    }
+    //     assertFalse(b.isEmpty());
+    // }
 
-    @Test
-    public void getDistinctCommitTDsNoDistinctTest() {
-        List<CommitModel> allCommits = new ArrayList<>();
-        List<String> classes = Arrays.asList("ClassA.java", "ClassB.java");
-        List<CodeLocation> locations = createLocations(classes);
-        CommitModel commit = createCommitWithTD(locations);
-        allCommits.add(commit);
+    // @Test
+    // public void getDistinctCommitTDsNoDistinctTest() {
+    //     List<CommitModel> allCommits = new ArrayList<>();
+    //     List<String> classes = Arrays.asList("ClassA.java", "ClassB.java");
+    //     List<CodeLocation> locations = createLocations(classes);
+    //     CommitModel commit = createCommitWithTD(locations);
+    //     allCommits.add(commit);
 
-        List<CommitTD> actual = TDCalculator.getDistinctCommitTDs(allCommits).collect(Collectors.toList());
+    //     List<CommitTD> actual = TDCalculator.getDistinctCommitTDs(allCommits).collect(Collectors.toList());
 
-        assertEquals(2, actual.size());
-    }
+    //     assertEquals(2, actual.size());
+    // }
 
     @Test
     public void getTotalChangesTest() {
