@@ -16,9 +16,9 @@ import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueModel.Transition;
 import com.td.models.IssueStats;
-import com.td.models.IssueStats.ChangeSetStats;
-import com.td.models.IssueStats.TDStats;
-import com.td.models.IssueStats.WorkEffort;
+import com.td.models.ChangeSetStats;
+import com.td.models.TDStats;
+import com.td.models.WorkEffort;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

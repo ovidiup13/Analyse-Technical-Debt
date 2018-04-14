@@ -8,7 +8,7 @@ import com.td.db.CommitRepository;
 import com.td.db.TDReferenceRepository;
 import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
-import com.td.models.IssueStats.TDStats;
+import com.td.models.TDStats;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtItem;
 import com.td.models.TechnicalDebtItem.CompositeKey;

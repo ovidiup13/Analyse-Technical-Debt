@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.CommitTD;
-import com.td.models.IssueStats.TDStats;
+import com.td.models.TDStats;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtPriority;
 
