@@ -62,7 +62,7 @@ public class JiraTrackerHelper extends IssueTrackerHelper {
         try {
             Issue issue = jiraRestClient.getIssueClient().getIssue(issueKey).claim();
             return Optional.of(jiraIssueToIssueModel(issue));
-        } catch (RestClientException e) {
+        } catch (Exception e) { // catches RestClientException, SocketTimeoutException
             logger.error("Could not retrieve issue " + issueKey);
             e.printStackTrace();
             return Optional.empty();
