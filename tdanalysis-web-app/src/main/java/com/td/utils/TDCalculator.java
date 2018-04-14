@@ -23,6 +23,10 @@ public class TDCalculator {
     public static Optional<TDStats> getTechnicalDebtForIssue(List<CommitModel> issueCommits,
             List<CommitModel> allCommits) {
 
+        if (issueCommits.size() < 1) {
+            return Optional.empty();
+        }
+
         Set<String> changes = ChangeSetCalculator.getTotalChanges(issueCommits);
 
         CommitModel first = issueCommits.get(0);
