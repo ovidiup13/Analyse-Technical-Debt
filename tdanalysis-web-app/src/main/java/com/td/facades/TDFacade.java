@@ -2,13 +2,15 @@ package com.td.facades;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.td.db.CommitRepository;
 import com.td.db.TDReferenceRepository;
+import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
+import com.td.models.IssueStats.TDStats;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtItem;
-import com.td.models.IssueStats.TDStats;
 import com.td.models.TechnicalDebtItem.CompositeKey;
 import com.td.utils.TDCalculator;
 
@@ -59,5 +61,15 @@ public class TDFacade {
     public Optional<TDStats> getTechnicalDebtForIssue(String repoId, List<CommitModel> commits) {
         List<CommitModel> allCommits = repositoryFacade.getAllCommits(repoId);
         return TDCalculator.getTechnicalDebtForIssue(commits, allCommits);
+    }
+
+    public Stream<TechnicalDebt> getTechnicalDebtTimeline(String id) {
+        List<CommitModel> commits = commitRepository.findByRepositoryIdAndBuildStatusOrderByTimestampAsc(id,
+                BuildStatus.SUCCESSFUL);
+        return commits.stream().filter(c -> c.getTechnicalDebt() != null).map(c -> {
+            TechnicalDebt t = c.getTechnicalDebt();
+            t.setTdItems(null); // ignore TD items, just need counts
+            return t;
+        });
     }
 }

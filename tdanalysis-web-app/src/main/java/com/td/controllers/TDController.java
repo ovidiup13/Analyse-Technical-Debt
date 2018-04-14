@@ -1,6 +1,7 @@
 package com.td.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.td.facades.TDFacade;
 import com.td.models.TechnicalDebt;
@@ -31,5 +32,10 @@ public class TDController extends BaseController {
     @GetMapping("/repos/{id}/commits/{sha}/td")
     public TechnicalDebt getTechnicalDebtOfCommit(@PathVariable String id, @PathVariable String sha) {
         return tdFacade.getTechnicalDebtOfCommit(id, sha);
+    }
+
+    @GetMapping("repos/{id}/td/timeline")
+    public List<TechnicalDebt> getTechnicalDebtTimeline(@PathVariable String id) {
+        return tdFacade.getTechnicalDebtTimeline(id).collect(Collectors.toList());
     }
 }

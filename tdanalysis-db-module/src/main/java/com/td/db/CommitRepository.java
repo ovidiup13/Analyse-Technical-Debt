@@ -2,6 +2,7 @@ package com.td.db;
 
 import java.util.List;
 
+import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 
 import org.springframework.cache.annotation.Cacheable;
@@ -25,4 +26,7 @@ public interface CommitRepository extends MongoRepository<CommitModel, String> {
 
     @Cacheable("authorCommits")
     List<CommitModel> findCommitModelsByRepositoryIdAndAuthor(String id, String author, Sort sort);
+
+    @Cacheable("timeline")
+    List<CommitModel> findByRepositoryIdAndBuildStatusOrderByTimestampAsc(String id, BuildStatus buildStatus);
 }
