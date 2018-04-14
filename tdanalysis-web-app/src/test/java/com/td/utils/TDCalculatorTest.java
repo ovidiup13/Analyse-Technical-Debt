@@ -87,17 +87,6 @@ public class TDCalculatorTest {
         assertFalse(opt.isPresent());
     }
 
-    private CommitModel createCommit(String sha, BuildStatus status) {
-        CommitModel commit = new CommitModel();
-        commit.setSha(sha);
-        commit.setBuildStatus(status);
-        commit.setRepositoryId("1"); //does not matter
-        CommitDiff diff = createDiff(Arrays.asList("ClassA.java"), Arrays.asList("ClassC.java"),
-                Arrays.asList("ClassB.java"));
-        commit.setDiff(diff);
-        return commit;
-    }
-
     @Test
     public void getTechnicalDebtForIssueTestLessCommits() {
         List<CommitModel> allCommits = new ArrayList<>();
@@ -240,92 +229,15 @@ public class TDCalculatorTest {
         assertEquals(expected, actual);
     }
 
-    // @Test
-    // public void getDistinctCommitTDsTest() {
-    //     List<CommitModel> allCommits = new ArrayList<>();
-    //     List<String> classes = Arrays.asList("ClassA.java", "ClassA.java", "ClassB.java");
-    //     List<CodeLocation> locations = createLocations(classes);
-    //     CommitModel commit = createCommitWithTD(locations);
-    //     allCommits.add(commit);
-
-    //     List<CommitTD> actual = TDCalculator.getDistinctCommitTDs(allCommits).collect(Collectors.toList());
-
-    //     assertEquals(2, actual.size());
-
-    //     List<CommitTD> b = actual.stream().filter(td -> td.getLocation().getFileName().equals("ClassB.java"))
-    //             .collect(Collectors.toList());
-
-    //     assertFalse(b.isEmpty());
-    // }
-
-    // @Test
-    // public void getDistinctCommitTDsNoDistinctTest() {
-    //     List<CommitModel> allCommits = new ArrayList<>();
-    //     List<String> classes = Arrays.asList("ClassA.java", "ClassB.java");
-    //     List<CodeLocation> locations = createLocations(classes);
-    //     CommitModel commit = createCommitWithTD(locations);
-    //     allCommits.add(commit);
-
-    //     List<CommitTD> actual = TDCalculator.getDistinctCommitTDs(allCommits).collect(Collectors.toList());
-
-    //     assertEquals(2, actual.size());
-    // }
-
-    @Test
-    public void getTotalChangesTest() {
-        List<CommitModel> allCommits = new ArrayList<>();
-        List<String> diffs = Arrays.asList("ClassA.java", "ClassB.java");
-        CommitDiff diff1 = createDiff(diffs, diffs, diffs);
-        CommitModel commit = createCommit("", BuildStatus.SUCCESSFUL);
-        commit.setDiff(diff1);
-        allCommits.add(commit);
-
-        Set<String> changes = TDCalculator.getTotalChanges(allCommits);
-
-        assertFalse(changes.isEmpty());
-        assertEquals(2, changes.size());
-        assertTrue(changes.contains("ClassA.java"));
-        assertTrue(changes.contains("ClassB.java"));
-    }
-
-    @Test
-    public void getTotalChangesNullTest() {
-        List<CommitModel> allCommits = new ArrayList<>();
-        List<String> diffs = Arrays.asList("ClassA.java", "ClassB.java");
-        CommitDiff diff1 = createDiff(diffs, null, null);
-        CommitModel commit = createCommit("", BuildStatus.SUCCESSFUL);
-        commit.setDiff(diff1);
-        allCommits.add(commit);
-
-        Set<String> changes = TDCalculator.getTotalChanges(allCommits);
-
-        assertFalse(changes.isEmpty());
-        assertEquals(2, changes.size());
-        assertTrue(changes.contains("ClassA.java"));
-        assertTrue(changes.contains("ClassB.java"));
-    }
-
-    @Test
-    public void getTotalChangesDuplicateTest() {
-        List<CommitModel> allCommits = new ArrayList<>();
-
-        List<String> diffs1 = Arrays.asList("ClassA.java", "ClassA.java", "ClassC.java");
-        List<String> diffs2 = Arrays.asList("ClassA.java", "ClassA.java", "ClassC.java");
-        CommitDiff diff1 = createDiff(diffs1, diffs1, diffs1);
-        CommitDiff diff2 = createDiff(diffs2, diffs2, diffs2);
-        CommitModel commit1 = createCommit("", BuildStatus.SUCCESSFUL);
-        CommitModel commit2 = createCommit("", BuildStatus.SUCCESSFUL);
-        commit1.setDiff(diff1);
-        commit2.setDiff(diff2);
-        allCommits.add(commit1);
-        allCommits.add(commit2);
-
-        Set<String> changes = TDCalculator.getTotalChanges(allCommits);
-
-        assertFalse(changes.isEmpty());
-        assertEquals(2, changes.size());
-        assertTrue(changes.contains("ClassA.java"));
-        assertTrue(changes.contains("ClassC.java"));
+    private CommitModel createCommit(String sha, BuildStatus status) {
+        CommitModel commit = new CommitModel();
+        commit.setSha(sha);
+        commit.setBuildStatus(status);
+        commit.setRepositoryId("1"); //does not matter
+        CommitDiff diff = createDiff(Arrays.asList("ClassA.java"), Arrays.asList("ClassC.java"),
+                Arrays.asList("ClassB.java"));
+        commit.setDiff(diff);
+        return commit;
     }
 
     private List<CodeLocation> createLocations(List<String> classes) {

@@ -1,7 +1,6 @@
 package com.td.utils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,11 +23,7 @@ public class TDCalculator {
     public static Optional<TDStats> getTechnicalDebtForIssue(List<CommitModel> issueCommits,
             List<CommitModel> allCommits) {
 
-        if (issueCommits.size() < 1) {
-            return Optional.empty();
-        }
-
-        Set<String> changes = getTotalChanges(issueCommits);
+        Set<String> changes = ChangeSetCalculator.getTotalChanges(issueCommits);
 
         CommitModel first = issueCommits.get(0);
         CommitModel last = issueCommits.get(issueCommits.size() - 1);
@@ -168,27 +163,6 @@ public class TDCalculator {
                 (int) commitTDs.stream().filter(td -> td.getPriority().equals(TechnicalDebtPriority.LOW)).count());
 
         return debt;
-    }
-
-    /**
-     * Returns all the distinct file names that have suffered changes over a period of commits.  
-     */
-    static Set<String> getTotalChanges(List<CommitModel> commits) {
-        Stream<String> totalAdditions = commits.stream().map(commit -> commit.getDiff())
-                .map(diff -> diff.getAdditionSet()).filter(item -> item != null).flatMap(List::stream);
-        Stream<String> totalDeletions = commits.stream().map(commit -> commit.getDiff())
-                .map(diff -> diff.getDeletionSet()).filter(item -> item != null).flatMap(List::stream);
-        Stream<String> totalModifications = commits.stream().map(commit -> commit.getDiff())
-                .map(diff -> diff.getModificationSet()).filter(item -> item != null).flatMap(List::stream);
-
-        Stream<String> totalChanges = Stream.concat(Stream.concat(totalAdditions, totalModifications), totalDeletions)
-                .sorted().distinct();
-
-        return totalChanges.filter(change -> {
-            return change != null;
-        }).map(change -> {
-            return TDCalculator.getFileNameFromPath(change);
-        }).collect(Collectors.toCollection(HashSet::new));
     }
 
     static String getFileNameFromPath(String path) {

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.td.facades.TDFacade;
+import com.td.models.ChangeTD;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtItem;
 
@@ -37,5 +38,10 @@ public class TDController extends BaseController {
     @GetMapping("repos/{id}/td/timeline")
     public List<TechnicalDebt> getTechnicalDebtTimeline(@PathVariable String id) {
         return tdFacade.getTechnicalDebtTimeline(id).collect(Collectors.toList());
+    }
+
+    @GetMapping("repos/{id}/td/changeset")
+    public List<ChangeTD> getChangeSetTechnicalDebt(@PathVariable String id) {
+        return tdFacade.getChangeSetTechnicalDebt(id);
     }
 }

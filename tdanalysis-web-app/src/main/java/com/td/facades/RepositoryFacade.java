@@ -18,8 +18,11 @@ import com.td.db.ProjectRepository;
 import com.td.models.CommitModel;
 import com.td.models.IssueModel;
 import com.td.models.RepositoryModel;
+import com.td.models.WorkItem;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -200,6 +203,27 @@ public class RepositoryFacade {
 
         //TODO: what happens if there is a tie?
         return Collections.max(authorMap.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
+    }
+
+    /**
+     * Retrieves all work items for a specific repository.
+     */
+    public Stream<WorkItem> getWorkItems(String id) {
+        List<IssueModel> issues = issueRepository.findIssueModelsByRepositoryId(id, new Sort(Direction.ASC, "closed"));
+        return issues.stream().map(issue -> {
+            WorkItem item = new WorkItem();
+            item.setIssue(issue);
+            item.setCommits(commitRepository.findCommitModelsByIssueModels(issue.getIssueId(),
+                    new Sort(Direction.ASC, "timestamp")));
+            return item;
+        });
+    }
+
+    public Stream<WorkItem> getWorkItemSingleAuthor(String id) {
+        return getWorkItems(id).map(item -> {
+            item.setCommits(filterByAuthor(item.getCommits()));
+            return item;
+        });
     }
 
 }
