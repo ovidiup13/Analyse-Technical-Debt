@@ -21,10 +21,6 @@ sourceSets {
     }
 }
 
-bootRun {
-    jvmArgs = ["-Xms64m", "-Xmx256m", "-Xss64m"]
-}
-
 dependencies {
     compile "org.springframework.boot:spring-boot-starter:$spring_boot_version"
     compile 'org.eclipse.jgit:org.eclipse.jgit:4.9.0.201710071750-r'

@@ -46,18 +46,17 @@ public class MavenBuildHelper {
             logger.info("Process builder started...");
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
+            BuildStatus status = BuildStatus.SUCCESSFUL;
             while ((line = reader.readLine()) != null) {
                 logger.info(line);
                 if (line.contains(BUILD_FAILURE_MESSAGE)) {
-                    p.destroy();
-                    return BuildStatus.FAILED;
+                    status = BuildStatus.FAILED;
                 }
             }
             p.waitFor();
-            p.destroy();
 
-            return p.exitValue() == 0 ? BuildStatus.SUCCESSFUL : BuildStatus.FAILED;
-        } catch (IOException | InterruptedException e) {
+            return status;
+        } catch (Exception e) {
             logger.error("An error occurred when building repository", e);
             e.printStackTrace();
             return BuildStatus.FAILED;
