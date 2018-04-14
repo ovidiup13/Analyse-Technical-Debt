@@ -20,6 +20,7 @@ import com.td.models.TechnicalDebtItem.CompositeKey;
 import com.td.utils.ChangeSetCalculator;
 import com.td.utils.TDCalculator;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -79,6 +80,7 @@ public class TDFacade {
         });
     }
 
+    @Cacheable("changeTD")
     public List<ChangeTD> getChangeSetTechnicalDebt(String id) {
         List<WorkItem> items = repositoryFacade.getWorkItemSingleAuthor(id).filter(item -> item.getCommits().size() > 0)
                 .collect(Collectors.toList());
