@@ -3,8 +3,12 @@ package com.td.processor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.td.db.IssueRepository;
 import com.td.db.ProjectRepository;
@@ -79,9 +83,12 @@ public class RepositoryProcessor {
                 }
 
                 // get issues
-                List<IssueModel> issues = issueProcessor.getIssues(commit);
-                commit.setIssueIds(issueProcessor.getIssueIds(issues));
-                issueRepository.save(issues);
+                // List<IssueModel> issues = issueProcessor.getIssues(commit);
+                List<String> issueKeys = getJiraIssueKeys(commit.getMessage());
+                commit.setIssueIds(
+                        issueKeys.stream().map(key -> repo.getName() + "/" + key).collect(Collectors.toList()));
+                // commit.setIssueIds(issueProcessor.getIssueIds());
+                // issueRepository.save(issues);
 
                 // process commit
                 commitProcessor.processCommit(commit, repo);
@@ -126,5 +133,17 @@ public class RepositoryProcessor {
         } else {
             return new IssueProcessor(githubUsername, githubToken, repo);
         }
+    }
+
+    private List<String> getJiraIssueKeys(String message) {
+        Pattern pattern = Pattern.compile("[A-Z]+-[0-9]+");
+        List<String> keys = new ArrayList<>();
+
+        Matcher matcher = pattern.matcher(message);
+        while (matcher.find()) {
+            keys.add(matcher.group());
+        }
+
+        return keys;
     }
 }
