@@ -5,6 +5,8 @@ public class CommitStats {
     private int totalCommits;
     private int commitsWithIssues;
     private int commitsWithoutIssues;
+    private int successfulBuilds;
+    private int failedBuilds;
     private int numberOfAuthors;
     private double meanTicketsPerCommit;
     private double meanTDItemsPerCommit;
@@ -91,6 +93,34 @@ public class CommitStats {
      */
     public void setMeanTDItemsPerCommit(double meanTDItemsPerCommit) {
         this.meanTDItemsPerCommit = meanTDItemsPerCommit;
+    }
+
+    /**
+     * @return the successfulBuilds
+     */
+    public int getSuccessfulBuilds() {
+        return successfulBuilds;
+    }
+
+    /**
+     * @param successfulBuilds the successfulBuilds to set
+     */
+    public void setSuccessfulBuilds(int successfulBuilds) {
+        this.successfulBuilds = successfulBuilds;
+    }
+
+    /**
+     * @return the failedBuilds
+     */
+    public int getFailedBuilds() {
+        return failedBuilds;
+    }
+
+    /**
+     * @param failedBuilds the failedBuilds to set
+     */
+    public void setFailedBuilds(int failedBuilds) {
+        this.failedBuilds = failedBuilds;
     }
 
 }

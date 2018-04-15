@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import com.td.models.BuildStatus;
 import com.td.models.CommitDiff;
@@ -240,33 +239,12 @@ public class TDCalculatorTest {
         return commit;
     }
 
-    private List<CodeLocation> createLocations(List<String> classes) {
-        List<CodeLocation> locations = new ArrayList<>();
-        classes.forEach(className -> locations.add(new CodeLocation(className, "1")));
-        return locations;
-    }
-
     private CommitDiff createDiff(List<String> additions, List<String> modifications, List<String> deletions) {
         CommitDiff diff = new CommitDiff();
         diff.setAdditionSet(additions);
         diff.setModificationSet(modifications);
         diff.setDeletionSet(deletions);
         return diff;
-    }
-
-    private CommitModel createCommitWithTD(List<CodeLocation> locations) {
-        CommitModel commit = createCommit("1", BuildStatus.SUCCESSFUL);
-        TechnicalDebt debt = new TechnicalDebt();
-
-        List<CommitTD> tds = new ArrayList<>();
-        locations.forEach(location -> {
-            tds.add(createCommitTD(new CompositeKey("A", "DB"), TechnicalDebtPriority.HIGH, location));
-        });
-
-        debt.setTdItems(tds);
-        commit.setTechnicalDebt(debt);
-
-        return commit;
     }
 
     private CommitTD createCommitTD(CompositeKey key, TechnicalDebtPriority priority, CodeLocation location) {

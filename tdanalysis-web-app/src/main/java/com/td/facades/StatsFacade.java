@@ -1,8 +1,6 @@
 package com.td.facades;
 
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -11,7 +9,6 @@ import com.td.models.CommitModel;
 import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueStats;
-import com.td.models.TDStats;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,9 +18,6 @@ public class StatsFacade {
 
     @Autowired
     private RepositoryFacade repositoryFacade;
-
-    @Autowired
-    private TDFacade tdFacade;
 
     /**
      * Returns a list of total number of commits for all issues.
@@ -51,14 +45,21 @@ public class StatsFacade {
     public CommitStats getCommitStats(String id) {
         CommitStats result = new CommitStats();
 
-        List<CommitModel> commits = this.repositoryFacade.getAllCommits(id).stream()
-                .filter(commit -> commit.getBuildStatus().equals(BuildStatus.SUCCESSFUL)).collect(Collectors.toList());
+        List<CommitModel> commits = this.repositoryFacade.getAllCommits(id).stream().collect(Collectors.toList());
 
         int totalCommits = commits.size();
-        int withIssues = (int) commits.stream().filter(commit -> commit.getIssueIds().size() > 0).count();
-        int withoutIssues = totalCommits - withIssues;
         int numberOfAuthors = repositoryFacade.getCollaborators(id).size();
 
+        // tickets
+        int withIssues = (int) commits.stream().filter(commit -> commit.getIssueIds().size() > 0).count();
+        int withoutIssues = totalCommits - withIssues;
+
+        // builds
+        int successfulBuilds = (int) commits.stream()
+                .filter(commit -> commit.getBuildStatus().equals(BuildStatus.SUCCESSFUL)).count();
+        int failedBuilds = totalCommits - successfulBuilds;
+
+        // stats
         double meanTicketsPerCommit = commits.stream().map(commit -> commit.getIssueIds().size()).reduce(0,
                 (prev, cur) -> prev + cur) / ((double) totalCommits);
         double meanTDItemsPerCommit = commits.stream().map(commit -> commit.getTechnicalDebt().getTotalCount())
@@ -70,6 +71,8 @@ public class StatsFacade {
         result.setNumberOfAuthors(numberOfAuthors);
         result.setMeanTicketsPerCommit(meanTicketsPerCommit);
         result.setMeanTDItemsPerCommit(meanTDItemsPerCommit);
+        result.setSuccessfulBuilds(successfulBuilds);
+        result.setFailedBuilds(failedBuilds);
 
         return result;
     }

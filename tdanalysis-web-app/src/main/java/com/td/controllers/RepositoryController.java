@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.td.facades.RepositoryFacade;
-import com.td.models.CommitModel;
 import com.td.models.RepositoryModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
