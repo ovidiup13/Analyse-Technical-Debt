@@ -54,16 +54,19 @@ public class StatsFacade {
         int withIssues = (int) commits.stream().filter(commit -> commit.getIssueIds().size() > 0).count();
         int withoutIssues = totalCommits - withIssues;
 
+        List<CommitModel> successfulCommits = commits.stream()
+                .filter(commit -> commit.getBuildStatus().equals(BuildStatus.SUCCESSFUL)).collect(Collectors.toList());
+
         // builds
-        int successfulBuilds = (int) commits.stream()
-                .filter(commit -> commit.getBuildStatus().equals(BuildStatus.SUCCESSFUL)).count();
+        int successfulBuilds = successfulCommits.size();
         int failedBuilds = totalCommits - successfulBuilds;
 
         // stats
-        double meanTicketsPerCommit = commits.stream().map(commit -> commit.getIssueIds().size()).reduce(0,
+        double meanTicketsPerCommit = successfulCommits.stream().map(commit -> commit.getIssueIds().size()).reduce(0,
                 (prev, cur) -> prev + cur) / ((double) totalCommits);
-        double meanTDItemsPerCommit = commits.stream().map(commit -> commit.getTechnicalDebt().getTotalCount())
-                .reduce(0, (prev, cur) -> prev + cur) / ((double) totalCommits);
+        double meanTDItemsPerCommit = successfulCommits.stream()
+                .map(commit -> commit.getTechnicalDebt().getTotalCount()).reduce(0, (prev, cur) -> prev + cur)
+                / ((double) totalCommits);
 
         result.setTotalCommits(totalCommits);
         result.setCommitsWithIssues(withIssues);
