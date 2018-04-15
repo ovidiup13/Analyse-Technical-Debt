@@ -1,6 +1,7 @@
 package com.td.facades;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,10 +16,13 @@ import com.td.models.CommitModel;
 import com.td.models.TDStats;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtItem;
+import com.td.models.WorkEffort;
 import com.td.models.WorkItem;
+import com.td.models.WorkTD;
 import com.td.models.TechnicalDebtItem.CompositeKey;
 import com.td.utils.ChangeSetCalculator;
 import com.td.utils.TDCalculator;
+import com.td.utils.WorkEffortCalculator;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -80,6 +84,9 @@ public class TDFacade {
         });
     }
 
+    /**
+     * 
+     */
     @Cacheable("changeTD")
     public List<ChangeTD> getChangeSetTechnicalDebt(String id) {
         List<WorkItem> items = repositoryFacade.getWorkItemSingleAuthor(id).filter(item -> item.getCommits().size() > 0)
@@ -90,9 +97,7 @@ public class TDFacade {
                 .map(item -> ChangeSetCalculator.getChangeSetStats(item.getCommits())).collect(Collectors.toList());
 
         // get technical debt per issue
-        List<Optional<TDStats>> td = items.stream().map(
-                item -> TDCalculator.getTechnicalDebtForIssue(item.getCommits(), repositoryFacade.getAllCommits(id)))
-                .collect(Collectors.toList());
+        List<Optional<TDStats>> td = getTechnicalDebt(id, items);
 
         // combine change and TD into results
         List<ChangeTD> result = new ArrayList<>(changeSets.size());
@@ -105,4 +110,56 @@ public class TDFacade {
 
         return result;
     }
+
+    /**
+     * 
+     */
+    @Cacheable("workTDTicket")
+    public List<WorkTD> getWorkTDByTicket(String id) {
+
+        List<WorkItem> items = repositoryFacade.getWorkItemSingleAuthor(id).filter(item -> item.getCommits().size() > 0)
+                .filter(item -> !item.getIssue().getStatus().equalsIgnoreCase("OPEN")).collect(Collectors.toList());
+
+        List<WorkEffort> workEffort = items.stream()
+                .map(item -> WorkEffortCalculator.getWorkEffortByTicketTimestamp(item.getIssue()))
+                .collect(Collectors.toList());
+
+        // get technical debt per issue
+        List<Optional<TDStats>> td = getTechnicalDebt(id, items);
+
+        List<WorkTD> result = new ArrayList<>();
+        for (int i = 0; i < workEffort.size(); i++) {
+            WorkTD workTd = new WorkTD();
+            workTd.setWorkEffort(workEffort.get(i));
+            workTd.setTechnicalDebt(td.get(i).orElse(null));
+            result.add(workTd);
+        }
+
+        return result;
+    }
+
+    /**
+     * 
+     */
+    private List<Optional<TDStats>> getTechnicalDebt(String repoId, List<WorkItem> items) {
+        return items.stream().map(item -> TDCalculator.getTechnicalDebtForIssue(item.getCommits(),
+                repositoryFacade.getAllCommits(repoId))).collect(Collectors.toList());
+    }
+
+    // /**
+    // * Returns the previous commit by the same author.
+    // */
+    // private Optional<CommitModel> getPreviousCommitByAuthor(CommitModel commit) {
+    //     String author = commit.getAuthor();
+    //     String repoId = commit.getRepositoryId();
+
+    //     // sorted by timestamp
+    //     List<CommitModel> allCommits = repositoryFacade.getAllCommitsByAuthor(repoId, author);
+
+    //     // binary search for current commit
+    //     int index = allCommits.indexOf(commit);
+
+    //     // return previous commit
+    //     return index < 1 ? Optional.empty() : Optional.of(allCommits.get(index - 1));
+    // }
 }

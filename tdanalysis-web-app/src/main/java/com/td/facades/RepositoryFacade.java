@@ -201,7 +201,6 @@ public class RepositoryFacade {
             }
         });
 
-        //TODO: what happens if there is a tie?
         return Collections.max(authorMap.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
     }
 

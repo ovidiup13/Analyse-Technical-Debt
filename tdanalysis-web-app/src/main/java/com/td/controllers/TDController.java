@@ -7,6 +7,7 @@ import com.td.facades.TDFacade;
 import com.td.models.ChangeTD;
 import com.td.models.TechnicalDebt;
 import com.td.models.TechnicalDebtItem;
+import com.td.models.WorkTD;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,5 +44,10 @@ public class TDController extends BaseController {
     @GetMapping("repos/{id}/td/changeset")
     public List<ChangeTD> getChangeSetTechnicalDebt(@PathVariable String id) {
         return tdFacade.getChangeSetTechnicalDebt(id);
+    }
+
+    @GetMapping("repos/{id}/td/ticket/work")
+    public List<WorkTD> getWorkTDByTicket(@PathVariable String id) {
+        return tdFacade.getWorkTDByTicket(id);
     }
 }

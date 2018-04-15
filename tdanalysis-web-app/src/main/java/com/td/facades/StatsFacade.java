@@ -1,12 +1,8 @@
 package com.td.facades;
 
-import java.text.DecimalFormat;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,21 +10,16 @@ import com.td.models.BuildStatus;
 import com.td.models.CommitModel;
 import com.td.models.CommitStats;
 import com.td.models.IssueModel;
-import com.td.models.IssueModel.Transition;
-import com.td.utils.ChangeSetCalculator;
 import com.td.models.IssueStats;
-import com.td.models.ChangeSetStats;
 import com.td.models.TDStats;
-import com.td.models.WorkEffort;
+import com.td.utils.ChangeSetCalculator;
+import com.td.utils.WorkEffortCalculator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class StatsFacade {
-
-    private static final int WORK_HOURS_PER_DAY = 8;
-    private static final DecimalFormat formatter = new DecimalFormat("#0.00");
 
     @Autowired
     private RepositoryFacade repositoryFacade;
@@ -52,7 +43,7 @@ public class StatsFacade {
             // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
-            stats.setWorkEffort(getWorkEffortByCommitTimestamp(issueCommits));
+            stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByCommitTimestamp(issueCommits));
             stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
@@ -89,7 +80,7 @@ public class StatsFacade {
             // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
-            stats.setWorkEffort(getWorkEffortByTicketTimestamp(issue));
+            stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByTicketTimestamp(issue));
             stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
@@ -148,93 +139,5 @@ public class StatsFacade {
         result.setMeanTDItemsPerCommit(meanTDItemsPerCommit);
 
         return result;
-    }
-
-    /***
-     * Returns the overall work effort spent on a sequence of commits, based on
-     * commit timestamps.
-     */
-    private WorkEffort getWorkEffortByCommitTimestamp(List<CommitModel> commits) {
-        int numberOfCommits = commits.size();
-        CommitModel firstCommit = commits.get(0);
-        CommitModel lastCommit = commits.get(numberOfCommits - 1);
-
-        // get last commit before ticket start
-        Optional<CommitModel> previousOpt = getPreviousCommitByAuthor(firstCommit);
-
-        // if "previous" commit does not exist, use first commit
-        CommitModel previousCommit = previousOpt.isPresent() ? previousOpt.get() : firstCommit;
-
-        double normalized = normalizeWorkEffort(lastCommit.getTimestamp(), previousCommit.getTimestamp());
-        return new WorkEffort(Double.parseDouble(formatter.format(normalized)));
-    }
-
-    /***
-    * Returns the overall work effort spent on a sequence of commits, based on
-    * ticket timestamps.
-    */
-    private WorkEffort getWorkEffortByTicketTimestamp(IssueModel issue) {
-        LocalDateTime started = getWorkStarted(issue.getTransitions()).orElse(issue.getCreated());
-        LocalDateTime ended = issue.getClosed() == null ? issue.getUpdated() : issue.getClosed();
-        double normalized = normalizeWorkEffort(started, ended);
-        return new WorkEffort(Double.parseDouble(formatter.format(normalized)));
-    }
-
-    /**
-     * Retrieves the time that work has started by looking at the issue
-     * transitions. If there is a transition from the state "Open" to "In
-     * Progress", then that is the start time. Otherwise, return an empty
-     * Optional.
-     */
-    private Optional<LocalDateTime> getWorkStarted(List<Transition> transitions) {
-        if (transitions == null) {
-            return Optional.empty();
-        }
-
-        Predicate<Transition> condition = (transition) -> transition.getFrom().equals("Open")
-                && transition.getFrom().equals("In Progress");
-        long count = transitions.stream().filter(condition).count();
-
-        if (count <= 0) {
-            return Optional.empty();
-        }
-
-        Transition t = transitions.stream().filter(condition).findFirst().get();
-        return Optional.of(t.getCreated());
-    }
-
-    /**
-     * Returns the previous commit by the same author.
-     */
-    private Optional<CommitModel> getPreviousCommitByAuthor(CommitModel commit) {
-        String author = commit.getAuthor();
-        String repoId = commit.getRepositoryId();
-
-        // sorted by timestamp
-        List<CommitModel> allCommits = repositoryFacade.getAllCommitsByAuthor(repoId, author);
-
-        // binary search for current commit
-        int index = allCommits.indexOf(commit);
-
-        // return previous commit
-        return index < 1 ? Optional.empty() : Optional.of(allCommits.get(index - 1));
-    }
-
-    /**
-     * Calculates the work effort between two dates, assuming that the normal
-     * working day is 8 hours.
-     */
-    private double normalizeWorkEffort(LocalDateTime t1, LocalDateTime t2) {
-        Duration duration = Duration.between(t1, t2);
-        long days = Math.abs(duration.toDays());
-
-        // case same day
-        if (days < 1) {
-            double hours = Math.abs(duration.toMinutes()) / 60.0;
-            return hours < WORK_HOURS_PER_DAY ? hours : WORK_HOURS_PER_DAY;
-        }
-
-        // case any other day
-        return (days + 1) * WORK_HOURS_PER_DAY;
     }
 }
