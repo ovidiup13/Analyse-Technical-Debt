@@ -25,85 +25,20 @@ public class StatsFacade {
     @Autowired
     private TDFacade tdFacade;
 
-    /***
-     * Returns list of issue stats by calculating work effort using commit
-     * timestamps.
-     */
-    public Stream<IssueStats> getIssueStatsByCommitTimestamp(String repositoryId) {
-        return repositoryFacade.getIssuesAndCommitsFiltered(repositoryId).map(item -> {
-            Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
-            String issueKey = entry.getKey();
-            List<CommitModel> issueCommits = entry.getValue();
-
-            // generate simple stats
-            IssueStats stats = new IssueStats();
-            stats.setIssueKey(issueKey);
-            // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
-            stats.setTotalCommits(issueCommits.size());
-            stats.setAuthor(issueCommits.get(0).getAuthor());
-            // stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByCommitTimestamp(issueCommits));
-            // stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
-
-            Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
-            stats.setTdStats(opt.orElse(null));
-
-            return stats;
-        });
-    }
-
-    /***
-    * Returns a list of issue stats by calculating work effort using ticket
-    * timestamps.
-    */
-    public Stream<IssueStats> getIssueStatsByIssueTimestamp(String repositoryId) {
-        return repositoryFacade.getIssuesAndCommitsFiltered(repositoryId).map(item -> {
-            Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
-            String issueKey = entry.getKey();
-
-            // get issue model
-            Optional<IssueModel> issueOpt = repositoryFacade.getIssue(repositoryId, issueKey);
-            if (!issueOpt.isPresent()) {
-                return null;
-            }
-            IssueModel issue = issueOpt.get();
-            if (issue.getStatus().equalsIgnoreCase("Open")) {
-                return null;
-            }
-
-            List<CommitModel> issueCommits = entry.getValue();
-
-            // generate simple stats
-            IssueStats stats = new IssueStats();
-            stats.setIssueKey(issueKey);
-            // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
-            stats.setTotalCommits(issueCommits.size());
-            stats.setAuthor(issueCommits.get(0).getAuthor());
-            // stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByTicketTimestamp(issue));
-            // stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
-
-            Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
-            stats.setTdStats(opt.orElse(null));
-
-            return stats;
-        }).filter(item -> item != null);
-    }
-
     /**
      * Returns a list of total number of commits for all issues.
      */
     public Stream<IssueStats> getIssueStatsRaw(String repositoryId) {
-        return repositoryFacade.getIssuesAndCommitsRaw(repositoryId).map(item -> {
-            Entry<String, List<CommitModel>> entry = item.entrySet().iterator().next();
-            String issueKey = entry.getKey();
-            List<CommitModel> issueCommits = entry.getValue();
+        return repositoryFacade.getWorkItems(repositoryId).map(item -> {
+
+            IssueModel issue = item.getIssue();
+            List<CommitModel> commits = item.getCommits();
 
             IssueStats stats = new IssueStats();
-            stats.setTotalCommits(issueCommits.size());
-            stats.setIssueKey(issueKey);
-            // stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
-
-            Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
-            stats.setTdStats(opt.orElse(null));
+            stats.setTotalCommits(commits.size());
+            stats.setIssueKey(issue.getIssueKey());
+            stats.setAuthor(issue.getAssignee());
+            stats.setStatus(issue.getStatus());
 
             return stats;
         });

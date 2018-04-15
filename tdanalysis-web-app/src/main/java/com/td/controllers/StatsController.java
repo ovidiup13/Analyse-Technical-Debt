@@ -17,17 +17,7 @@ public class StatsController extends BaseController {
     @Autowired
     private StatsFacade statsFacade;
 
-    @GetMapping("/repos/{id}/stats/tickets/by-commit")
-    public List<IssueStats> getTicketStatsByCommitTimestamp(@PathVariable String id) {
-        return this.statsFacade.getIssueStatsByCommitTimestamp(id).collect(Collectors.toList());
-    }
-
-    @GetMapping("/repos/{id}/stats/tickets/by-ticket")
-    public List<IssueStats> getTicketStatsByTicketTimestamp(@PathVariable String id) {
-        return this.statsFacade.getIssueStatsByIssueTimestamp(id).collect(Collectors.toList());
-    }
-
-    @GetMapping("/repos/{id}/stats/tickets/raw")
+    @GetMapping("/repos/{id}/stats/tickets")
     public List<IssueStats> getIssueStatsRaw(@PathVariable String id) {
         return this.statsFacade.getIssueStatsRaw(id).collect(Collectors.toList());
     }

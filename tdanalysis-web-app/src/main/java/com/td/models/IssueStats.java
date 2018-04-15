@@ -3,41 +3,9 @@ package com.td.models;
 public class IssueStats {
 
     private String issueKey;
-    private WorkEffort workEffort;
-    private long technicalDebt;
     private int totalCommits;
-    private int totalIssues;
     private String author;
-    private TDStats tdStats;
-    private ChangeSetStats changeSetStats;
-
-    /**
-     * @return the workEffort
-     */
-    public WorkEffort getWorkEffort() {
-        return workEffort;
-    }
-
-    /**
-     * @param workEffort the workEffort to set
-     */
-    public void setWorkEffort(WorkEffort workEffort) {
-        this.workEffort = workEffort;
-    }
-
-    /**
-     * @return the technicalDebt
-     */
-    public long getTechnicalDebt() {
-        return technicalDebt;
-    }
-
-    /**
-     * @param technicalDebt the technicalDebt to set
-     */
-    public void setTechnicalDebt(long technicalDebt) {
-        this.technicalDebt = technicalDebt;
-    }
+    private String status;
 
     /**
      * @return the issueKey
@@ -82,45 +50,16 @@ public class IssueStats {
     }
 
     /**
-     * @return the totalIssues
+     * @return the status
      */
-    public int getTotalIssues() {
-        return totalIssues;
+    public String getStatus() {
+        return status;
     }
 
     /**
-     * @param totalIssues the totalIssues to set
+     * @param status the status to set
      */
-    public void setTotalIssues(int totalIssues) {
-        this.totalIssues = totalIssues;
+    public void setStatus(String status) {
+        this.status = status;
     }
-
-    /**
-     * @return the tdStats
-     */
-    public TDStats getTdStats() {
-        return tdStats;
-    }
-
-    /**
-     * @param tdStats the tdStats to set
-     */
-    public void setTdStats(TDStats tdStats) {
-        this.tdStats = tdStats;
-    }
-
-    /**
-     * @return the changeSetStats
-     */
-    public ChangeSetStats getChangeSetStats() {
-        return changeSetStats;
-    }
-
-    /**
-     * @param changeSetStats the changeSetStats to set
-     */
-    public void setChangeSetStats(ChangeSetStats changeSetStats) {
-        this.changeSetStats = changeSetStats;
-    }
-
 }
