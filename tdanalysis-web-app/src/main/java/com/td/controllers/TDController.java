@@ -50,4 +50,9 @@ public class TDController extends BaseController {
     public List<WorkTD> getWorkTDByTicket(@PathVariable String id) {
         return tdFacade.getWorkTDByTicket(id);
     }
+
+    @GetMapping("repos/{id}/td/commit/work")
+    public List<WorkTD> getWorkTDByCommit(@PathVariable String id) {
+        return tdFacade.getWorkTDByCommit(id);
+    }
 }

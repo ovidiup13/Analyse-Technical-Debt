@@ -12,8 +12,6 @@ import com.td.models.CommitStats;
 import com.td.models.IssueModel;
 import com.td.models.IssueStats;
 import com.td.models.TDStats;
-import com.td.utils.ChangeSetCalculator;
-import com.td.utils.WorkEffortCalculator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,8 +41,8 @@ public class StatsFacade {
             // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
-            stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByCommitTimestamp(issueCommits));
-            stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
+            // stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByCommitTimestamp(issueCommits));
+            // stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
@@ -80,8 +78,8 @@ public class StatsFacade {
             // stats.setTechnicalDebt(getTechnicalDebtCount(issueCommits));
             stats.setTotalCommits(issueCommits.size());
             stats.setAuthor(issueCommits.get(0).getAuthor());
-            stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByTicketTimestamp(issue));
-            stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
+            // stats.setWorkEffort(WorkEffortCalculator.getWorkEffortByTicketTimestamp(issue));
+            // stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));
@@ -102,7 +100,7 @@ public class StatsFacade {
             IssueStats stats = new IssueStats();
             stats.setTotalCommits(issueCommits.size());
             stats.setIssueKey(issueKey);
-            stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
+            // stats.setChangeSetStats(ChangeSetCalculator.getChangeSetStats(issueCommits));
 
             Optional<TDStats> opt = tdFacade.getTechnicalDebtForIssue(repositoryId, issueCommits);
             stats.setTdStats(opt.orElse(null));

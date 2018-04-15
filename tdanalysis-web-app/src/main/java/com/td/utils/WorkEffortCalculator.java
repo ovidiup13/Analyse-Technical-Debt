@@ -21,20 +21,8 @@ public class WorkEffortCalculator {
      * Returns the overall work effort spent on a sequence of commits, based on
      * commit timestamps.
      */
-    public static WorkEffort getWorkEffortByCommitTimestamp(List<CommitModel> commits) {
-        int numberOfCommits = commits.size();
-        CommitModel firstCommit = commits.get(0);
-        CommitModel lastCommit = commits.get(numberOfCommits - 1);
-
-        // get last commit before ticket start
-        // Optional<CommitModel> previousOpt = getPreviousCommitByAuthor(firstCommit);
-
-        // if "previous" commit does not exist, use first commit
-        // CommitModel previousCommit = previousOpt.isPresent() ? previousOpt.get() : firstCommit;
-
-        // TODO: refactor method
-        double normalized = WorkEffortCalculator.normalizeWorkEffort(lastCommit.getTimestamp(),
-                lastCommit.getTimestamp());
+    public static WorkEffort getWorkEffortByCommitTimestamp(CommitModel first, CommitModel last) {
+        double normalized = WorkEffortCalculator.normalizeWorkEffort(first.getTimestamp(), last.getTimestamp());
         return new WorkEffort(Double.parseDouble(formatter.format(normalized)));
     }
 
@@ -89,4 +77,5 @@ public class WorkEffortCalculator {
         Transition t = transitions.stream().filter(condition).findFirst().get();
         return Optional.of(t.getCreated());
     }
+
 }
